@@ -3,6 +3,8 @@ export type HomepageCms = {
   heroTitle: string;
   heroLine: string;
   featuredSlug: string;
+  featuredCta: string;
+  collectionCta: string;
   comingSoonLine: string;
   finderCta: string;
   createCta: string;
@@ -14,7 +16,9 @@ export const HOMEPAGE_CMS: HomepageCms = {
   heroTitle: "REHMAT PANJAB",
   heroLine: "FRAGRANCE BECOMES MEMORY",
   featuredSlug: "musk-rizali",
-  comingSoonLine: "Four still choosing their names.",
+  featuredCta: "Hold Musk Rizali",
+  collectionCta: "View collection",
+  comingSoonLine: "Four still choosing their names — in development, not unfinished shop pages.",
   finderCta: "WHAT SHOULD YOUR FRAGRANCE FEEL LIKE?",
   createCta: "CREATE YOUR REHMAT",
   nextDropCta: "HELP CREATE WHAT COMES NEXT",

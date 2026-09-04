@@ -7,15 +7,18 @@ import { useLiquidTransition } from "@/components/motion/LiquidTransition";
 import { track } from "@/lib/analytics/index";
 import { durationMs } from "@/lib/motion/tokens";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
+import { requestLabel } from "@/lib/commerce/cta";
 
 export function BuyNowButton({
   productId,
   variantId,
   compact = false,
+  priced = false,
 }: {
   productId: string;
   variantId: string;
   compact?: boolean;
+  priced?: boolean;
 }) {
   const { addLine } = useCart();
   const { go } = useLiquidTransition();
@@ -38,7 +41,7 @@ export function BuyNowButton({
           window.setTimeout(() => go("/checkout", "pour"), durationMs("buyNow"));
         }}
       >
-        Buy now
+        {requestLabel(priced)}
       </LiquidButton>
       {wiping ? <div className="liquid-pour-veil" /> : null}
     </>

@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { HOUSE } from "@/data/fragrance-config";
 import { Emblem } from "@/components/brand/Emblem";
-import { PRIMARY_NAV } from "@/lib/nav";
+import { WhatsAppNote } from "@/components/brand/WhatsAppNote";
+import { PRIMARY_NAV, TRUST_NAV } from "@/lib/nav";
 
 export function SiteFooter() {
   const pathname = usePathname();
@@ -22,7 +23,7 @@ export function SiteFooter() {
             {HOUSE.wornLineSecond}
           </p>
         </div>
-        <div className="col-span-6 mt-8 md:col-span-3 md:col-start-8 md:mt-0">
+        <div className="col-span-6 mt-8 md:col-span-3 md:col-start-7 md:mt-0">
           <p className="label mb-3">Visit</p>
           <ul className="space-y-2 text-sm leading-7">
             {PRIMARY_NAV.map((item) => (
@@ -42,6 +43,13 @@ export function SiteFooter() {
         <div className="col-span-6 mt-8 md:col-span-2 md:mt-0">
           <p className="label mb-3">House</p>
           <ul className="space-y-2 text-sm leading-7">
+            {TRUST_NAV.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} data-cursor="link" className="link-lux">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
             <li>
               <Link href="/account" data-cursor="vault" className="link-lux">
                 Account
@@ -52,12 +60,10 @@ export function SiteFooter() {
                 Private archive
               </Link>
             </li>
-            <li>
-              <Link href="/checkout" data-cursor="link" className="link-lux">
-                Checkout
-              </Link>
-            </li>
           </ul>
+        </div>
+        <div className="col-span-12 mt-8 md:col-span-5">
+          <WhatsAppNote />
         </div>
         <FooterMark />
         <div className="col-span-12 mt-6 flex items-end justify-between border-t border-ink/10 pt-4">

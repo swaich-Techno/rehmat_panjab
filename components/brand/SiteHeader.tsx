@@ -15,8 +15,17 @@ export function SiteHeader() {
   const { itemCount, openCart } = useCart();
   const [open, setOpen] = useState(false);
   const [rendered, setRendered] = useState(false);
+  const [compact, setCompact] = useState(false);
   const mode = useMotionMode();
   const hide = pathname?.startsWith("/admin");
+
+  useEffect(() => {
+    const onScroll = () => setCompact(window.scrollY > 28);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   if (hide) return null;
 
   const nav = PRIMARY_NAV.map((item) => ({ href: item.href, label: item.label }));
@@ -32,7 +41,10 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-ink/10 bg-cream" style={{ paddingTop: "var(--safe-top)" }}>
+    <header
+      className={`site-header sticky top-0 z-40 border-b border-ink/10 bg-cream ${compact ? "is-compact" : ""}`}
+      style={{ paddingTop: "var(--safe-top)" }}
+    >
       <div className="site-grid items-center py-3 md:py-4">
         <div className="col-span-6 md:col-span-3">
           <Wordmark size="sm" />
@@ -41,7 +53,7 @@ export function SiteHeader() {
           <LiquidNav items={nav} />
         </div>
         <div className="col-span-6 flex items-center justify-end gap-4 md:col-span-3">
-          <Link href="/account" className="label hidden no-underline text-ink/70 md:inline" data-cursor="vault">
+          <Link href="/account" className="label hidden no-underline text-ink/70 md:inline interactive-text" data-cursor="vault">
             Account
           </Link>
           <button type="button" className="label touch-target text-ink" data-cart-target="desktop" onClick={openCart}>
@@ -118,6 +130,15 @@ function MobileFilm({
         ))}
         <Link href="/account" className="label mt-8" data-cursor="vault" onClick={onClose}>
           Account
+        </Link>
+        <Link href="/shipping" className="label mt-4" onClick={onClose}>
+          Shipping
+        </Link>
+        <Link href="/faq" className="label mt-4" onClick={onClose}>
+          FAQ
+        </Link>
+        <Link href="/contact" className="label mt-4" onClick={onClose}>
+          Contact
         </Link>
       </nav>
     </div>

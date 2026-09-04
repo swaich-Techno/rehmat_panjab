@@ -15,6 +15,11 @@ export function MotionProvider({ children }: { children: ReactNode }) {
       document.documentElement.dataset.motion = next.toLowerCase();
     };
     apply();
+    const onVis = () => {
+      document.documentElement.dataset.pageHidden = document.hidden ? "1" : "0";
+    };
+    onVis();
+    document.addEventListener("visibilitychange", onVis);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     const pointer = window.matchMedia("(pointer: fine)");
     const hover = window.matchMedia("(hover: hover)");
@@ -28,6 +33,7 @@ export function MotionProvider({ children }: { children: ReactNode }) {
       pointer.removeEventListener("change", apply);
       hover.removeEventListener("change", apply);
       width.removeEventListener("change", apply);
+      document.removeEventListener("visibilitychange", onVis);
     };
   }, []);
 

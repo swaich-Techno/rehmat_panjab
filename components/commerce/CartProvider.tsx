@@ -139,6 +139,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
             style={{
               left: fly.from.left,
               top: fly.from.top,
+              width: fly.from.width,
+              height: fly.from.height,
               ["--dx" as string]: `${fly.to.left - fly.from.left}px`,
               ["--dy" as string]: `${fly.to.top - fly.from.top}px`,
             }}

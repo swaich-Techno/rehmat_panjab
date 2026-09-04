@@ -6,8 +6,8 @@ This repository is the small-business commerce foundation for the house: catalog
 
 ## Features
 
-- Cinematic homepage with eight overlapping scenes (water morning with bottle in-viewport, drop hinge, sequential oils, note atmospheres, finder, create, next drop)
-- Shop, Find your scent, Create your Rehmat, Next drop, Our story
+- Cinematic homepage with overlapping scenes (hero CTA to Musk Rizali + collection, drop hinge, sequential oils, note atmospheres, finder, create, next drop)
+- Shop, Find your scent, Create your Rehmat, Next drop, Our story, Shipping, FAQ, Contact
 - Collection and product pages with composition + scent character
 - Cart drawer / mobile sheet and cart page, persisted in `localStorage`, totals recomputed on the server
 - Checkout coming soon — pack ceremony then manual / WhatsApp request, never a fake charge
@@ -69,7 +69,7 @@ Placeholder SVG/CSS compositions live in `public/images/placeholders/` and are l
 
 Prices are INR **paise integers**. `null` means **LAUNCHING SOON**. Do not invent prices.
 
-`01 Musk Rizali` is named. `02–05` use working titles (`Product Two` …) until the house names them. Edit `data/fragrance-config.ts`.
+`01 Musk Rizali` is named. `02–05` use working titles (`Product Two` …) and are marked **in development**. Edit `data/fragrance-config.ts`.
 
 ## Future Razorpay
 

@@ -6,6 +6,8 @@ import { useLayoutEffect, useRef, useState, type PointerEvent } from "react";
 import { MOTION_DURATION_MS, MOTION_EASE_CSS } from "@/lib/motion/tokens";
 import { LIQUID_PERSONALITIES } from "@/lib/motion/personalities";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
+import { useLiquidTransition } from "@/components/motion/LiquidTransition";
+import { transitionKind } from "@/lib/motion/transitions";
 
 export type NavItem = { href: string; label: string };
 
@@ -22,6 +24,7 @@ function blobPath(stretch: number, compress: number, overshoot: number): string 
 export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => void }) {
   const pathname = usePathname();
   const mode = useMotionMode();
+  const { go } = useLiquidTransition();
   const listRef = useRef<HTMLUListElement>(null);
   const [blob, setBlob] = useState({ x: 0, width: 0, path: IDLE_PATH, visible: false });
 
@@ -109,7 +112,16 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
                   event.currentTarget.style.setProperty("--nav-drop-x", "50%");
                 }}
                 onFocus={() => place(index, "settle")}
-                onClick={() => onNavigate?.()}
+                onClick={(event) => {
+                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+                    onNavigate?.();
+                    return;
+                  }
+                  event.preventDefault();
+                  const kind = transitionKind(pathname ?? "/", item.href);
+                  go(item.href, kind === "none" ? "water" : kind);
+                  onNavigate?.();
+                }}
               >
                 {item.label}
                 <span className="nav-drop" aria-hidden="true" />

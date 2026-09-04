@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import {
   CREATE_QUESTIONS,
+  CREATE_SESSION_KEY,
   CREATE_STORAGE_KEY,
   type CreateConcept,
 } from "@/data/create-fragrance-config";
@@ -10,8 +11,10 @@ import { conceptSummary, notesFromAnswers } from "@/lib/fragrance/create-concept
 import { LiquidButton } from "@/components/ui/LiquidButton";
 import { Field } from "@/components/ui/Field";
 import { ShareCard } from "@/components/quiz/ShareCard";
+import { OptionSelect } from "@/components/quiz/OptionSelect";
+import { MoodWash } from "@/components/motion/MoodWash";
 import { LiquidReveal } from "@/components/motion/LiquidReveal";
-import { writeLocalJson } from "@/lib/storage/local-json";
+import { useLocalJson, writeLocalJson } from "@/lib/storage/local-json";
 import { VirtualBottle } from "@/components/fragrance/VirtualBottle";
 import Link from "next/link";
 
@@ -23,21 +26,36 @@ const atmospheres: Record<string, string> = {
   evening: "atmosphere-evening text-ivory",
 };
 
+type Session = {
+  step: number;
+  answers: Record<string, string>;
+  name: string;
+};
+
+const EMPTY_SESSION: Session = { step: 0, answers: {}, name: "" };
+
 export function CreateFragranceFlow() {
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [name, setName] = useState("");
+  const stored = useLocalJson<Session>(CREATE_SESSION_KEY, EMPTY_SESSION);
+  const step = stored.step ?? 0;
+  const answers = stored.answers ?? {};
+  const name = stored.name ?? "";
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [concept, setConcept] = useState<CreateConcept | null>(null);
   const [archiveMessage, setArchiveMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [origin, setOrigin] = useState({ x: 48, y: 42, tick: 0 });
+  const [prevWash, setPrevWash] = useState("atmosphere-morning");
 
   const notes = useMemo(() => notesFromAnswers(answers), [answers]);
   const question = CREATE_QUESTIONS[step];
   const selected = question ? answers[question.id] : "";
   const wash = question ? atmospheres[question.atmosphere] : "atmosphere-morning";
   const ivory = wash.includes("text-ivory");
+
+  function patch(next: Partial<Session>) {
+    writeLocalJson(CREATE_SESSION_KEY, { step, answers, name, ...next });
+  }
 
   function finish() {
     const next: CreateConcept = {
@@ -91,7 +109,7 @@ export function CreateFragranceFlow() {
               Distance: {concept.distance || "—"} · Hour: {concept.hour || "—"}
             </p>
             <div className="mt-8 max-w-md space-y-5">
-              <Field label="Name this oil (optional)" value={name} onChange={(event) => setName(event.target.value)} />
+              <Field label="Name this oil (optional)" value={name} onChange={(event) => patch({ name: event.target.value })} />
               <Field
                 label="Email to save later (optional)"
                 type="email"
@@ -132,7 +150,7 @@ export function CreateFragranceFlow() {
           <p className="col-span-12 label">Name</p>
           <h1 className="col-span-12 display headline-gap text-5xl md:col-span-7">What should we call this Rehmat?</h1>
           <div className="col-span-12 mt-8 max-w-md md:col-span-5">
-            <Field label="Optional name" value={name} onChange={(event) => setName(event.target.value)} />
+            <Field label="Optional name" value={name} onChange={(event) => patch({ name: event.target.value })} />
             <div className="mt-8">
               <LiquidButton liquid="oil" onClick={finish}>
                 See your Rehmat
@@ -151,32 +169,31 @@ export function CreateFragranceFlow() {
 
   return (
     <section className={`quiz-stage min-h-[72svh] section-pad ${ivory ? "text-ivory" : "text-ink"}`}>
-      <div className={`quiz-stage__wash ${wash}`} aria-hidden="true" />
+      <MoodWash current={wash} previous={prevWash} x={origin.x} y={origin.y} tick={origin.tick} />
       <LiquidReveal className="site-grid quiz-stage__content" as="div" key={question.id}>
         <div className="col-span-12 md:col-span-7">
           <p className="label">
             {question.number} — {question.total}
           </p>
           <h1 className="display headline-gap whitespace-pre-line text-[clamp(2.4rem,7vw,4.6rem)]">{question.prompt}</h1>
-          <p className="copy-gap text-sm">{question.instruction}</p>
+          <p className="copy-gap text-sm">Click or hold. Notes fall into the vessel. Progress stays on this device.</p>
           <ul className="mt-8">
             {question.options.map((option) => (
               <li key={option.id}>
-                <button
-                  type="button"
-                  data-cursor="quiz"
-                  data-held={selected === option.id}
-                  className={`option-liquid flex min-h-11 w-full items-baseline justify-between py-4 text-left ${selected === option.id ? "text-forest" : ""}`}
-                  onClick={() => setAnswers((current) => ({ ...current, [question.id]: option.id }))}
-                >
-                  <span className="display text-4xl">{option.label}</span>
-                  {selected === option.id ? <span className="label">Held</span> : null}
-                </button>
+                <OptionSelect
+                  label={option.label}
+                  selected={selected === option.id}
+                  onSelect={(point) => {
+                    setPrevWash(wash);
+                    setOrigin({ x: point.x, y: point.y, tick: origin.tick + 1 });
+                    patch({ answers: { ...answers, [question.id]: option.id } });
+                  }}
+                />
               </li>
             ))}
           </ul>
           <div className="mt-8 max-w-xs">
-            <LiquidButton liquid="water" className="w-full" disabled={!selected} onClick={() => setStep((value) => value + 1)}>
+            <LiquidButton liquid="water" className="w-full" disabled={!selected} onClick={() => patch({ step: step + 1 })}>
               Continue
             </LiquidButton>
           </div>

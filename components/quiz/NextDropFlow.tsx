@@ -9,6 +9,8 @@ import { INSIGHTS_KEY, REWARD_LEDGER_KEY, type NextDropInsight } from "@/lib/ins
 import { track } from "@/lib/analytics/index";
 import { durationMs } from "@/lib/motion/tokens";
 import { VirtualBottle } from "@/components/fragrance/VirtualBottle";
+import { OptionSelect } from "@/components/quiz/OptionSelect";
+import { storeActiveReward } from "@/lib/rewards/client";
 import type { CreateNoteId } from "@/data/create-fragrance-config";
 
 type Answers = {
@@ -122,6 +124,7 @@ export function NextDropFlow() {
         REWARD_LEDGER_KEY,
         JSON.stringify([...ledger, { emailHash: data.emailHash, token: data.token, shown: true, at: Date.now() }]),
       );
+      storeActiveReward({ token: data.token, email: answers.email, at: Date.now() });
     }
     if (data.code) {
       setReward(data.code);
@@ -284,6 +287,7 @@ export function NextDropFlow() {
         <h1 className="col-span-12 display headline-gap whitespace-pre-line text-[clamp(2.2rem,6vw,4.2rem)] md:col-span-7">
           {question.prompt}
         </h1>
+        <p className="col-span-12 mt-2 text-sm text-ink/60 md:col-span-7">Click or hold. Progress is only on this page until you confirm.</p>
         <div className="col-span-12 mt-4 md:col-span-4 md:col-start-9 md:row-span-3">
           <VirtualBottle notes={voteNotes(answers)} />
         </div>
@@ -292,16 +296,13 @@ export function NextDropFlow() {
             const held = Array.isArray(selected) ? selected.includes(option.id) : selected === option.id;
             return (
               <li key={option.id}>
-                <button
-                  type="button"
-                  data-cursor="quiz"
-                  data-held={held}
-                  className="option-liquid flex min-h-11 w-full items-baseline justify-between py-3 text-left"
-                  onClick={() => toggle(option.id)}
-                >
-                  <span className={`display text-2xl md:text-3xl ${held ? "text-forest" : ""}`}>{option.label}</span>
-                  {held ? <span className="label">Marked</span> : null}
-                </button>
+                <OptionSelect
+                  label={option.label}
+                  selected={held}
+                  displayClassName="text-2xl md:text-3xl"
+                  selectedWord="Marked"
+                  onSelect={() => toggle(option.id)}
+                />
               </li>
             );
           })}

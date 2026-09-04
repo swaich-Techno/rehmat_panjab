@@ -66,6 +66,8 @@ export type Product = {
   occasion: string[];
   season: string[];
   featured: boolean;
+  /** Working title still being written — mark clearly, never fake a finished oil. */
+  development: boolean;
 };
 
 export type HouseConfig = {
@@ -77,6 +79,8 @@ export type HouseConfig = {
   finderLine: string;
   nextDropLine: string;
   oilLine: string;
+  oilExplain: string;
+  sizeGuide: Record<number, string>;
   currency: "INR";
   locale: string;
   checkoutEnabled: boolean;
@@ -97,6 +101,13 @@ export const HOUSE: HouseConfig = {
   finderLine: "Find what stays with you.",
   nextDropLine: "Help shape the next Rehmat.",
   oilLine: "Perfume oil, close to skin.",
+  oilExplain:
+    "A concentrated perfume oil is the juice without the alcohol cloud. A few drops on pulse, cloth, or hair — it sits on skin instead of filling a room.",
+  sizeGuide: {
+    6: "A close-to-skin ritual. A few drops at the wrist or throat — worn, not announced.",
+    12: "The same oil, kept longer in the house.",
+    24: "For skin that already knows this oil.",
+  },
   currency: "INR",
   locale: "en-IN",
   checkoutEnabled: false,
@@ -195,6 +206,7 @@ export const PRODUCTS: Product[] = [
     occasion: ["everyday", "work", "evening"],
     season: ["all", "cool", "winter"],
     featured: true,
+    development: false,
   },
   {
     id: "prod_02",
@@ -238,6 +250,7 @@ export const PRODUCTS: Product[] = [
     occasion: ["date", "wedding", "special"],
     season: ["warm", "hot", "all"],
     featured: false,
+    development: true,
   },
   {
     id: "prod_03",
@@ -281,6 +294,7 @@ export const PRODUCTS: Product[] = [
     occasion: ["evening", "work", "special"],
     season: ["cool", "winter"],
     featured: false,
+    development: true,
   },
   {
     id: "prod_04",
@@ -324,6 +338,7 @@ export const PRODUCTS: Product[] = [
     occasion: ["everyday", "work"],
     season: ["hot", "warm", "all"],
     featured: false,
+    development: true,
   },
   {
     id: "prod_05",
@@ -367,6 +382,7 @@ export const PRODUCTS: Product[] = [
     occasion: ["date", "wedding", "evening", "special"],
     season: ["cool", "winter", "all"],
     featured: false,
+    development: true,
   },
 ];
 
@@ -394,4 +410,12 @@ export function isPurchasable(product: Product, variant?: SizeVariant): boolean 
 
 export function displayPrice(variant: SizeVariant): "LAUNCHING SOON" | number {
   return variant.price_paise === null ? "LAUNCHING SOON" : variant.price_paise;
+}
+
+export function isDevelopmentProduct(product: Product): boolean {
+  return product.development === true;
+}
+
+export function pricesArePublished(product: Product): boolean {
+  return product.variants.some((variant) => variant.price_paise !== null);
 }

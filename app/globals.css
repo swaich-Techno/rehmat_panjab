@@ -243,9 +243,12 @@ a {
       rgba(99, 55, 54, 0.72) 42%,
       transparent 72%
     );
+  clip-path: circle(0% at var(--px) var(--py));
   transform: scaleY(0.12) scaleX(0.92);
   transform-origin: bottom center;
-  transition: transform var(--duration-standard) var(--ease-weighted);
+  transition:
+    transform var(--fill-ms, var(--duration-standard)) var(--ease-liquidEase),
+    clip-path var(--fill-ms, var(--duration-standard)) var(--ease-liquidEase);
 }
 
 .liquid-button[data-liquid="water"]::before {
@@ -256,13 +259,14 @@ a {
       rgba(71, 106, 80, 0.78) 48%,
       transparent 74%
     );
-  transition-duration: var(--duration-fast);
+  --fill-ms: var(--duration-fast);
 }
 
 .liquid-button:hover::before,
 .liquid-button:focus-visible::before,
 .liquid-button[data-loading="true"]::before {
   transform: scaleY(1) scaleX(1);
+  clip-path: circle(140% at var(--px) var(--py));
 }
 
 .liquid-button:hover,
@@ -286,6 +290,7 @@ a {
 
 .liquid-button[data-success="true"]::before {
   transform: scaleY(1.18) scaleX(1.04);
+  clip-path: circle(160% at var(--px) var(--py));
 }
 
 .liquid-button:disabled {
@@ -971,10 +976,19 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  transition:
-    background var(--duration-standard) var(--ease-liquidEase),
-    opacity var(--duration-fast) var(--ease-glassEase),
-    filter var(--duration-standard) var(--ease-glassEase);
+}
+
+.quiz-stage__wash--from-click {
+  clip-path: circle(0% at var(--wash-x, 50%) var(--wash-y, 42%));
+  animation: wash-open var(--duration-standard) var(--ease-liquidEase) forwards;
+}
+
+.note-field__word {
+  animation-play-state: paused;
+}
+
+.note-field.is-on .note-field__word {
+  animation-play-state: running;
 }
 
 .quiz-stage__content {
@@ -1171,10 +1185,11 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 @keyframes bottle-breathe {
   0%,
   100% {
-    transform: translate3d(var(--shift, 0px), var(--lift, 0px), 0) rotate(-0.5deg);
+    transform: translate3d(var(--shift, 0px), var(--lift, 0px), 0) rotate(calc(var(--tilt, 0deg) - 0.5deg));
   }
   50% {
-    transform: translate3d(calc(var(--shift, 0px) + 5px), calc(var(--lift, 0px) - 7px), 0) rotate(0.7deg);
+    transform: translate3d(calc(var(--shift, 0px) + 5px), calc(var(--lift, 0px) - 7px), 0)
+      rotate(calc(var(--tilt, 0deg) + 0.7deg));
   }
 }
 
@@ -1225,16 +1240,20 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 
 @keyframes rp-fly {
   0% {
-    transform: translate(0, 0) scale(1) rotate(-6deg);
+    transform: translate(0, 0) scale(1) rotate(-8deg);
+    opacity: 1;
+    filter: drop-shadow(0 10px 12px rgba(24, 58, 42, 0.32));
+  }
+  28% {
+    transform: translate(calc(var(--dx) * 0.22), calc(var(--dy) * 0.08 - 72px)) scale(0.92) rotate(12deg);
     opacity: 1;
   }
-  42% {
-    transform: translate(calc(var(--dx) * 0.48), calc(var(--dy) * 0.22 - 56px)) scale(0.82) rotate(10deg);
-    opacity: 1;
+  58% {
+    transform: translate(calc(var(--dx) * 0.62), calc(var(--dy) * 0.48 - 18px)) scale(0.55) rotate(-6deg);
   }
   100% {
-    transform: translate(var(--dx), var(--dy)) scale(0.22) rotate(-14deg);
-    opacity: 0.12;
+    transform: translate(var(--dx), var(--dy)) scale(0.16) rotate(-18deg);
+    opacity: 0.08;
   }
 }
 
@@ -1247,6 +1266,129 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
     transform: translate(var(--dx), var(--dy)) scale(0.2);
     opacity: 0;
   }
+}
+
+@keyframes wash-open {
+  from {
+    clip-path: circle(0% at var(--wash-x, 50%) var(--wash-y, 42%));
+  }
+  to {
+    clip-path: circle(160% at var(--wash-x, 50%) var(--wash-y, 42%));
+  }
+}
+
+.bottle-note-name {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  translate: -50% 0;
+  color: var(--forest);
+  animation: note-name-fall var(--duration-editorial) var(--ease-liquidEase) both;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@keyframes note-name-fall {
+  from {
+    transform: translate3d(0, -12px, 0);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, 88px, 0);
+    opacity: 0;
+  }
+}
+
+.site-header {
+  transition: box-shadow var(--duration-fast) var(--ease-glassEase);
+}
+
+.site-header.is-compact .site-grid {
+  padding-block: 0.4rem;
+}
+
+.site-header.is-compact {
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--forest) 8%, transparent);
+}
+
+.dev-mark {
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--ivory) 88%, var(--sand));
+  color: var(--wine);
+  border: 1px solid color-mix(in srgb, var(--wine) 25%, transparent);
+  padding: 0.4rem 0.55rem;
+}
+
+.dev-oil {
+  opacity: 0.92;
+}
+
+.option-affordance {
+  opacity: 0.45;
+  transition: opacity var(--duration-fast) var(--ease-weighted), color var(--duration-fast) var(--ease-weighted);
+}
+
+.option-liquid:hover .option-affordance,
+.option-liquid:focus-visible .option-affordance,
+.option-liquid[data-held="true"] .option-affordance {
+  opacity: 1;
+}
+
+.interactive-row,
+.interactive-text {
+  transition: background var(--duration-fast) var(--ease-glassEase), color var(--duration-fast) var(--ease-weighted);
+}
+
+.interactive-row:hover,
+.interactive-row:focus-within {
+  background: color-mix(in srgb, var(--mint) 42%, transparent);
+}
+
+header a:hover,
+header button:hover,
+footer a:hover,
+.touch-target:hover {
+  color: var(--forest);
+}
+
+.touch-target:hover {
+  background: color-mix(in srgb, var(--mint) 40%, transparent);
+}
+
+label:has(input[type="checkbox"]):hover,
+label:has(input[type="radio"]):hover {
+  background: color-mix(in srgb, var(--mint) 35%, transparent);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--forest);
+}
+
+.liquid-glass-veil,
+.liquid-water-veil,
+.liquid-wipe-veil,
+.liquid-pour-veil.is-route-veil {
+  opacity: 1;
+}
+
+html[data-page-hidden="1"] .atmosphere-morning::after,
+html[data-page-hidden="1"] .atmosphere-garden::after,
+html[data-page-hidden="1"] .atmosphere-amber::after,
+html[data-page-hidden="1"] .atmosphere-evening::after,
+html[data-page-hidden="1"] .atmosphere-monsoon::after,
+html[data-page-hidden="1"] .atmosphere-oud::after,
+html[data-page-hidden="1"] .atmosphere-rose::after,
+html[data-page-hidden="1"] .note-field__word,
+html[data-page-hidden="1"] .bottle-stage,
+html[data-page-hidden="1"] .orbit-note {
+  animation-play-state: paused !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

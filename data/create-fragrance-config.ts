@@ -153,6 +153,7 @@ export const CREATE_QUESTIONS: CreateQuestion[] = [
 ];
 
 export const CREATE_STORAGE_KEY = "rp.create-fragrance.v1";
+export const CREATE_SESSION_KEY = "rp.create-fragrance.session.v1";
 
 export type CreateConcept = {
   answers: Record<string, string>;

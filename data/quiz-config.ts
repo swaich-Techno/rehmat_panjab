@@ -24,7 +24,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     number: "01",
     total: "06",
     prompt: "How should it feel\non you?",
-    instruction: "One word is enough.",
+    instruction: "Click or hold one word.",
     atmosphere: "morning",
     options: [
       { id: "fresh", label: "Fresh", weights: { fresh: 10, greens: 6, clean: 4 } },

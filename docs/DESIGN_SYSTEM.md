@@ -119,4 +119,4 @@ Pill buttons, glass cards, glowing orbs, three-up feature grids, giant gradient 
 
 ## LiquidButton
 
-Semantic `<button>`, rectangular, 2px radius. Water or oil fill toward the pointer. Compress on press. Expand on success. Magnetism 4–8px on FULL. Keyboard and focus-visible required. Visible label is never replaced by the fill alone. Order flow: ORDER NOW → PREPARING → ORDER READY. ATC: ADDED then ADD ANOTHER after 1.5s.
+Semantic `<button>`, rectangular, 2px radius. Water or oil fill toward the pointer (clip-path + viscous scale, 280–480ms). Compress on press. Expand on success bloom 280–600ms. Magnetism 4–8px on FULL. Keyboard and focus-visible required. Visible label is never replaced by the fill alone. Order flow: REQUEST → PREPARING → ORDER READY while prices are null. ATC: ADDED then ADD ANOTHER after 1.5s.

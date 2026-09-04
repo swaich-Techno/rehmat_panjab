@@ -30,6 +30,11 @@ export function VirtualBottle({
           style={{ background: NOTE_LAYERS[latest].color }}
         />
       ) : null}
+      {latest ? (
+        <span key={`name-${latest}-${notes.length}`} className="bottle-note-name label">
+          {NOTE_LAYERS[latest].label}
+        </span>
+      ) : null}
       <div className="absolute inset-x-6 top-7 bottom-0 overflow-hidden border border-ink/20 bg-ivory/35">
         <div
           className="absolute inset-x-0 bottom-0"

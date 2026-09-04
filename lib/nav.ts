@@ -5,3 +5,9 @@ export const PRIMARY_NAV = [
   { href: "/next-drop", label: "Next drop" },
   { href: "/our-story", label: "Our story" },
 ] as const;
+
+export const TRUST_NAV = [
+  { href: "/shipping", label: "Shipping" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
+] as const;

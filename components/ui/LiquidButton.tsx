@@ -2,7 +2,7 @@
 
 import { useRef, useState, type ButtonHTMLAttributes, type PointerEvent } from "react";
 import { Ripple } from "@/components/motion/Ripple";
-import type { LiquidPersonality } from "@/lib/motion/personalities";
+import { LIQUID_PERSONALITIES, type LiquidPersonality } from "@/lib/motion/personalities";
 import { durationCss, durationMs } from "@/lib/motion/tokens";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 
@@ -42,6 +42,7 @@ export function LiquidButton({
   const ref = useRef<HTMLButtonElement>(null);
   const mode = useMotionMode();
   const [ripple, setRipple] = useState<{ x: number; y: number; id: number } | null>(null);
+  const fillMs = LIQUID_PERSONALITIES[liquid].fillMs;
 
   function setFill(event: PointerEvent<HTMLButtonElement>) {
     const node = ref.current;
@@ -59,7 +60,9 @@ export function LiquidButton({
     const rect = node.getBoundingClientRect();
     const dx = event.clientX - (rect.left + rect.width / 2);
     const dy = event.clientY - (rect.top + rect.height / 2);
-    node.style.transform = `translate3d(${Math.max(-8, Math.min(8, dx * 0.2))}px, ${Math.max(-6, Math.min(6, dy * 0.2))}px, 0)`;
+    const mx = Math.max(-8, Math.min(8, dx * 0.18));
+    const my = Math.max(-6, Math.min(6, dy * 0.18));
+    node.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
   }
 
   function handleMove(event: PointerEvent<HTMLButtonElement>) {
@@ -116,7 +119,10 @@ export function LiquidButton({
         if (node && !success) node.style.transform = "";
       }}
       onClick={onClick}
-      style={{ transition: `transform ${durationCss("micro")} var(--ease-snapEase)` }}
+      style={{
+        transition: `transform ${durationCss("micro")} var(--ease-snapEase)`,
+        ["--fill-ms" as string]: `${fillMs}ms`,
+      }}
     >
       {ripple ? <Ripple x={ripple.x} y={ripple.y} personality={liquid} origin="pointer" /> : null}
       <span className="relative z-[1]">{label}</span>

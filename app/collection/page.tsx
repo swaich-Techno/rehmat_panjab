@@ -16,7 +16,7 @@ export default function CollectionPage() {
       <PageIntro
         kicker="The catalogue"
         title={"Five numbers.\nOne finished name."}
-        body="Musk Rizali is written. The others keep working titles until the juice is honest. No invented prices."
+        body="Musk Rizali is written. Numbers 02–05 keep working titles — in development, marked as such. No invented prices. Concentrated perfume oil: a few drops on skin, not a spray that fills a room."
       />
       <CollectionCompositions />
     </div>

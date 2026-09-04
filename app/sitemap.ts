@@ -11,11 +11,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/create-your-fragrance",
     "/next-drop",
     "/our-story",
+    "/shipping",
+    "/faq",
+    "/contact",
     "/cart",
-    "/checkout",
-    "/auth/login",
-    "/auth/register",
-    "/auth/otp",
   ];
   return [
     ...staticRoutes.map((path) => ({

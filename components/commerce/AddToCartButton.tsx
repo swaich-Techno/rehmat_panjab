@@ -12,14 +12,16 @@ export function AddToCartButton({
   productId,
   variantId,
   imageSrc,
-  label = "Add to cart",
+  label,
   compact = false,
+  priced = false,
 }: {
   productId: string;
   variantId: string;
   imageSrc: string;
   label?: string;
   compact?: boolean;
+  priced?: boolean;
 }) {
   const { addLine } = useCart();
   const ref = useRef<HTMLDivElement>(null);
@@ -27,7 +29,8 @@ export function AddToCartButton({
   const [phase, setPhase] = useState<"idle" | "added" | "another">("idle");
   const [ripple, setRipple] = useState(false);
 
-  const caption = phase === "added" ? "Added" : phase === "another" ? "Add another" : label;
+  const idleLabel = label ?? (priced ? "Add to cart" : "Hold this oil");
+  const caption = phase === "added" ? "Added" : phase === "another" ? "Add another" : idleLabel;
 
   return (
     <div

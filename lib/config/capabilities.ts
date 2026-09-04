@@ -14,10 +14,12 @@ export function isRazorpayConfigured(): boolean {
 export function publicCapabilities() {
   const supabase = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
   const sms = isSmsConfigured();
+  const whatsapp = (process.env.WHATSAPP_ORDER_NUMBER?.replace(/\D/g, "").length ?? 0) >= 10;
   return {
     supabase,
     sms,
     phoneAuth: supabase && sms,
     razorpay: isRazorpayConfigured(),
+    whatsapp,
   };
 }

@@ -129,6 +129,9 @@ function EmptyShelf() {
       <p className="mx-auto max-w-xs text-center text-sm leading-7 text-ink/70">
         The catalogue is still arriving. Add an oil from the collection if you want the house to hold a request.
       </p>
+      <Link href="/collection" onClick={closeCart} className="liquid-button mx-auto text-center no-underline" data-liquid="water">
+        View collection
+      </Link>
     </div>
   );
 }

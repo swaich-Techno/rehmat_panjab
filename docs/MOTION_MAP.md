@@ -1,4 +1,8 @@
-# Motion map — Rehmat Panjab V3
+# Motion map — Rehmat Panjab V3.2
+
+Durations from `lib/motion/tokens.ts`. Modes: FULL (desktop fine pointer), STANDARD (mobile/coarse), REDUCED (`prefers-reduced-motion`). Offscreen work pauses via `useOffscreenPause`; CSS loops pause when the tab is hidden. Custom cursor never required for function.
+
+Page transitions play on FULL and STANDARD (scaled). Mapped rooms keep their kind; other room changes wipe so the veil is visible. Nav and LiquidLink play the veil *before* navigation.
 
 Durations from `lib/motion/tokens.ts`. Modes: FULL (desktop fine pointer), STANDARD (mobile/coarse), REDUCED (`prefers-reduced-motion`). Offscreen work pauses via `useOffscreenPause`. Custom cursor never required for function.
 
@@ -66,8 +70,8 @@ Easings: `liquidEase`, `glassEase`, `snapEase`, `editorialEase`. No extra bounce
 
 | Animation | Trigger | Duration | Purpose | Mobile | Reduced |
 | --- | --- | --- | --- | --- | --- |
-| Atmosphere shift | selected option | standard 480 | Wash layer actually interpolates FRESH/DARK/ROMANTIC | Same | Class only |
-| Liquid selection ring | held option | fast | Not boxes | Same | Outline |
+| Quiz / create atmosphere | selected option from click origin | standard 480 | Clip-path wash from the pointer | Same | Class only |
+| Liquid selection | click or hold | fast | Visible “Click or hold” affordance; hold is extra | Same | Outline |
 | Result merge veil | last continue | editorial | Quiz → result | Same | Skip |
 
 ## Create `/create-your-fragrance`

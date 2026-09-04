@@ -9,7 +9,7 @@ export function Field({
       <span className="label text-ink/60">{label}</span>
       <input
         {...props}
-        className="mt-2 w-full border-b border-ink/25 bg-transparent py-2 text-base outline-none focus:border-forest"
+        className="mt-2 w-full border-b border-ink/25 bg-transparent py-2 text-base outline-none transition-colors hover:border-forest/60 focus:border-forest"
         data-cursor="text"
       />
     </label>
@@ -25,7 +25,7 @@ export function AreaField({
       <span className="label text-ink/60">{label}</span>
       <textarea
         {...props}
-        className="mt-2 w-full border-b border-ink/25 bg-transparent py-2 text-base outline-none focus:border-forest"
+        className="mt-2 w-full border-b border-ink/25 bg-transparent py-2 text-base outline-none transition-colors hover:border-forest/60 focus:border-forest"
         data-cursor="text"
       />
     </label>

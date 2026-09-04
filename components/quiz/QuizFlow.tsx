@@ -7,9 +7,12 @@ import { QUIZ_QUESTIONS, QUIZ_STORAGE_KEY } from "@/data/quiz-config";
 import { scoreQuiz, type QuizAnswers, type QuizResult } from "@/lib/quiz/scoring";
 import { LiquidButton } from "@/components/ui/LiquidButton";
 import { ShareCard } from "@/components/quiz/ShareCard";
+import { OptionSelect } from "@/components/quiz/OptionSelect";
+import { MoodWash } from "@/components/motion/MoodWash";
 import { track } from "@/lib/analytics/index";
 import { useLocalJson, writeLocalJson } from "@/lib/storage/local-json";
 import { LiquidReveal } from "@/components/motion/LiquidReveal";
+import { durationMs } from "@/lib/motion/tokens";
 
 const atmospheres: Record<string, string> = {
   morning: "atmosphere-morning",
@@ -42,6 +45,8 @@ const EMPTY_SESSION: Session = { answers: {}, step: 0 };
 export function QuizFlow() {
   const session = useLocalJson<Session>(QUIZ_STORAGE_KEY, EMPTY_SESSION);
   const [result, setResult] = useState<QuizResult | null>(null);
+  const [origin, setOrigin] = useState({ x: 48, y: 42, tick: 0 });
+  const [prevMood, setPrevMood] = useState("atmosphere-morning");
   const answers = session.answers ?? {};
   const step = session.step ?? 0;
 
@@ -77,7 +82,7 @@ export function QuizFlow() {
             <div className="relative aspect-[3/4] bg-ivory/50">
               <Image src={primary.images[0].src} alt={primary.images[0].alt} fill className="object-contain p-8" />
             </div>
-            <Link href={`/product/${primary.slug}`} className="label mt-4 inline-block min-h-11">
+            <Link href={`/product/${primary.slug}`} className="label mt-4 inline-block min-h-11 link-lux">
               Open {primary.name}
             </Link>
             {secondary ? (
@@ -106,9 +111,15 @@ export function QuizFlow() {
   const mood = moodClass(selected, question.atmosphere);
   const ivory = mood.includes("text-ivory");
 
+  function choose(optionId: string, x = 50, y = 40) {
+    setPrevMood(mood);
+    setOrigin({ x, y, tick: origin.tick + 1 });
+    patch({ answers: { ...answers, [question.id]: optionId } });
+  }
+
   return (
     <section className={`quiz-stage min-h-[72svh] section-pad ${ivory ? "text-ivory" : "text-ink"}`}>
-      <div className={`quiz-stage__wash ${mood}`} aria-hidden="true" />
+      <MoodWash current={mood} previous={prevMood} x={origin.x} y={origin.y} tick={origin.tick} />
       <LiquidReveal className="site-grid quiz-stage__content" as="div" key={question.id}>
         <p className="col-span-12 label">
           {question.number} — {question.total}
@@ -117,21 +128,16 @@ export function QuizFlow() {
           {question.prompt}
         </h1>
         <p className="col-span-12 mt-4 text-sm md:col-span-3 md:col-start-10 md:mt-10 md:text-right">
-          {question.instruction}
+          Click or hold one word. Progress stays on this device.
         </p>
         <ul className="col-span-12 mt-8 md:col-span-9">
           {question.options.map((option) => (
             <li key={option.id}>
-              <button
-                type="button"
-                data-cursor="quiz"
-                data-held={selected === option.id}
-                className={`option-liquid flex min-h-11 w-full items-baseline justify-between py-4 text-left ${selected === option.id ? "text-forest" : ""}`}
-                onClick={() => patch({ answers: { ...answers, [question.id]: option.id } })}
-              >
-                <span className="display text-4xl md:text-5xl">{option.label}</span>
-                {selected === option.id ? <span className="label">Held</span> : null}
-              </button>
+              <OptionSelect
+                label={option.label}
+                selected={selected === option.id}
+                onSelect={(point) => choose(option.id, point.x, point.y)}
+              />
             </li>
           ))}
         </ul>
@@ -151,7 +157,7 @@ export function QuizFlow() {
                 const veil = document.createElement("div");
                 veil.className = "liquid-merge-veil";
                 document.body.appendChild(veil);
-                window.setTimeout(() => veil.remove(), 900);
+                window.setTimeout(() => veil.remove(), durationMs("editorial"));
               }
               track({ name: "quiz_completed" });
               track({ name: "quiz_result", meta: { primary: scored.primary.product.slug } });

@@ -14,6 +14,7 @@ import { OilLayer } from "@/components/motion/OilLayer";
 import { durationMs } from "@/lib/motion/tokens";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 import type { OrderPhase } from "@/components/ui/LiquidButton";
+import { readActiveReward } from "@/lib/rewards/client";
 
 export default function CheckoutPage() {
   const { totals, cart } = useCart();
@@ -28,9 +29,21 @@ export default function CheckoutPage() {
   const [whatsapp, setWhatsapp] = useState<string | null>(null);
   const [pack, setPack] = useState<PackPhase>("idle");
   const [orderPhase, setOrderPhase] = useState<OrderPhase>("idle");
+  const [whatsappOpen, setWhatsappOpen] = useState(false);
+  const [rewardNote, setRewardNote] = useState("");
 
   useEffect(() => {
     track({ name: "checkout_started", path: "/checkout" });
+    const held = readActiveReward();
+    if (held?.token) {
+      setRewardNote(
+        "A 5% house thank-you is attached if this email matches the vote. It only applies when prices exist — we will not invent a rupee off.",
+      );
+    }
+    void fetch("/api/capabilities")
+      .then((response) => response.json())
+      .then((data: { whatsapp?: boolean }) => setWhatsappOpen(Boolean(data.whatsapp)))
+      .catch(() => setWhatsappOpen(false));
   }, []);
 
   async function playPack() {
@@ -50,6 +63,7 @@ export default function CheckoutPage() {
     setError("");
     setOrderPhase("preparing");
     await playPack();
+    const held = readActiveReward();
     const response = await fetch("/api/checkout/request", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -60,6 +74,7 @@ export default function CheckoutPage() {
         phone,
         note,
         channel,
+        rewardToken: held?.token,
       }),
     });
     const data = (await response.json()) as {
@@ -105,6 +120,7 @@ export default function CheckoutPage() {
           <Field label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
           <Field label="Phone" value={phone} onChange={(event) => setPhone(event.target.value)} required />
           <AreaField label="Note to the house" rows={4} value={note} onChange={(event) => setNote(event.target.value)} />
+          {rewardNote ? <p className="text-sm leading-7 text-forest">{rewardNote}</p> : null}
           {error ? (
             <p className="text-sm text-wine" role="alert">
               {error}
@@ -119,11 +135,17 @@ export default function CheckoutPage() {
               disabled={totals.lines.length === 0}
               onClick={() => void submit("manual")}
             >
-              Complete order
+              Request this oil
             </LiquidButton>
-            <LiquidButton loading={loading} disabled={totals.lines.length === 0} onClick={() => void submit("whatsapp")}>
-              Request on WhatsApp
-            </LiquidButton>
+            {whatsappOpen ? (
+              <LiquidButton loading={loading} disabled={totals.lines.length === 0} onClick={() => void submit("whatsapp")}>
+                Request on WhatsApp
+              </LiquidButton>
+            ) : (
+              <p className="text-sm leading-7 text-ink/50">
+                WhatsApp is not published yet. Manual request still reaches the house. We will not invent a chat number.
+              </p>
+            )}
           </div>
           {whatsapp ? (
             <a href={whatsapp} className="label">

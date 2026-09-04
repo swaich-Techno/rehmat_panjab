@@ -109,5 +109,6 @@ describe("motion tokens and gating", () => {
     expect(transitionKind("/auth/login", "/account")).toBe("vault");
     expect(transitionKind("/cart", "/checkout")).toBe("oil");
     expect(transitionKind("/checkout", "/order/abc")).toBe("droplet");
+    expect(transitionKind("/collection", "/contact")).toBe("wipe");
   });
 });

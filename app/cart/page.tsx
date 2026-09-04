@@ -25,6 +25,9 @@ export default function CartPage() {
             <p className="mt-3 max-w-md text-base leading-7 text-ink/70">
               The catalogue is still arriving. Add an oil from the collection if you want the house to hold a request.
             </p>
+            <LiquidLink href="/collection" liquid="water" className="mt-6">
+              View collection
+            </LiquidLink>
           </div>
         ) : (
           <ul className="mt-8 space-y-5">

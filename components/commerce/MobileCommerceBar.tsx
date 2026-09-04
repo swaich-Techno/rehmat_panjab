@@ -10,10 +10,12 @@ export function MobileCommerceBar({
   productId,
   variantId,
   imageSrc,
+  priced = false,
 }: {
   productId?: string;
   variantId?: string;
   imageSrc?: string;
+  priced?: boolean;
 }) {
   const pathname = usePathname();
   const { itemCount, openCart, totals } = useCart();
@@ -38,13 +40,15 @@ export function MobileCommerceBar({
         </button>
         {onProduct && productId && variantId ? (
           <div className="flex flex-1 gap-2">
-            <AddToCartButton productId={productId} variantId={variantId} imageSrc={imageSrc ?? ""} compact />
-            <BuyNowButton productId={productId} variantId={variantId} compact />
+            <AddToCartButton productId={productId} variantId={variantId} imageSrc={imageSrc ?? ""} compact priced={priced} />
+            <BuyNowButton productId={productId} variantId={variantId} compact priced={priced} />
           </div>
         ) : null}
         {onCart ? (
           totals.lines.length === 0 ? (
-            <p className="label flex-1 text-ink/50">Your shelf is waiting.</p>
+            <LiquidLink href="/collection" liquid="water" className="flex-1">
+              View collection
+            </LiquidLink>
           ) : (
             <LiquidLink href="/checkout" className="flex-1">
               Continue
