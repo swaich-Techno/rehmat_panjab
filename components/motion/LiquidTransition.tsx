@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { durationMs } from "@/lib/motion/tokens";
+import { durationMs, capCeremony } from "@/lib/motion/tokens";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 import { scaleDuration } from "@/lib/motion/mode";
 import { playVeil } from "@/components/motion/RouteTransition";
@@ -9,6 +9,7 @@ import type { TransitionKind } from "@/lib/motion/transitions";
 
 type Kind = TransitionKind;
 
+/** Navigate immediately. Veil is atmosphere, never a gate. Rapid clicks replace leftover veil. */
 export function useLiquidTransition() {
   const router = useRouter();
   const mode = useMotionMode();
@@ -19,7 +20,9 @@ export function useLiquidTransition() {
       return;
     }
 
-    const ms = scaleDuration(durationMs(kind === "vault" ? "vault" : kind === "pour" || kind === "oil" ? "buyNow" : "editorial"), mode);
+    const ms = capCeremony(
+      scaleDuration(durationMs(kind === "vault" ? "vault" : kind === "pour" || kind === "oil" ? "buyNow" : "editorial"), mode),
+    );
     playVeil(kind, ms);
 
     const supportsView =
@@ -31,15 +34,13 @@ export function useLiquidTransition() {
       const doc = document as Document & {
         startViewTransition?: (cb: () => void) => void;
       };
-      window.setTimeout(() => {
-        doc.startViewTransition?.(() => {
-          router.push(href);
-        });
-      }, Math.min(180, ms * 0.25));
+      doc.startViewTransition?.(() => {
+        router.push(href);
+      });
       return;
     }
 
-    window.setTimeout(() => router.push(href), Math.min(280, ms * 0.4));
+    router.push(href);
   }
 
   return { go };

@@ -51,8 +51,8 @@ export function CartDrawer() {
                     key={key}
                     className={`grid grid-cols-[64px_1fr] gap-3 ${dissolving === key ? "dissolve-out" : ""}`}
                   >
-                    <div className="relative h-[76px] overflow-hidden bg-charcoal" data-cursor="product">
-                      <Image src={line.image} alt={line.name} fill sizes="64px" className="object-cover" />
+                    <div className="campaign-still campaign-still--thumb relative h-[76px] overflow-hidden bg-charcoal" data-cursor="product">
+                      <Image src={line.image} alt={line.name} fill sizes="64px" className="campaign-still__img" />
                     </div>
                     <div>
                       <p className="label text-ink/50">{line.number}</p>

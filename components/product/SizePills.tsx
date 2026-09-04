@@ -80,7 +80,7 @@ export function SizePills({ variants, value, onChange }: Props) {
             width: blob.width || undefined,
             height: blob.height || undefined,
             filter: mode === "REDUCED" ? "none" : `url(#${gooId})`,
-            transition: `transform ${durationCss("standard")} var(--ease-liquidEase), width ${durationCss("standard")} var(--ease-liquidEase), height ${durationCss("standard")} var(--ease-liquidEase)`,
+            transition: mode === "REDUCED" ? "none" : `transform ${durationCss("fast")} var(--ease-liquidEase)`,
           }}
         />
         {variants.map((item) => {

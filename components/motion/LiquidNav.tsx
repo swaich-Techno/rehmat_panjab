@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useRef, useState, type PointerEvent } from "react";
-import { MOTION_DURATION_MS, MOTION_EASE_CSS, durationCss } from "@/lib/motion/tokens";
+import { durationCss, durationMs } from "@/lib/motion/tokens";
 import { LIQUID_PERSONALITIES } from "@/lib/motion/personalities";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 import { useLiquidTransition } from "@/components/motion/LiquidTransition";
@@ -79,9 +79,10 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
         height="48"
         viewBox="0 0 96 56"
         style={{
-          left: blob.x,
+          transform: `translate3d(${blob.x}px, 0, 0)`,
+          width: blob.width || 96,
           opacity: blob.visible && mode !== "REDUCED" ? 0.55 : 0,
-          transition: `left ${MOTION_DURATION_MS.fast}ms ${MOTION_EASE_CSS.liquidEase}, width ${MOTION_DURATION_MS.fast}ms ${MOTION_EASE_CSS.liquidEase}, opacity ${MOTION_DURATION_MS.micro}ms ${MOTION_EASE_CSS.weighted}`,
+          transition: `transform ${durationCss("fast")} var(--ease-liquidEase), opacity ${durationCss("micro")} var(--ease-weighted)`,
         }}
         aria-hidden="true"
       >
@@ -89,7 +90,7 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
           d={blob.path}
           style={{
             fill: "color-mix(in srgb, var(--sage) 72%, var(--mint))",
-            transition: `d ${MOTION_DURATION_MS.morph}ms ${MOTION_EASE_CSS.liquidEase}`,
+            transition: `d ${durationCss("morph")} var(--ease-liquidEase)`,
           }}
         />
       </svg>
@@ -110,7 +111,7 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
                 onPointerEnter={() => {
                   if (mode === "REDUCED") return;
                   place(index, "stretch");
-                  window.setTimeout(() => place(index, "settle"), MOTION_DURATION_MS.fast);
+                  window.setTimeout(() => place(index, "settle"), durationMs("fast"));
                 }}
                 onPointerMove={magnet}
                 onPointerDown={(event) => {
@@ -120,7 +121,7 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
                   event.currentTarget.style.setProperty("--ink-y", `${origin.y}%`);
                   event.currentTarget.style.setProperty("--nav-fill", "100%");
                   setInk({ id: Date.now(), index, x: origin.x, y: origin.y });
-                  window.setTimeout(() => setInk(null), MOTION_DURATION_MS.fast);
+                  window.setTimeout(() => setInk(null), durationMs("fast"));
                 }}
                 onPointerLeave={(event) => {
                   event.currentTarget.style.setProperty("--mx", "0px");
@@ -133,7 +134,7 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
                   event.currentTarget.style.setProperty("--ink-x", "50%");
                   event.currentTarget.style.setProperty("--ink-y", "50%");
                   setInk({ id: Date.now(), index, x: 50, y: 50 });
-                  window.setTimeout(() => setInk(null), MOTION_DURATION_MS.fast);
+                  window.setTimeout(() => setInk(null), durationMs("fast"));
                 }}
                 onFocus={() => place(index, "settle")}
                 onClick={(event) => {

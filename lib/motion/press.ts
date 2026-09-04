@@ -1,10 +1,9 @@
-import { MOTION_DURATION_MS } from "@/lib/motion/tokens";
+import { MOTION_DURATION_MS, PRESS_SCALE } from "@/lib/motion/tokens";
 
 /** Bottle may lerp with the pointer. The homepage wordmark must not. */
 export const BOTTLE_LERP_MAX_PX = 8;
 
-/** Uniform press — satisfying, not a decorative squash. */
-export const PRESS_SCALE = 0.96;
+export { PRESS_SCALE };
 
 export const PRESS_SETTLE_MS = MOTION_DURATION_MS.pressSettle;
 

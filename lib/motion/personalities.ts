@@ -27,8 +27,8 @@ export const LIQUID_PERSONALITIES: Record<
   },
   oil: {
     viscosity: 0.74,
-    fillMs: MOTION_DURATION_MS.standard,
-    rippleMs: MOTION_DURATION_MS.cinematic,
+    fillMs: MOTION_DURATION_MS.routine,
+    rippleMs: MOTION_DURATION_MS.ripple,
     stretch: 1.06,
     compress: 0.94,
     overshoot: 1.03,

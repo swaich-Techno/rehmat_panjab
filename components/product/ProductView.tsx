@@ -13,6 +13,7 @@ import { Composition } from "@/components/product/Composition";
 import { ScentCharacter } from "@/components/product/ScentCharacter";
 import { OilExplainer } from "@/components/product/OilExplainer";
 import { SizePills } from "@/components/product/SizePills";
+import { CampaignStill } from "@/components/product/CampaignStill";
 import { OilLayer } from "@/components/motion/OilLayer";
 import { LiquidMask } from "@/components/motion/LiquidMask";
 import { track } from "@/lib/analytics/index";
@@ -34,24 +35,21 @@ export function ProductView({ product }: { product: Product }) {
         <OilLayer className="h-full min-h-[70vh]" />
       </div>
       <section className="site-grid relative z-[1] items-start section-pad">
-        <div className="col-span-12 md:col-span-6">
-          <LiquidMask kind="oil">
-            <div className="image-sheen relative aspect-[4/5] bg-charcoal" data-cursor="product">
-              <Image
-                src={product.images[0].src}
-                alt={product.images[0].alt}
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
-              {development ? (
-                <p className="dev-mark absolute left-4 top-4">In development</p>
-              ) : null}
-            </div>
+        <div className="product-visual col-span-12 min-w-0 md:col-span-5">
+          <LiquidMask kind="oil" eager>
+            <CampaignStill
+              src={product.images[0].src}
+              alt={product.images[0].alt}
+              sizes="(max-width: 768px) calc(100vw - 2rem), 42vw"
+              priority
+              expand
+            />
+            {development ? (
+              <p className="dev-mark absolute left-4 top-4">In development</p>
+            ) : null}
           </LiquidMask>
         </div>
-        <div className="col-span-12 mt-8 md:col-span-5 md:col-start-8 md:mt-4">
+        <div className="product-copy relative z-[2] col-span-12 mt-8 min-w-0 md:col-span-6 md:col-start-7 md:mt-0">
           <p className="label text-forest">{product.number}</p>
           {development ? <p className="label mt-2 text-rose-metal">Working title · in development</p> : null}
           <h1 className="display headline-gap text-6xl md:text-8xl">{product.name}</h1>

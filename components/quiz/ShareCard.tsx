@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LiquidButton } from "@/components/ui/LiquidButton";
+import { durationMs } from "@/lib/motion/tokens";
 
 type Props = {
   title: string;
@@ -103,7 +104,7 @@ export function ShareCard({ title, kicker, lines, shareText, imageSrc }: Props) 
     try {
       await navigator.clipboard.writeText(shareText);
       setCopied(true);
-      window.setTimeout(() => setCopied(false), 1600);
+      window.setTimeout(() => setCopied(false), durationMs("editorial"));
     } catch {
       setCopied(false);
     }

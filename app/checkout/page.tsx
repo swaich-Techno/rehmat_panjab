@@ -61,7 +61,7 @@ export default function CheckoutPage() {
     setLoading(true);
     setError("");
     setOrderPhase("preparing");
-    await playPack();
+    void playPack();
     const response = await fetch("/api/checkout/request", {
       method: "POST",
       headers: { "content-type": "application/json" },

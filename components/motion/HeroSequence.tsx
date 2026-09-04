@@ -14,9 +14,9 @@ import { LiquidMask } from "@/components/motion/LiquidMask";
 import { SceneConnector } from "@/components/motion/SceneConnector";
 import { OilLayer } from "@/components/motion/OilLayer";
 import { ClickWashCard, ClickWashLink } from "@/components/motion/ClickWash";
+import { CampaignStill } from "@/components/product/CampaignStill";
 import { motionAllowsCinematic } from "@/lib/motion/mode";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
-import { useScrollStretch } from "@/lib/motion/useScrollStretch";
 import { useOffscreenPause } from "@/lib/motion/useOffscreenPause";
 import { durationCss } from "@/lib/motion/tokens";
 import { BOTTLE_LERP_MAX_PX, clampBottleLerp } from "@/lib/motion/press";
@@ -27,7 +27,6 @@ export function HeroSequence() {
   const notesRef = useRef<HTMLDivElement>(null);
   const notesOn = useOffscreenPause(notesRef);
   const mode = useMotionMode();
-  useScrollStretch();
 
   useEffect(() => {
     track({ name: "hero_view", path: "/" });
@@ -49,7 +48,7 @@ export function HeroSequence() {
         </div>
         <div className="site-grid relative z-[1] flex-1 pt-8">
           <p className="col-span-12 label md:col-span-3">{HOMEPAGE_CMS.heroKicker}</p>
-          <div className="col-span-12 md:col-span-8 md:col-start-1">
+          <div className="col-span-12 min-w-0 md:col-span-7 md:col-start-1">
             <SplitTextReveal
               text="Rehmat Panjab"
               className="hero-wordmark display mt-2 text-[clamp(3rem,10vw,8.2rem)] leading-[0.82]"
@@ -65,7 +64,7 @@ export function HeroSequence() {
               </LiquidLink>
             </div>
           </div>
-          <div className="col-span-12 mt-4 md:col-span-5 md:col-start-8 md:row-start-1 md:mt-6">
+          <div className="product-visual col-span-12 mt-4 min-w-0 md:col-span-5 md:col-start-8 md:row-start-1 md:mt-6">
             <BottleStage src={heroStill.src} alt={heroStill.alt} />
           </div>
           <div className="col-span-12 scroll-cue mt-2 md:col-span-4">
@@ -82,7 +81,7 @@ export function HeroSequence() {
       <section className="scene scene--overlap bg-cream">
         <div className="site-grid">
           <p className="col-span-12 label text-forest">The first glass</p>
-          <div className="col-span-12 md:col-span-5">
+          <div className="product-copy relative z-[2] col-span-12 min-w-0 md:col-span-5">
             <p className="label headline-gap text-wine">{featured.number}</p>
             <h2 className="display headline-gap text-[clamp(2.6rem,7vw,5.8rem)]">{featured.name}</h2>
             <p className="copy-gap max-w-sm text-base leading-7">{featured.subtitle}</p>
@@ -93,24 +92,20 @@ export function HeroSequence() {
               </LiquidLink>
             </div>
           </div>
-          <div className="col-span-12 mt-8 md:col-span-6 md:col-start-7 md:mt-0">
-            <LiquidMask kind="glass">
-              <div className="image-sheen relative aspect-[4/5] bg-charcoal md:min-h-0" data-cursor="product">
-                <Image
-                  src={heroStill.src}
-                  alt={heroStill.alt}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover"
-                  priority
-                />
-              </div>
+          <div className="product-visual col-span-12 mt-8 min-w-0 md:col-span-6 md:col-start-7 md:mt-0">
+            <LiquidMask kind="glass" eager>
+              <CampaignStill
+                src={heroStill.src}
+                alt={heroStill.alt}
+                sizes="(max-width: 768px) calc(100vw - 2rem), 50vw"
+                priority
+              />
             </LiquidMask>
           </div>
         </div>
       </section>
 
-      <SceneConnector delay={80} />
+      <SceneConnector />
 
       <section className="scene scene--overlap bg-paper">
         <div className="site-grid">
@@ -132,7 +127,7 @@ export function HeroSequence() {
         </div>
       </section>
 
-      <SceneConnector delay={120} />
+      <SceneConnector />
 
       <section className="scene scene--overlap bg-cream">
         <div className="site-grid collection-stack">
@@ -141,20 +136,21 @@ export function HeroSequence() {
             <ClickWashCard
               key={product.id}
               href={`/product/${product.slug}`}
-              className="col-span-12 grid items-end gap-x-[var(--space-collection-col)] gap-y-6 md:grid-cols-12"
+              className="col-span-12 grid items-start gap-x-[var(--space-collection-col)] gap-y-6 md:grid-cols-12"
             >
-              <LiquidMask kind={index % 2 ? "oil" : "sweep"} className={index % 2 ? "md:col-span-5 md:col-start-8" : "md:col-span-5"}>
-                <div className="image-sheen relative aspect-[4/5] bg-charcoal" data-cursor="product">
-                  <Image
-                    src={product.images[0].src}
-                    alt={product.images[0].alt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 42vw"
-                    className="object-cover"
-                  />
-                </div>
+              <LiquidMask
+                kind={index % 2 ? "oil" : "sweep"}
+                className={`product-visual min-w-0 ${index % 2 ? "md:col-span-5 md:col-start-8" : "md:col-span-5"}`}
+              >
+                <CampaignStill
+                  src={product.images[0].src}
+                  alt={product.images[0].alt}
+                  sizes="(max-width: 768px) calc(100vw - 2rem), 40vw"
+                />
               </LiquidMask>
-              <div className={index % 2 ? "md:col-span-6 md:col-start-1 md:row-start-1" : "md:col-span-6 md:col-start-7 md:-ml-8"}>
+              <div
+                className={`product-copy relative z-[2] min-w-0 ${index % 2 ? "md:col-span-6 md:col-start-1 md:row-start-1" : "md:col-span-6 md:col-start-7"}`}
+              >
                 <p className="label">{product.number}</p>
                 <h2 className="display headline-gap text-[clamp(2.4rem,6.5vw,5.4rem)]">
                   <ClickWashLink href={`/product/${product.slug}`} className="no-underline link-lux">
@@ -186,16 +182,12 @@ export function HeroSequence() {
           <ul className="col-span-12 mt-8 grid gap-6 md:col-span-12 md:grid-cols-3">
             {rest.map((product) => (
               <li key={product.id}>
-                <ClickWashCard href={`/product/${product.slug}`} className="block">
-                  <div className="image-sheen relative aspect-[4/5] bg-charcoal" data-cursor="product">
-                    <Image
-                      src={product.images[0].src}
-                      alt={product.images[0].alt}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover"
-                    />
-                  </div>
+                <ClickWashCard href={`/product/${product.slug}`} className="block min-w-0">
+                  <CampaignStill
+                    src={product.images[0].src}
+                    alt={product.images[0].alt}
+                    sizes="(max-width: 768px) calc(100vw - 2rem), 33vw"
+                  />
                   <p className="label mt-3">{product.number}</p>
                   <ClickWashLink href={`/product/${product.slug}`} className="display mt-1 block text-2xl no-underline link-lux">
                     {product.name}
@@ -209,7 +201,7 @@ export function HeroSequence() {
         </div>
       </section>
 
-      <SceneConnector delay={160} />
+      <SceneConnector />
 
       <section className="scene scene--overlap atmosphere-morning">
         <LiquidReveal className="site-grid relative z-[1]" as="div">
@@ -297,7 +289,7 @@ function BottleStage({ src, alt }: { src: string; alt: string }) {
   return (
     <div
       ref={stageRef}
-      className="bottle-stage relative mx-auto aspect-[4/5] h-[min(46vh,380px)] w-auto max-w-full overflow-hidden bg-charcoal"
+      className="bottle-stage campaign-still relative mx-auto h-[min(46vh,380px)] w-auto max-w-full"
       data-cursor="product"
       onPointerMove={(event) => {
         if (event.pointerType === "touch" || mode === "REDUCED") return;
@@ -318,7 +310,7 @@ function BottleStage({ src, alt }: { src: string; alt: string }) {
         }}
       />
       <div ref={glassRef} className="bottle-stage__glass absolute inset-0">
-        <Image src={src} alt={alt} fill sizes="(max-width: 768px) 90vw, 380px" className="object-cover" priority />
+        <Image src={src} alt={alt} fill sizes="(max-width: 768px) 90vw, 380px" className="campaign-still__img" priority />
       </div>
     </div>
   );

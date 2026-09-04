@@ -16,6 +16,7 @@ export function useClickPress<T extends HTMLElement>() {
   const mode = useMotionMode();
   const [pressed, setPressed] = useState(false);
   const [ripple, setRipple] = useState<Origin | null>(null);
+  const rippleTimer = useRef(0);
 
   function writeOrigin(x: number, y: number) {
     const node = ref.current;
@@ -36,8 +37,9 @@ export function useClickPress<T extends HTMLElement>() {
     writeOrigin(x, y);
     setPressed(true);
     if (withRipple) {
+      if (rippleTimer.current) window.clearTimeout(rippleTimer.current);
       setRipple({ x, y, id: Date.now() });
-      window.setTimeout(() => setRipple(null), durationMs("ripple"));
+      rippleTimer.current = window.setTimeout(() => setRipple(null), durationMs("ripple"));
     }
   }
 

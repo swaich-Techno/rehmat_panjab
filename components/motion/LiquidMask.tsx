@@ -11,19 +11,23 @@ export function LiquidMask({
   children,
   kind = "liquid",
   className = "",
+  eager = false,
 }: {
   children: ReactNode;
   kind?: Kind;
   className?: string;
+  /** Above-fold stills start open so posters are not clipped over copy. */
+  eager?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useState(eager);
   const mode = useMotionMode();
   const cinematic = motionAllowsCinematic(mode);
   const resolved = kind === "sweep" && !cinematic ? "liquid" : kind;
   const visible = mode === "REDUCED" || shown;
 
   useEffect(() => {
+    if (eager) return;
     const node = ref.current;
     if (!node || mode === "REDUCED") return;
     const io = new IntersectionObserver(
@@ -34,7 +38,7 @@ export function LiquidMask({
     );
     io.observe(node);
     return () => io.disconnect();
-  }, [mode]);
+  }, [mode, eager]);
 
   return (
     <div

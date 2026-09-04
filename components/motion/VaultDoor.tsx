@@ -37,7 +37,7 @@ export function VaultDoor({ title, children, onSubmit, submitLabel }: Props) {
         return;
       }
       setVault("turning");
-      window.setTimeout(() => setVault("pins"), durationMs("fast") + 200);
+      window.setTimeout(() => setVault("pins"), durationMs("fast"));
       window.setTimeout(() => setVault("open"), durationMs("vault"));
       window.setTimeout(() => setInfo(result.message), durationMs("vault"));
       return;

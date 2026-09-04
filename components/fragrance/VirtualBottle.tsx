@@ -1,7 +1,7 @@
 "use client";
 
 import { NOTE_LAYERS, type CreateNoteId } from "@/data/create-fragrance-config";
-import { durationCss } from "@/lib/motion/tokens";
+import { durationCss, durationMs } from "@/lib/motion/tokens";
 
 export function VirtualBottle({
   notes,
@@ -37,12 +37,13 @@ export function VirtualBottle({
       ) : null}
       <div className="absolute inset-x-6 top-7 bottom-0 overflow-hidden border border-ink/20 bg-ivory/35">
         <div
-          className="absolute inset-x-0 bottom-0"
+          className="absolute inset-x-0 bottom-0 origin-bottom"
           style={{
-            height: notes.length ? `${Math.min(92, 22 + notes.length * 14)}%` : "8%",
+            height: "100%",
+            transform: `scaleY(${notes.length ? Math.min(0.92, 0.22 + notes.length * 0.14) : 0.08})`,
             background: mix,
             opacity: 0.72,
-            transition: `height ${durationCss("editorial")} var(--ease-liquidEase), background ${durationCss("standard")} var(--ease-glassEase)`,
+            transition: `transform ${durationCss("editorial")} var(--ease-liquidEase), background ${durationCss("standard")} var(--ease-glassEase)`,
           }}
         />
         {notes.map((id, index) => (
@@ -55,7 +56,7 @@ export function VirtualBottle({
               background: NOTE_LAYERS[id].color,
               opacity: 0.45,
               mixBlendMode: "multiply",
-              animationDelay: `${index * 70}ms`,
+              animationDelay: `${index * durationMs("instant")}ms`,
             }}
           />
         ))}
@@ -68,8 +69,7 @@ export function VirtualBottle({
               style={{
                 top: "42%",
                 left: "50%",
-                animationDelay: `${index * 1.4}s`,
-                animationDuration: `${16 + index}s`,
+                animationDelay: `${index * durationMs("instant")}ms`,
               }}
             >
               {NOTE_LAYERS[id].label}

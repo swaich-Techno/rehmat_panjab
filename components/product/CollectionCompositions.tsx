@@ -1,10 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 import { HOUSE, PRODUCTS, isDevelopmentProduct } from "@/data/fragrance-config";
 import { PriceDisplay } from "@/components/commerce/PriceDisplay";
 import { LiquidMask } from "@/components/motion/LiquidMask";
 import { ClickWashCard } from "@/components/motion/ClickWash";
 import { OilExplainer } from "@/components/product/OilExplainer";
+import { CampaignStill } from "@/components/product/CampaignStill";
 
 export function CollectionCompositions({ featuredOnly = false }: { featuredOnly?: boolean }) {
   const items = featuredOnly ? PRODUCTS.filter((product) => product.featured) : PRODUCTS;
@@ -16,28 +16,29 @@ export function CollectionCompositions({ featuredOnly = false }: { featuredOnly?
       </div>
       {items.map((product, index) => {
         const development = isDevelopmentProduct(product);
+        const imageLeft = index % 2 === 0;
         return (
           <ClickWashCard
             key={product.id}
             href={`/product/${product.slug}`}
-            className={`site-grid ${development ? "dev-oil" : ""}`}
+            className={`site-grid items-start ${development ? "dev-oil" : ""}`}
           >
-            <div className={`col-span-12 md:col-span-5 ${index % 2 ? "md:col-start-8" : ""}`}>
+            <div
+              className={`product-visual col-span-12 min-w-0 md:col-span-5 ${imageLeft ? "" : "md:col-start-8"}`}
+            >
               <LiquidMask kind={masks[index % masks.length]}>
-                <div className="relative aspect-[4/5] bg-charcoal" data-cursor="product">
-                  <Image
-                    src={product.images[0].src}
-                    alt={product.images[0].alt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 42vw"
-                    className="object-cover"
-                  />
-                  {development ? <p className="dev-mark absolute left-4 top-4">In development</p> : null}
-                </div>
+                <CampaignStill
+                  src={product.images[0].src}
+                  alt={product.images[0].alt}
+                  sizes="(max-width: 768px) calc(100vw - 2rem), 40vw"
+                />
+                {development ? <p className="dev-mark absolute left-4 top-4">In development</p> : null}
               </LiquidMask>
             </div>
             <div
-              className={`col-span-12 mt-4 md:col-span-6 ${index % 2 ? "md:col-start-1 md:row-start-1 md:mt-16" : "md:col-start-6 md:-ml-10 md:mt-20"}`}
+              className={`product-copy relative z-[2] col-span-12 mt-4 min-w-0 md:col-span-6 md:mt-0 ${
+                imageLeft ? "md:col-start-7" : "md:col-start-1 md:row-start-1"
+              }`}
             >
               <p className="label text-forest">{product.number}</p>
               {development ? <p className="label mt-2 text-rose-metal">Working title</p> : null}

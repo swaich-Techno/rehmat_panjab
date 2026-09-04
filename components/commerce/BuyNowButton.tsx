@@ -38,7 +38,7 @@ export function BuyNowButton({
             return;
           }
           setWiping(true);
-          window.setTimeout(() => go("/checkout", "pour"), durationMs("buyNow"));
+          window.setTimeout(() => go("/checkout", "pour"), durationMs("fast"));
         }}
       >
         {requestLabel(priced)}

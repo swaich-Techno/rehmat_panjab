@@ -29,6 +29,8 @@ export function AddToCartButton({
   const [phase, setPhase] = useState<"idle" | "added" | "another">("idle");
   const [ripple, setRipple] = useState(false);
 
+  const timers = useRef<number[]>([]);
+
   const idleLabel = label ?? (priced ? "Add to cart" : "Hold this oil");
   const caption = phase === "added" ? "Added" : phase === "another" ? "Add another" : idleLabel;
 
@@ -45,10 +47,12 @@ export function AddToCartButton({
           addLine({ productId, variantId, quantity: 1 }, { src: imageSrc, from });
           setPhase("added");
           setRipple(true);
+          timers.current.forEach((id) => window.clearTimeout(id));
+          timers.current = [];
           const hold = scaleDuration(durationMs("atc"), mode);
           const another = scaleDuration(durationMs("addAnother"), mode);
-          window.setTimeout(() => setRipple(false), hold);
-          window.setTimeout(() => setPhase("another"), another);
+          timers.current.push(window.setTimeout(() => setRipple(false), hold));
+          timers.current.push(window.setTimeout(() => setPhase("another"), another));
         }}
       >
         {caption}

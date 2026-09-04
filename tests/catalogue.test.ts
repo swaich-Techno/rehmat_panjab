@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PRODUCTS, pricesArePublished, isDevelopmentProduct, SCENT_PROFILE_BASIS } from "@/data/fragrance-config";
+import { PRODUCTS, pricesArePublished, isDevelopmentProduct, SCENT_PROFILE_BASIS, CAMPAIGN_STILL_SIZE } from "@/data/fragrance-config";
 
 describe("first five catalogue oils", () => {
   it("uses PDF names, slugs, and top notes with no invented prices", () => {
@@ -26,6 +26,7 @@ describe("first five catalogue oils", () => {
       expect(product.images[0].alt.toLowerCase()).toContain("campaign still");
       expect(product.images[0].alt).toContain(item.name);
     });
+    expect(CAMPAIGN_STILL_SIZE).toEqual({ width: 1122, height: 1402 });
   });
 
   it("keeps scent profiles as editorial estimates", () => {

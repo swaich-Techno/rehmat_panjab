@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { durationMs } from "@/lib/motion/tokens";
+import { capCeremony, durationMs } from "@/lib/motion/tokens";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 import { scaleDuration } from "@/lib/motion/mode";
 import { transitionKind, type TransitionKind } from "@/lib/motion/transitions";
@@ -24,15 +24,29 @@ declare global {
   }
 }
 
+let veilNode: HTMLDivElement | null = null;
+let veilTimer = 0;
+
 export function playVeil(kind: TransitionKind, ms: number) {
   if (kind === "none" || typeof document === "undefined") return;
+  if (veilNode) {
+    veilNode.remove();
+    veilNode = null;
+  }
+  if (veilTimer) {
+    window.clearTimeout(veilTimer);
+    veilTimer = 0;
+  }
   window.__rehmatVeil = true;
   const veil = document.createElement("div");
   veil.className = `${CLASS[kind]} is-route-veil`;
   document.body.appendChild(veil);
-  window.setTimeout(() => {
+  veilNode = veil;
+  veilTimer = window.setTimeout(() => {
     veil.remove();
+    if (veilNode === veil) veilNode = null;
     window.__rehmatVeil = false;
+    veilTimer = 0;
   }, ms);
 }
 
@@ -49,7 +63,7 @@ export function RouteTransition() {
     if (window.__rehmatVeil) return;
     const kind = transitionKind(prev, pathname);
     if (kind === "none") return;
-    playVeil(kind, scaleDuration(durationMs("editorial"), mode));
+    playVeil(kind, capCeremony(scaleDuration(durationMs("editorial"), mode)));
   }, [pathname, mode]);
 
   return null;

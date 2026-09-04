@@ -1,6 +1,7 @@
 "use client";
 
 import { useMotionMode } from "@/lib/motion/useMotionMode";
+import { durationMs } from "@/lib/motion/tokens";
 import type { ElementType } from "react";
 
 type Props = {
@@ -24,7 +25,7 @@ export function SplitTextReveal({ text, as = "h1", className = "" }: Props) {
         <span
           key={`${word}-${index}`}
           className="split-text__word"
-          style={{ animationDelay: `${index * 48}ms` }}
+          style={{ animationDelay: `${index * durationMs("instant")}ms` }}
           aria-hidden="true"
         >
           {word}

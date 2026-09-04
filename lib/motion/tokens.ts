@@ -3,31 +3,42 @@
  * Components must not invent raw duration literals — import tokens or use var(--duration-*).
  *
  * Bands (ms):
- *   micro 150–220 · fast 250–350 · standard 400–550 · editorial 650–850 · cinematic 900–1200
+ *   micro 150–220 · fast 250–350 · routine ≤300 · standard 400–550 · editorial 650–800 · ceremony ≤800
  */
+
+/** Uniform press — satisfying, not a decorative squash. */
+export const PRESS_SCALE = 0.96;
+
+/** Power-user caps: routine actions never wait past 300ms; ceremonies never past 800ms. */
+export const MOTION_CAPS = {
+  routineMs: 300,
+  ceremonyMs: 800,
+} as const;
 
 export const MOTION_DURATION_MS = {
   instant: 80,
   micro: 180,
   fast: 280,
+  /** Cap for click-gated work (fills, sheets, nav expand). */
+  routine: 300,
   /** Click overshoot settle — 280–400ms band, not a second system. */
   pressSettle: 340,
   standard: 480,
   /** @deprecated alias of standard — kept so existing CSS/hooks keep compiling */
   normal: 480,
-  sheet: 320,
+  sheet: 300,
   editorial: 750,
   cartFly: 780,
   buyNow: 720,
-  cinematic: 1050,
-  pack: 1100,
-  vault: 980,
+  cinematic: 800,
+  pack: 800,
+  vault: 800,
   droplet: 640,
-  ripple: 820,
+  ripple: 800,
   morph: 260,
-  navExpand: 550,
+  navExpand: 300,
   atc: 750,
-  addAnother: 1500,
+  addAnother: 280,
 } as const;
 
 export type MotionDurationName = keyof typeof MOTION_DURATION_MS;
@@ -58,6 +69,7 @@ export const MOTION_EASE_CSS = {
 export const motionTokens = {
   micro: MOTION_DURATION_MS.micro / 1000,
   fast: MOTION_DURATION_MS.fast / 1000,
+  routine: MOTION_DURATION_MS.routine / 1000,
   pressSettle: MOTION_DURATION_MS.pressSettle / 1000,
   standard: MOTION_DURATION_MS.standard / 1000,
   normal: MOTION_DURATION_MS.standard / 1000,
@@ -73,6 +85,7 @@ export const motionTokens = {
   morph: MOTION_DURATION_MS.morph / 1000,
   navExpand: MOTION_DURATION_MS.navExpand / 1000,
   atc: MOTION_DURATION_MS.atc / 1000,
+  addAnother: MOTION_DURATION_MS.addAnother / 1000,
   ease: MOTION_EASE.editorialEase,
   easePress: MOTION_EASE.press,
   easeLiquid: MOTION_EASE.liquidEase,
@@ -90,6 +103,14 @@ export function durationCss(name: MotionDurationName): string {
   return `var(--duration-${name})`;
 }
 
+export function capRoutine(ms: number): number {
+  return Math.min(ms, MOTION_CAPS.routineMs);
+}
+
+export function capCeremony(ms: number): number {
+  return Math.min(ms, MOTION_CAPS.ceremonyMs);
+}
+
 export function motionCssVars(): string {
   const durations = Object.entries(MOTION_DURATION_MS)
     .map(([name, ms]) => `--duration-${name}: ${ms}ms`)
@@ -97,7 +118,7 @@ export function motionCssVars(): string {
   const eases = Object.entries(MOTION_EASE_CSS)
     .map(([name, value]) => `--ease-${name}: ${value}`)
     .join("; ");
-  return `${durations}; ${eases}`;
+  return `${durations}; ${eases}; --press-scale: ${PRESS_SCALE}`;
 }
 
 export function prefersReducedMotion(): boolean {

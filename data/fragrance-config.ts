@@ -156,6 +156,9 @@ export const HOUSE: HouseConfig = {
 export const SCENT_PROFILE_BASIS =
   "Editorial reading of the notes — not a laboratory score.";
 
+/** Intrinsic size of the supplied campaign WebPs — used for CLS-safe next/image frames. */
+export const CAMPAIGN_STILL_SIZE = { width: 1122, height: 1402 } as const;
+
 const campaignStill = (slug: string, name: string): ProductImage => ({
   src: `/images/products/${slug}.webp`,
   alt: `Campaign still of ${name}`,

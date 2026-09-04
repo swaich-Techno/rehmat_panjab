@@ -11,7 +11,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLiquidTransition } from "@/components/motion/LiquidTransition";
 import { transitionKind } from "@/lib/motion/transitions";
-import { durationMs } from "@/lib/motion/tokens";
 import { pointerPercent } from "@/lib/motion/press";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 
@@ -21,14 +20,9 @@ type CardProps = {
   className?: string;
 };
 
-function navigateDelay(mode: ReturnType<typeof useMotionMode>): number {
-  if (mode === "REDUCED") return 0;
-  return Math.round(durationMs("standard") * 0.55);
-}
-
 /**
- * Product/card click: oil wash opens from the pointer, then the route plays.
- * 400–600ms wash uses the standard token (480ms).
+ * Product/card click: oil wash on the still, route immediately.
+ * Rapid second click skips leftover veil work in `go()`.
  */
 export function ClickWashCard({ href, children, className = "" }: CardProps) {
   const { go } = useLiquidTransition();
@@ -36,15 +30,12 @@ export function ClickWashCard({ href, children, className = "" }: CardProps) {
   const mode = useMotionMode();
   const ref = useRef<HTMLElement>(null);
   const [washing, setWashing] = useState(false);
-  const locked = useRef(false);
 
   function play(event: MouseEvent<HTMLElement>) {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
     if ((event.target as HTMLElement).closest("button, .liquid-button")) return;
     event.preventDefault();
     event.stopPropagation();
-    if (locked.current) return;
-    locked.current = true;
     const kind = transitionKind(pathname, href);
     const next = kind === "none" ? "water" : kind;
     if (mode === "REDUCED") {
@@ -58,7 +49,7 @@ export function ClickWashCard({ href, children, className = "" }: CardProps) {
       node.style.setProperty("--oy", `${origin.y}%`);
     }
     setWashing(true);
-    window.setTimeout(() => go(href, next), navigateDelay(mode));
+    go(href, next);
   }
 
   return (
@@ -88,7 +79,6 @@ export function ClickWashLink({ href, children, className = "" }: LinkProps) {
   const [pressed, setPressed] = useState(false);
 
   function commit(clientX: number, clientY: number) {
-    if (washing) return;
     const kind = transitionKind(pathname, href);
     const next = kind === "none" ? "water" : kind;
     if (mode === "REDUCED") {
@@ -104,7 +94,7 @@ export function ClickWashLink({ href, children, className = "" }: LinkProps) {
       node.style.setProperty("--py", `${origin.y}%`);
     }
     setWashing(true);
-    window.setTimeout(() => go(href, next), navigateDelay(mode));
+    go(href, next);
   }
 
   function onClick(event: MouseEvent<HTMLAnchorElement>) {

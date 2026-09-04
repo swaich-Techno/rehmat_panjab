@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { QUIZ_QUESTIONS, QUIZ_STORAGE_KEY } from "@/data/quiz-config";
 import { scoreQuiz, type QuizAnswers, type QuizResult } from "@/lib/quiz/scoring";
 import { LiquidButton } from "@/components/ui/LiquidButton";
@@ -13,6 +12,7 @@ import { track } from "@/lib/analytics/index";
 import { useLocalJson, writeLocalJson } from "@/lib/storage/local-json";
 import { LiquidReveal } from "@/components/motion/LiquidReveal";
 import { durationMs } from "@/lib/motion/tokens";
+import { CampaignStill } from "@/components/product/CampaignStill";
 
 const atmospheres: Record<string, string> = {
   morning: "atmosphere-morning",
@@ -79,15 +79,11 @@ export function QuizFlow() {
             ))}
           </div>
           <div className="col-span-12 mt-8 md:col-span-4 md:col-start-9">
-            <div className="relative aspect-[4/5] overflow-hidden bg-charcoal">
-              <Image
-                src={primary.images[0].src}
-                alt={primary.images[0].alt}
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover"
-              />
-            </div>
+            <CampaignStill
+              src={primary.images[0].src}
+              alt={primary.images[0].alt}
+              sizes="(max-width: 768px) calc(100vw - 2rem), 33vw"
+            />
             <Link href={`/product/${primary.slug}`} className="label mt-4 inline-block min-h-11 link-lux">
               Open {primary.name}
             </Link>

@@ -119,7 +119,7 @@ function MobileFilm({
             className="display block border-t border-ivory/15 py-5 text-5xl no-underline"
             style={{
               transition: `opacity ${durationCss("standard")} var(--ease-editorialEase), transform ${durationCss("standard")} var(--ease-liquidEase)`,
-              transitionDelay: entered ? `${80 + index * 70}ms` : "0ms",
+              transitionDelay: entered ? `${durationMs("instant") * index}ms` : "0ms",
               opacity: entered ? 1 : 0,
               transform: entered ? "none" : "translate3d(0, 12px, 0)",
             }}
