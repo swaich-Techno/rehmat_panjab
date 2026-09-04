@@ -46,10 +46,10 @@ If the CLI or MCP is not authenticated, use `npx vercel deploy --temporary --yes
 
 Vercel CLI was **logged out** in this run (`vercel whoami` → Logged out). MCP `list_teams` was not used to invent a production host. A new temporary anonymous production deployment was created with `npx vercel deploy --temporary --yes` after clearing a previously claimed local `.vercel/anonymous.json` (gitignored; never commit it):
 
-- Live: https://temporary-agile-antimony-n6n64y4.vercel.app
-- Claim: https://vercel.com/claim-deployment?code=0cae27b0-40c1-4221-8100-c93ac4ad7854
+- Live: https://temporary-sonic-nitrogen-tnf7r4a.vercel.app
+- Claim: https://vercel.com/claim-deployment?code=7d9eac39-c221-4cab-abc4-2fdb77e38fda
 
-Anonymous deployments expire (~59 minutes from this deploy). GET `/`, `/collection`, `/find-your-scent`, and all five product PDPs returned HTTP 200. Campaign WebPs at `/images/products/*.webp` returned `image/webp`. Claim the URL or connect the GitHub repo (`swaich-Techno/rehmat_panjab`) and set the production branch. Do not treat the temporary host as permanent production. There is no working `rehmat-panjab.vercel.app` from this logged-out CLI.
+Anonymous deployments expire (~59 minutes from this deploy). GET `/`, `/collection`, and all five product PDPs returned HTTP 200. Campaign WebPs at `/images/products/*.webp` returned `image/webp`. Claim the URL or connect the GitHub repo (`swaich-Techno/rehmat_panjab`) and set the production branch. Do not treat the temporary host as permanent production. There is no working `rehmat-panjab.vercel.app` from this logged-out CLI.
 
 ## GitHub
 
