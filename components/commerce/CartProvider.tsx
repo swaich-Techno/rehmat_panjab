@@ -120,6 +120,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       {children}
       <CartDrawer />
       {fly ? (
+        // Flying overlay must be free-positioned; next/image layout fights the RAF-less CSS fly.
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={fly.src}
           alt=""

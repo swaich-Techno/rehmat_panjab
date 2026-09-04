@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Emblem } from "@/components/brand/Emblem";
 import { LiquidLink } from "@/components/ui/LiquidLink";
 import { Droplet } from "@/components/motion/Droplet";

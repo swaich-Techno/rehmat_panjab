@@ -15,14 +15,11 @@ export function LiquidReveal({ children, className = "", as = "div" }: Props) {
   const ref = useRef<HTMLElement | null>(null);
   const [shown, setShown] = useState(false);
   const mode = useMotionMode();
+  const visible = mode === "REDUCED" || shown;
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return;
-    if (mode === "REDUCED") {
-      setShown(true);
-      return;
-    }
+    if (!node || mode === "REDUCED") return;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) setShown(true);
@@ -38,7 +35,7 @@ export function LiquidReveal({ children, className = "", as = "div" }: Props) {
       ref={(node) => {
         ref.current = node;
       }}
-      className={`liquid-reveal ${shown ? "is-shown" : ""} ${className}`}
+      className={`liquid-reveal ${visible ? "is-shown" : ""} ${className}`}
       style={{ transitionDuration: durationCss("editorial") }}
     >
       {children}

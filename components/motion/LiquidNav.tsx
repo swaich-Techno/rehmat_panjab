@@ -45,10 +45,12 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
   }
 
   useLayoutEffect(() => {
-    const index = items.findIndex((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`));
-    if (index >= 0) place(index, "settle");
-    else setBlob((current) => ({ ...current, visible: false }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- place on path change only
+    const frame = requestAnimationFrame(() => {
+      const index = items.findIndex((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`));
+      if (index >= 0) place(index, "settle");
+      else setBlob((current) => ({ ...current, visible: false }));
+    });
+    return () => cancelAnimationFrame(frame);
   }, [pathname, items]);
 
   return (
