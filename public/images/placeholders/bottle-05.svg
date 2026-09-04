@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 420" role="img" aria-label="Placeholder bottle silhouette 05">
+  <rect width="240" height="420" fill="#D5C5AA"/>
+  <text x="16" y="28" fill="#5A302F" font-size="9" font-family="sans-serif" letter-spacing="2">PLACEHOLDER</text>
+  <rect x="100" y="36" width="40" height="40" fill="#B9814D"/>
+  <rect x="88" y="76" width="64" height="14" fill="#5A302F"/>
+  <path d="M68 104h104l-12 272H80Z" fill="#FBF7EE" stroke="#B9814D"/>
+  <path d="M80 220h80l-8 140H88Z" fill="#B9814D" opacity="0.4"/>
+  <text x="120" y="300" text-anchor="middle" fill="#5A302F" font-size="18" font-family="serif">05</text>
+</svg>
