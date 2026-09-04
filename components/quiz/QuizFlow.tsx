@@ -103,10 +103,13 @@ export function QuizFlow() {
 
   const question = QUIZ_QUESTIONS[step];
   const selected = answers[question.id];
+  const mood = moodClass(selected, question.atmosphere);
+  const ivory = mood.includes("text-ivory");
 
   return (
-    <section className={`min-h-[72svh] section-pad ${moodClass(selected, question.atmosphere)}`}>
-      <LiquidReveal className="site-grid" as="div">
+    <section className={`quiz-stage min-h-[72svh] section-pad ${ivory ? "text-ivory" : "text-ink"}`}>
+      <div className={`quiz-stage__wash ${mood}`} aria-hidden="true" />
+      <LiquidReveal className="site-grid quiz-stage__content" as="div" key={question.id}>
         <p className="col-span-12 label">
           {question.number} — {question.total}
         </p>

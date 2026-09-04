@@ -120,29 +120,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
       {children}
       <CartDrawer />
       {fly ? (
-        // Flying overlay must be free-positioned; next/image layout fights the RAF-less CSS fly.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={fly.src}
-          alt=""
-          className="pointer-events-none fixed z-[60] h-16 w-10 object-contain"
-          style={{
-            left: fly.from.left,
-            top: fly.from.top,
-            animation: `rp-fly var(--duration-cartFly) var(--ease-weighted) forwards`,
-            ["--dx" as string]: `${fly.to.left - fly.from.left}px`,
-            ["--dy" as string]: `${fly.to.top - fly.from.top}px`,
-          }}
-        />
+        <>
+          <span
+            className="cart-fly-trail"
+            style={{
+              left: fly.from.left + fly.from.width / 2,
+              top: fly.from.top,
+              ["--dx" as string]: `${fly.to.left - fly.from.left}px`,
+              ["--dy" as string]: `${fly.to.top - fly.from.top}px`,
+            }}
+          />
+          {/* Flying overlay must be free-positioned; next/image layout fights the CSS fly. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={fly.src}
+            alt=""
+            className="cart-fly"
+            style={{
+              left: fly.from.left,
+              top: fly.from.top,
+              ["--dx" as string]: `${fly.to.left - fly.from.left}px`,
+              ["--dy" as string]: `${fly.to.top - fly.from.top}px`,
+            }}
+          />
+        </>
       ) : null}
       <p className="sr-only" aria-live="polite">
         {liveMessage}
       </p>
-      <style>{`
-        @keyframes rp-fly {
-          to { transform: translate(var(--dx), var(--dy)) scale(0.35); opacity: 0.25; }
-        }
-      `}</style>
     </CartContext.Provider>
   );
 }

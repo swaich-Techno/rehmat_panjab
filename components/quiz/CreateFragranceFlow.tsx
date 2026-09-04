@@ -36,6 +36,8 @@ export function CreateFragranceFlow() {
   const notes = useMemo(() => notesFromAnswers(answers), [answers]);
   const question = CREATE_QUESTIONS[step];
   const selected = question ? answers[question.id] : "";
+  const wash = question ? atmospheres[question.atmosphere] : "atmosphere-morning";
+  const ivory = wash.includes("text-ivory");
 
   function finish() {
     const next: CreateConcept = {
@@ -145,9 +147,12 @@ export function CreateFragranceFlow() {
     );
   }
 
+  if (!question) return null;
+
   return (
-    <section className={`min-h-[72svh] section-pad ${atmospheres[question.atmosphere]}`}>
-      <LiquidReveal className="site-grid" as="div">
+    <section className={`quiz-stage min-h-[72svh] section-pad ${ivory ? "text-ivory" : "text-ink"}`}>
+      <div className={`quiz-stage__wash ${wash}`} aria-hidden="true" />
+      <LiquidReveal className="site-grid quiz-stage__content" as="div" key={question.id}>
         <div className="col-span-12 md:col-span-7">
           <p className="label">
             {question.number} — {question.total}

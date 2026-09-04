@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState, type PointerEvent } from "react";
 import { MOTION_DURATION_MS, MOTION_EASE_CSS } from "@/lib/motion/tokens";
 import { LIQUID_PERSONALITIES } from "@/lib/motion/personalities";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
@@ -44,6 +44,18 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
     });
   }
 
+  function magnet(event: PointerEvent<HTMLAnchorElement>) {
+    if (mode !== "FULL") return;
+    const node = event.currentTarget;
+    const rect = node.getBoundingClientRect();
+    const dx = event.clientX - (rect.left + rect.width / 2);
+    const dy = event.clientY - (rect.top + rect.height / 2);
+    node.style.transform = `translate3d(${Math.max(-8, Math.min(8, dx * 0.22))}px, ${Math.max(-5, Math.min(5, dy * 0.22))}px, 0)`;
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    node.style.setProperty("--nav-drop-x", `${Math.max(12, Math.min(88, x))}%`);
+    node.style.setProperty("--nav-fill", `${Math.max(28, Math.min(100, 40 + Math.abs(dx)))}%`);
+  }
+
   useLayoutEffect(() => {
     const frame = requestAnimationFrame(() => {
       const index = items.findIndex((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`));
@@ -62,15 +74,15 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
         viewBox="0 0 96 56"
         style={{
           left: blob.x,
-          opacity: blob.visible && mode !== "REDUCED" ? 0.4 : 0,
-          transition: `left ${MOTION_DURATION_MS.editorial}ms ${MOTION_EASE_CSS.liquidEase}, width ${MOTION_DURATION_MS.fast}ms ${MOTION_EASE_CSS.liquidEase}, opacity ${MOTION_DURATION_MS.micro}ms ${MOTION_EASE_CSS.weighted}`,
+          opacity: blob.visible && mode !== "REDUCED" ? 0.55 : 0,
+          transition: `left ${MOTION_DURATION_MS.fast}ms ${MOTION_EASE_CSS.liquidEase}, width ${MOTION_DURATION_MS.fast}ms ${MOTION_EASE_CSS.liquidEase}, opacity ${MOTION_DURATION_MS.micro}ms ${MOTION_EASE_CSS.weighted}`,
         }}
         aria-hidden="true"
       >
         <path
           d={blob.path}
-          fill="var(--mint)"
           style={{
+            fill: "color-mix(in srgb, var(--sage) 72%, var(--mint))",
             transition: `d ${MOTION_DURATION_MS.morph}ms ${MOTION_EASE_CSS.liquidEase}`,
           }}
         />
@@ -89,6 +101,12 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
                   if (mode === "REDUCED") return;
                   place(index, "stretch");
                   window.setTimeout(() => place(index, "settle"), MOTION_DURATION_MS.fast);
+                }}
+                onPointerMove={magnet}
+                onPointerLeave={(event) => {
+                  event.currentTarget.style.transform = "";
+                  event.currentTarget.style.setProperty("--nav-fill", active ? "100%" : "0%");
+                  event.currentTarget.style.setProperty("--nav-drop-x", "50%");
                 }}
                 onFocus={() => place(index, "settle")}
                 onClick={() => onNavigate?.()}

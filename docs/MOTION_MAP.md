@@ -18,6 +18,7 @@ Durations from `lib/motion/tokens.ts`. Modes: FULL (desktop fine pointer), STAND
 | buyNow | 720 | oil pour + VT |
 | vault | 980 | archive door |
 | droplet / ripple | 640 / 820 | drop ceremonies |
+| oil fill | 480 (standard) | LiquidButton viscous fill — 300–600, not seconds |
 
 Easings: `liquidEase`, `glassEase`, `snapEase`, `editorialEase`. No extra bounce.
 
@@ -25,23 +26,22 @@ Easings: `liquidEase`, `glassEase`, `snapEase`, `editorialEase`. No extra bounce
 
 | Animation | Trigger | Duration | Purpose | Mobile | Reduced |
 | --- | --- | --- | --- | --- | --- |
-| RehmatCursor oil droplet | pointermove FULL | morph 180–350, tail lerp | Default oil drop; bottle+VIEW on product photo; ADD/BUY; quiz ring; link stretch; vault keyhole | Disabled; tap ripple instead | Off |
+| LiquidCursor sage blob | pointermove FULL | lerp 0.18 | 20×20 green/forest circle, mix-blend multiply. Native cursor until first paint. No bottle morph. | Disabled; tap ripple | Off |
 | TapRipple | touch pointerdown | ripple 820 | Feedback without custom cursor | Yes | Off |
 | RouteTransition | pathname change | editorial / vault / pour | HOME→PDP glass; PDP→quiz water; quiz result merge; login→account vault; cart→checkout oil; checkout→success droplet | STANDARD skips cinematic veils | Instant navigate |
-| Atmosphere light | CSS 96s, paused offscreen | cinematic-slow | Light through liquid, not a screensaver | Same, cheaper | Static |
-| Scroll stretch | scroll velocity | micro settle | Subtle scaleY on atmosphere light | Damped | Off |
+| Atmosphere light | CSS 28s, paused offscreen | light-through | Light through liquid | Same, cheaper | Static |
+| Scroll stretch + oil thicken | scroll | micro settle | scaleY + --oil-thick on hero | Damped | Off |
 | Grain overlay | always | — | Paper tooth | Same | Same |
 
 ## Home `/`
 
 | Animation | Trigger | Duration | Purpose | Mobile | Reduced |
 | --- | --- | --- | --- | --- | --- |
-| Hero refraction | mount, IO pause | 9–14s noise | Water film over REHMAT PANJAB | Lower intensity | Static |
+| Hero refraction | mount, IO pause | 6–11s noise | Stronger water film over REHMAT PANJAB | Lower intensity | Static |
 | SplitTextReveal | mount | editorial + 48ms/word | Words enter, blur resolve, horizontal mask | Same | Immediate text |
-| Bottle light | pointer 10–16px | micro | Shared viewport with headline + cue | Touch skips | Static |
-| Signature drop + ripple | hero settle | droplet then ripple | End of hero; next scene peeks | Same | Still drop |
-| Scene overlap | layout | — | Density; no 100dvh dead band | Same | Same |
-| Notes atmosphere | CSS | slow | MUSK diffuse, OUD dark, ROSE dusty | Same | Static words |
+| Bottle breathe + light | idle + pointer | 5.6s + micro | Shared viewport with headline + cue | Touch skips idle pointer | Static |
+| Signature drop + scene connectors | IO at hinges | droplet then ripple | Connects scenes without adding height | Same | Off |
+| Notes atmosphere | CSS drift 16–22s | slow | MUSK / OUD / ROSE float, staggered | Same | Static words |
 | LiquidMask glass/sweep/oil | IO | editorial / cinematic | Varied image reveals | sweep→liquid on STANDARD | Shown |
 | Finder / create / next CTAs | hover fill | water/oil fill | Continue the arc | Press ripple | Instant fill |
 
@@ -66,7 +66,7 @@ Easings: `liquidEase`, `glassEase`, `snapEase`, `editorialEase`. No extra bounce
 
 | Animation | Trigger | Duration | Purpose | Mobile | Reduced |
 | --- | --- | --- | --- | --- | --- |
-| Atmosphere shift | selected option | standard | FRESH sage/water, DARK amber/wood, ROMANTIC dusty rose | Same | Class only |
+| Atmosphere shift | selected option | standard 480 | Wash layer actually interpolates FRESH/DARK/ROMANTIC | Same | Class only |
 | Liquid selection ring | held option | fast | Not boxes | Same | Outline |
 | Result merge veil | last continue | editorial | Quiz → result | Same | Skip |
 
@@ -74,7 +74,7 @@ Easings: `liquidEase`, `glassEase`, `snapEase`, `editorialEase`. No extra bounce
 
 | Animation | Trigger | Duration | Purpose | Mobile | Reduced |
 | --- | --- | --- | --- | --- | --- |
-| VirtualBottle fill | answers | editorial | Notes enter; blend colour; bottle always visible | Same | Height snap |
+| VirtualBottle fill + neck drop | answers | editorial + droplet | Notes fall into the vessel; blend colour | Same | Height snap |
 | Orbiting notes | result | 16–18s | YOUR REHMAT | Same | Labels static |
 | Share 9:16 / 1:1 | click | — | Branded cards, no PII | Download | Download |
 
@@ -106,10 +106,10 @@ Easings: `liquidEase`, `glassEase`, `snapEase`, `editorialEase`. No extra bounce
 
 | Animation | Trigger | Duration | Purpose | Mobile | Reduced |
 | --- | --- | --- | --- | --- | --- |
-| Liquid underline + active drop | hover / route | fast / editorial | Water film on menu | Hidden desktop nav | Instant |
+| Liquid underline + magnetic hover | hover / route | fast | Underline + drop track the pointer; blob follows | Hidden desktop nav | Instant |
+| LiquidButton magnet + squash + bloom | hover / press / success | micro / 480 | Viscous fill 280–480ms, press squash, success bloom | Press ripple | Off |
 | Mobile liquid expand | menu | 550, items stagger 70ms | Expands from menu control, contracts closed | Yes | Instant panel |
-| LiquidButton magnet | hover FULL | 4–8px max | Major CTAs | Off | Off |
-| Footer wordmark + reflection | IO | editorial | Large REHMAT, not whitespace | Same | Shown |
+| Footer wordmark + oil rise | IO | editorial | REHMAT clips up with a rising oil wash | Same | Shown |
 
 ## Admin
 

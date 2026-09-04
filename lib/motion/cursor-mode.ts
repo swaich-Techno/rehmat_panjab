@@ -36,6 +36,14 @@ export function cursorEnabled(input: CursorEnableInput): boolean {
   return true;
 }
 
+/**
+ * Native cursor is hidden only after the custom blob has painted.
+ * Never hide the pointer for STANDARD / touch / reduced, or before first RAF.
+ */
+export function nativeCursorHidden(input: { enabled: boolean; customPainted: boolean }): boolean {
+  return input.enabled && input.customPainted;
+}
+
 const SHAPE_BY_ATTR: Record<string, CursorShape> = {
   droplet: "droplet",
   product: "bottle",

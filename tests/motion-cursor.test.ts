@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { cursorEnabled, cursorShapeFromElement, cursorShapeFromDataset } from "@/lib/motion/cursor-mode";
+import { cursorEnabled, cursorShapeFromElement, cursorShapeFromDataset, nativeCursorHidden } from "@/lib/motion/cursor-mode";
 import { scaleDuration, motionAllowsCursor, motionAllowsCinematic } from "@/lib/motion/mode";
-import { MOTION_DURATION_MS } from "@/lib/motion/tokens";
+import { LIQUID_PERSONALITIES } from "@/lib/motion/personalities";
 import { transitionKind } from "@/lib/motion/transitions";
 
 describe("cursor enablement", () => {
@@ -49,7 +49,25 @@ describe("cursor enablement", () => {
     ).toBe(false);
   });
 
-  it("maps product photography to bottle and inputs to text", () => {
+  it("hides native cursor only after the custom blob is painted", () => {
+    expect(nativeCursorHidden({ enabled: true, customPainted: false })).toBe(false);
+    expect(nativeCursorHidden({ enabled: true, customPainted: true })).toBe(true);
+    expect(nativeCursorHidden({ enabled: false, customPainted: true })).toBe(false);
+  });
+
+  it("never enables custom cursor on reduced motion", () => {
+    expect(
+      cursorEnabled({
+        motionMode: "FULL",
+        pointerCoarse: false,
+        hoverHover: true,
+        lastInput: "mouse",
+        prefersReduced: true,
+      }),
+    ).toBe(false);
+  });
+
+  it("still maps dataset shapes for optional product hover, without requiring morph", () => {
     expect(cursorShapeFromDataset("product")).toBe("bottle");
     expect(cursorShapeFromElement("INPUT", false)).toBe("text");
     expect(cursorShapeFromElement("A", false)).toBe("link");
@@ -68,6 +86,10 @@ describe("motion tokens and gating", () => {
     expect(MOTION_DURATION_MS.editorial).toBeLessThanOrEqual(850);
     expect(MOTION_DURATION_MS.cinematic).toBeGreaterThanOrEqual(900);
     expect(MOTION_DURATION_MS.cinematic).toBeLessThanOrEqual(1200);
+    expect(LIQUID_PERSONALITIES.oil.fillMs).toBeGreaterThanOrEqual(300);
+    expect(LIQUID_PERSONALITIES.oil.fillMs).toBeLessThanOrEqual(600);
+    expect(LIQUID_PERSONALITIES.water.fillMs).toBeGreaterThanOrEqual(250);
+    expect(LIQUID_PERSONALITIES.water.fillMs).toBeLessThanOrEqual(600);
   });
 
   it("wires scaleDuration and cinematic gating", () => {

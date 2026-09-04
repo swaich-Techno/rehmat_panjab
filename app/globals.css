@@ -194,7 +194,7 @@ a {
   z-index: 0;
   pointer-events: none;
   background: radial-gradient(42% 32% at 28% 18%, rgba(251, 247, 238, 0.22), transparent 62%);
-  animation: light-through 96s linear infinite;
+  animation: light-through 28s linear infinite;
 }
 
 .atmosphere-evening::after,
@@ -238,31 +238,31 @@ a {
   z-index: 0;
   background:
     radial-gradient(
-      140% 120% at var(--px) var(--py),
-      rgba(180, 122, 71, 0.95),
-      rgba(99, 55, 54, 0.55) 46%,
-      transparent 68%
+      160% 140% at var(--px) var(--py),
+      rgba(180, 122, 71, 0.98),
+      rgba(99, 55, 54, 0.72) 42%,
+      transparent 72%
     );
-  transform: scaleY(0.18);
+  transform: scaleY(0.12) scaleX(0.92);
   transform-origin: bottom center;
-  transition: transform var(--duration-editorial) var(--ease-weighted);
+  transition: transform var(--duration-standard) var(--ease-weighted);
 }
 
 .liquid-button[data-liquid="water"]::before {
   background:
     radial-gradient(
-      140% 120% at var(--px) var(--py),
+      160% 140% at var(--px) var(--py),
       rgba(221, 232, 221, 0.98),
-      rgba(71, 106, 80, 0.7) 48%,
-      transparent 70%
+      rgba(71, 106, 80, 0.78) 48%,
+      transparent 74%
     );
-  transition-duration: var(--duration-normal);
+  transition-duration: var(--duration-fast);
 }
 
 .liquid-button:hover::before,
 .liquid-button:focus-visible::before,
 .liquid-button[data-loading="true"]::before {
-  transform: scaleY(1);
+  transform: scaleY(1) scaleX(1);
 }
 
 .liquid-button:hover,
@@ -276,16 +276,16 @@ a {
 }
 
 .liquid-button:active {
-  transform: scale(0.975);
+  transform: scale(0.96, 0.9);
 }
 
 .liquid-button[data-success="true"] {
-  transform: scale(1.04);
   color: var(--ivory);
+  animation: button-bloom var(--duration-standard) var(--ease-overshoot) both;
 }
 
 .liquid-button[data-success="true"]::before {
-  transform: scaleY(1.15);
+  transform: scaleY(1.18) scaleX(1.04);
 }
 
 .liquid-button:disabled {
@@ -327,52 +327,25 @@ a {
   mix-blend-mode: multiply;
 }
 
-.rehmat-cursor {
+.liquid-cursor {
   position: fixed;
   top: 0;
   left: 0;
   z-index: 95;
-  width: 28px;
-  height: 36px;
+  width: 20px;
+  height: 20px;
   pointer-events: none;
+  border-radius: 50% 45% 50% 40%;
+  background: color-mix(in srgb, var(--green) 68%, var(--forest));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--forest) 28%, transparent),
+    2px 3px 0 color-mix(in srgb, var(--ink) 12%, transparent);
+  mix-blend-mode: multiply;
   opacity: 0;
-  will-change: transform, opacity;
+  will-change: transform;
 }
 
-.rehmat-cursor.is-on {
-  opacity: 1;
-}
-
-.rehmat-cursor.is-dissolved {
-  opacity: 0;
-}
-
-.rehmat-cursor__svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 1px 2px rgba(90, 48, 18, 0.18));
-}
-
-.rehmat-cursor__label {
-  position: absolute;
-  left: 50%;
-  top: 110%;
-  translate: -50% 0;
-  font-family: var(--font-sans);
-  font-size: 0.55rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--amber);
-  white-space: nowrap;
-  opacity: 0;
-}
-
-.rehmat-cursor[data-shape="bottle"] .rehmat-cursor__label,
-.rehmat-cursor[data-shape="add"] .rehmat-cursor__label,
-.rehmat-cursor[data-shape="drag"] .rehmat-cursor__label,
-.rehmat-cursor[data-shape="buy"] .rehmat-cursor__label {
+.liquid-cursor.is-on {
   opacity: 1;
 }
 
@@ -529,7 +502,9 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   inset: 0;
   z-index: 80;
   pointer-events: none;
-  background: linear-gradient(180deg, transparent 0%, var(--amber) 42%, var(--wine) 100%);
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(251, 247, 238, 0.35), transparent 42%),
+    linear-gradient(180deg, rgba(180, 122, 71, 0.2) 0%, var(--amber) 38%, var(--wine) 100%);
   animation: pour-up var(--duration-buyNow) var(--ease-weighted) forwards;
 }
 
@@ -584,9 +559,14 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 @keyframes pour-up {
   from {
     clip-path: inset(100% 0 0 0);
+    opacity: 0.55;
+  }
+  55% {
+    opacity: 1;
   }
   to {
-    clip-path: inset(0 0 30% 0);
+    clip-path: inset(0 0 0 0);
+    opacity: 0.92;
   }
 }
 
@@ -701,6 +681,8 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 
 .nav-link {
   position: relative;
+  display: inline-block;
+  transition: color var(--duration-fast) var(--ease-liquidEase), transform var(--duration-micro) var(--ease-snapEase);
 }
 
 .nav-link::after {
@@ -708,10 +690,11 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   position: absolute;
   left: 0;
   bottom: -0.35rem;
-  height: 2px;
-  width: 0;
-  background: var(--forest);
+  height: 3px;
+  width: var(--nav-fill, 0%);
+  background: linear-gradient(90deg, var(--forest), var(--green) 70%, var(--sage));
   border-radius: 99px;
+  transform-origin: left center;
   transition: width var(--duration-fast) var(--ease-liquidEase);
 }
 
@@ -723,16 +706,21 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 
 .nav-drop {
   position: absolute;
-  bottom: -0.85rem;
-  left: 50%;
-  width: 7px;
-  height: 10px;
+  bottom: -0.95rem;
+  left: var(--nav-drop-x, 50%);
+  width: 8px;
+  height: 11px;
   translate: -50% 0;
   border-radius: 50% 50% 45% 45%;
-  background: radial-gradient(circle at 30% 25%, #fbf7ee, var(--green) 70%);
+  background: radial-gradient(circle at 30% 25%, #fbf7ee, var(--green) 55%, var(--forest));
   opacity: 0;
+  transition:
+    left var(--duration-fast) var(--ease-liquidEase),
+    opacity var(--duration-micro) var(--ease-weighted);
 }
 
+.nav-link:hover .nav-drop,
+.nav-link:focus-visible .nav-drop,
 .nav-link[data-active="true"] .nav-drop {
   opacity: 1;
 }
@@ -767,6 +755,35 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   line-height: 0.8;
   letter-spacing: -0.05em;
   color: var(--forest);
+  clip-path: inset(100% 0 0 0);
+  transform: translate3d(0, 18px, 0);
+  transition:
+    clip-path var(--duration-editorial) var(--ease-liquidEase),
+    transform var(--duration-editorial) var(--ease-editorialEase);
+}
+
+.footer-wordmark.is-shown {
+  clip-path: inset(0 0 0 0);
+  transform: none;
+}
+
+.footer-wordmark-wrap {
+  position: relative;
+}
+
+.footer-oil-rise {
+  position: absolute;
+  inset: auto 0 -8% 0;
+  height: 42%;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--amber) 28%, transparent));
+  transform: scaleY(0);
+  transform-origin: bottom;
+  pointer-events: none;
+  transition: transform var(--duration-cinematic) var(--ease-weighted);
+}
+
+.footer-wordmark-wrap.is-shown .footer-oil-rise {
+  transform: scaleY(1);
 }
 
 .footer-reflect {
@@ -785,9 +802,9 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 }
 
 .liquid-mask {
-  clip-path: inset(12% 8% 16% 8%);
-  filter: saturate(0.85);
-  transform: translate3d(0, 12px, 0);
+  clip-path: inset(18% 12% 22% 12%);
+  filter: saturate(0.78);
+  transform: translate3d(0, 18px, 0);
   transition:
     clip-path var(--duration-editorial) var(--ease-liquidEase),
     filter var(--duration-standard) var(--ease-glassEase),
@@ -802,7 +819,7 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 
 .liquid-mask--glass {
   clip-path: inset(0 0 0 0);
-  filter: blur(8px) saturate(0.7);
+  filter: blur(10px) saturate(0.62);
 }
 
 .liquid-mask--glass.is-shown {
@@ -810,7 +827,7 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 }
 
 .liquid-mask--oil {
-  clip-path: inset(80% 0 0 0);
+  clip-path: inset(86% 0 0 0);
 }
 
 .liquid-mask--oil.is-shown {
@@ -821,8 +838,8 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg, transparent 30%, rgba(251, 247, 238, 0.45) 48%, transparent 62%);
-  transform: translate3d(-80%, 0, 0);
+  background: linear-gradient(105deg, transparent 28%, rgba(251, 247, 238, 0.55) 48%, transparent 64%);
+  transform: translate3d(-90%, 0, 0);
   pointer-events: none;
 }
 
@@ -842,25 +859,137 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   letter-spacing: -0.04em;
   line-height: 0.85;
   pointer-events: none;
+  will-change: transform, filter, opacity;
+  animation: note-drift 16s var(--ease-glassEase) infinite;
 }
 
 .note-musk {
-  color: color-mix(in srgb, var(--sage) 70%, transparent);
-  filter: blur(1.2px);
+  color: color-mix(in srgb, var(--sage) 78%, var(--forest));
+  filter: blur(0.6px);
+  animation-duration: 18s;
 }
 
 .note-oud {
-  color: color-mix(in srgb, #3a2414 80%, transparent);
+  color: color-mix(in srgb, #3a2414 88%, transparent);
+  animation-duration: 22s;
+  animation-delay: -4s;
 }
 
 .note-rose {
-  color: color-mix(in srgb, var(--rose-metal) 55%, white);
+  color: color-mix(in srgb, var(--rose-metal) 70%, white);
   mix-blend-mode: multiply;
+  animation-duration: 20s;
+  animation-delay: -8s;
+}
+
+.hero-peek {
+  height: 4.5rem;
+  margin-top: auto;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--mint) 80%, transparent));
+  box-shadow: inset 0 -2.5rem 3.5rem color-mix(in srgb, var(--amber) calc(var(--oil-thick, 0) * 40%), transparent);
+}
+
+.hero-oil-thicken {
+  pointer-events: none;
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 46%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--amber) calc(8% + var(--oil-thick, 0) * 38%), transparent)
+  );
+  z-index: 0;
+}
+
+.bottle-stage {
+  animation: bottle-breathe 5.6s var(--ease-glassEase) infinite;
+}
+
+.bottle-note-enter {
+  animation: note-enter var(--duration-editorial) var(--ease-liquidEase) both;
+}
+
+.bottle-neck-drop {
+  position: absolute;
+  left: 50%;
+  top: 8%;
+  width: 9px;
+  height: 13px;
+  margin-left: -4.5px;
+  border-radius: 40% 40% 50% 50%;
+  z-index: 2;
+  animation: neck-drop var(--duration-droplet) var(--ease-weighted) both;
+}
+
+.scene-connector {
+  position: relative;
+  height: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.scene-connector__drop {
+  position: absolute;
+  left: clamp(1.25rem, 8vw, 3.5rem);
+  top: -2.4rem;
+  width: 10px;
+  height: 14px;
+  border-radius: 40% 40% 50% 50%;
+  background: radial-gradient(circle at 30% 20%, #fbf7ee, var(--green) 55%, var(--forest));
+  opacity: 0;
+}
+
+.scene-connector.is-falling .scene-connector__drop {
+  animation: connector-fall var(--duration-droplet) var(--ease-weighted) both;
+}
+
+.scene-connector__ripple {
+  position: absolute;
+  left: clamp(1.25rem, 8vw, 3.5rem);
+  top: 0.4rem;
+  width: 18px;
+  height: 10px;
+  margin-left: -4px;
+  border: 1px solid color-mix(in srgb, var(--forest) 50%, transparent);
+  border-radius: 70% 40% 60% 45%;
+  opacity: 0;
+}
+
+.scene-connector.is-falling .scene-connector__ripple {
+  animation: ripple-asymmetric var(--duration-ripple) var(--ease-liquid) 0.45s both;
+}
+
+.quiz-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.quiz-stage__wash {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition:
+    background var(--duration-standard) var(--ease-liquidEase),
+    opacity var(--duration-fast) var(--ease-glassEase),
+    filter var(--duration-standard) var(--ease-glassEase);
+}
+
+.quiz-stage__content {
+  position: relative;
+  z-index: 1;
 }
 
 .option-liquid {
   position: relative;
   isolation: isolate;
+  transition: color var(--duration-fast) var(--ease-liquidEase), transform var(--duration-micro) var(--ease-snapEase);
+}
+
+.option-liquid:hover {
+  transform: translate3d(6px, 0, 0);
 }
 
 .option-liquid[data-held="true"]::before {
@@ -873,23 +1002,57 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   animation: option-ring var(--duration-fast) var(--ease-liquidEase) both;
 }
 
-.orbit-note {
+.image-sheen {
+  position: relative;
+}
+
+.image-sheen::after {
+  content: "";
   position: absolute;
-  animation: orbit-slow 18s linear infinite;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 36%, rgba(251, 247, 238, 0.42) 50%, transparent 64%);
+  transform: translate3d(-120%, 0, 0);
+  pointer-events: none;
+  transition: none;
 }
 
-.scroll-cue {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-  padding-bottom: 1.25rem;
+.image-sheen:hover::after {
+  animation: light-sweep var(--duration-standard) var(--ease-glassEase) both;
 }
 
-.hero-peek {
+.cart-fly {
+  pointer-events: none;
+  position: fixed;
+  z-index: 60;
   height: 4.5rem;
-  margin-top: auto;
-  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--mint) 80%, transparent));
+  width: 2.6rem;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 10px rgba(24, 58, 42, 0.28));
+  animation: rp-fly var(--duration-cartFly) var(--ease-weighted) forwards;
+}
+
+.cart-fly-trail {
+  pointer-events: none;
+  position: fixed;
+  z-index: 59;
+  width: 10px;
+  height: 22px;
+  border-radius: 40% 40% 50% 50%;
+  background: radial-gradient(circle at 30% 20%, rgba(251, 247, 238, 0.9), var(--amber));
+  animation: rp-fly-trail var(--duration-cartFly) var(--ease-liquidEase) forwards;
+}
+
+.link-lux {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size var(--duration-fast) var(--ease-liquidEase), color var(--duration-fast) var(--ease-weighted);
+}
+
+.link-lux:hover,
+.link-lux:focus-visible {
+  background-size: 100% 1px;
 }
 
 @keyframes light-through {
@@ -905,6 +1068,19 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
     transform: translate3d(-3%, -2%, 0) scaleY(var(--scroll-stretch, 1));
     opacity: 0.42;
   }
+}
+
+.orbit-note {
+  position: absolute;
+  animation: orbit-slow 18s linear infinite;
+}
+
+.scroll-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding-bottom: 1.25rem;
 }
 
 @keyframes split-in {
@@ -964,6 +1140,115 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   }
 }
 
+@keyframes button-bloom {
+  0% {
+    transform: scale(0.96, 0.9);
+  }
+  42% {
+    transform: scale(1.06, 1.03);
+  }
+  100% {
+    transform: scale(1.02, 1);
+  }
+}
+
+@keyframes note-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-0.6deg);
+    opacity: 0.82;
+  }
+  40% {
+    transform: translate3d(14px, -16px, 0) rotate(1.2deg);
+    opacity: 1;
+  }
+  70% {
+    transform: translate3d(-8px, 10px, 0) rotate(-0.4deg);
+    opacity: 0.9;
+  }
+}
+
+@keyframes bottle-breathe {
+  0%,
+  100% {
+    transform: translate3d(var(--shift, 0px), var(--lift, 0px), 0) rotate(-0.5deg);
+  }
+  50% {
+    transform: translate3d(calc(var(--shift, 0px) + 5px), calc(var(--lift, 0px) - 7px), 0) rotate(0.7deg);
+  }
+}
+
+@keyframes connector-fall {
+  0% {
+    transform: translate3d(0, -8px, 0) scale(0.45, 0.7);
+    opacity: 0;
+  }
+  28% {
+    opacity: 1;
+    transform: translate3d(2px, 18px, 0) scale(1, 1.15);
+  }
+  100% {
+    transform: translate3d(0, 72px, 0) scale(1.05, 0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes note-enter {
+  from {
+    transform: translate3d(0, -70%, 0) scale(0.7, 1.25);
+    opacity: 0;
+  }
+  62% {
+    transform: translate3d(0, 8%, 0) scale(1.06, 0.88);
+    opacity: 0.55;
+  }
+  to {
+    transform: none;
+    opacity: 0.45;
+  }
+}
+
+@keyframes neck-drop {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.5, 0.8);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+    transform: translate3d(1px, 28px, 0) scale(1, 1.15);
+  }
+  100% {
+    transform: translate3d(0, 92px, 0) scale(1.1, 0.35);
+    opacity: 0;
+  }
+}
+
+@keyframes rp-fly {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(-6deg);
+    opacity: 1;
+  }
+  42% {
+    transform: translate(calc(var(--dx) * 0.48), calc(var(--dy) * 0.22 - 56px)) scale(0.82) rotate(10deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(0.22) rotate(-14deg);
+    opacity: 0.12;
+  }
+}
+
+@keyframes rp-fly-trail {
+  0% {
+    transform: translate(0, 8px) scale(0.6);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(0.2);
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -998,8 +1283,21 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 
   .liquid-cursor,
   .rehmat-cursor,
-  .tap-ripple {
+  .tap-ripple,
+  .scene-connector,
+  .cart-fly,
+  .cart-fly-trail,
+  .bottle-neck-drop {
     display: none;
+  }
+
+  .note-field__word,
+  .bottle-stage,
+  .footer-wordmark {
+    animation: none;
+    clip-path: none;
+    transform: none;
+    opacity: 1;
   }
 
   .atmosphere-morning::after,

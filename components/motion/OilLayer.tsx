@@ -63,8 +63,8 @@ export function OilLayer({ className = "" }: { className?: string }) {
         ctx.closePath();
         ctx.fillStyle =
           i % 2 === 0
-            ? `rgba(180, 122, 71, ${0.08 + i * 0.03})`
-            : `rgba(99, 55, 54, ${0.05 + i * 0.02})`;
+            ? `rgba(180, 122, 71, ${0.14 + i * 0.045})`
+            : `rgba(99, 55, 54, ${0.09 + i * 0.03})`;
         ctx.fill();
       }
       if (!reduce) frame += 1;

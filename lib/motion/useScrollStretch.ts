@@ -24,9 +24,11 @@ export function useScrollStretch() {
       const v = Math.abs(y - lastY) / dt;
       lastY = y;
       lastT = now;
-      const target = 1 + Math.min(0.035, v * 0.045);
-      current += (target - current) * 0.2;
+      const target = 1 + Math.min(0.055, v * 0.06);
+      current += (target - current) * 0.22;
       document.documentElement.style.setProperty("--scroll-stretch", current.toFixed(3));
+      const thick = Math.min(1, y / Math.max(1, window.innerHeight * 0.85));
+      document.documentElement.style.setProperty("--oil-thick", thick.toFixed(3));
     };
 
     const settle = () => {
@@ -43,6 +45,7 @@ export function useScrollStretch() {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
       document.documentElement.style.setProperty("--scroll-stretch", "1");
+      document.documentElement.style.setProperty("--oil-thick", "0");
     };
   }, [mode]);
 }

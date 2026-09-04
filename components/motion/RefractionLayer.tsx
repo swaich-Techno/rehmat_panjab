@@ -24,7 +24,7 @@ export function RefractionLayer({ className = "", intensity = 1 }: Props) {
         <filter id="rp-refract" x="-20%" y="-20%" width="140%" height="140%">
           <feTurbulence
             type="fractalNoise"
-            baseFrequency={mode === "FULL" ? 0.012 * intensity : 0.008}
+            baseFrequency={mode === "FULL" ? 0.016 * intensity : 0.01}
             numOctaves="2"
             seed="2"
             result="noise"
@@ -32,13 +32,13 @@ export function RefractionLayer({ className = "", intensity = 1 }: Props) {
             {run ? (
               <animate
                 attributeName="baseFrequency"
-                dur={mode === "FULL" ? "9s" : "14s"}
-                values="0.01;0.016;0.01"
+                dur={mode === "FULL" ? "6s" : "11s"}
+                values="0.012;0.022;0.012"
                 repeatCount="indefinite"
               />
             ) : null}
           </feTurbulence>
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale={8 * intensity} />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale={14 * intensity} />
         </filter>
       </svg>
       <div className="refraction-layer__sheet" />

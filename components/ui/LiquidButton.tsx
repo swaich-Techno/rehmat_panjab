@@ -55,13 +55,11 @@ export function LiquidButton({
 
   function magnet(event: PointerEvent<HTMLButtonElement>) {
     const node = ref.current;
-    if (!node || mode !== "FULL") return;
+    if (!node || mode !== "FULL" || success || loading) return;
     const rect = node.getBoundingClientRect();
     const dx = event.clientX - (rect.left + rect.width / 2);
     const dy = event.clientY - (rect.top + rect.height / 2);
-    const dist = Math.hypot(dx, dy) || 1;
-    const pull = Math.min(8, 4 + dist * 0.02);
-    node.style.transform = `translate3d(${(dx / dist) * pull}px, ${(dy / dist) * pull}px, 0)`;
+    node.style.transform = `translate3d(${Math.max(-8, Math.min(8, dx * 0.2))}px, ${Math.max(-6, Math.min(6, dy * 0.2))}px, 0)`;
   }
 
   function handleMove(event: PointerEvent<HTMLButtonElement>) {
@@ -73,6 +71,10 @@ export function LiquidButton({
 
   function handleDown(event: PointerEvent<HTMLButtonElement>) {
     setFill(event);
+    const node = ref.current;
+    if (node && mode !== "REDUCED") {
+      node.style.transform = "scale(0.96, 0.9)";
+    }
     if (event.pointerType === "touch") {
       const rect = event.currentTarget.getBoundingClientRect();
       setRipple({
@@ -109,6 +111,10 @@ export function LiquidButton({
       onPointerMove={handleMove}
       onPointerDown={handleDown}
       onPointerLeave={handleLeave}
+      onPointerUp={() => {
+        const node = ref.current;
+        if (node && !success) node.style.transform = "";
+      }}
       onClick={onClick}
       style={{ transition: `transform ${durationCss("micro")} var(--ease-snapEase)` }}
     >

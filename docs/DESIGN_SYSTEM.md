@@ -13,7 +13,7 @@ Editorial, tactile, sensory. Warm and fresh. Not a dark gold template. Not SaaS.
 | `--mint` | `#DDE8DD` | Cool ground (was `--mist`) |
 | `--cream` | `#F5F1E7` | Page ground |
 | `--sand` | `#D7C8AB` | Warm support |
-| `--amber` | `#B47A47` | Oil, emphasis, default cursor |
+| `--amber` | `#B47A47` | Oil, emphasis |
 | `--rose-metal` | `#A66F5F` | Quiet warning / rose |
 | `--wine` | `#633736` | Error, evening |
 
@@ -44,7 +44,7 @@ Never 160–220px padding unless one cinematic hero. Drop `items-center` on full
 | Personality | Use | Motion |
 | --- | --- | --- |
 | Water | Homepage, nav, finder, create-your-Rehmat, morning hero, OTP | Faster fill, mint, wider stretch |
-| Oil | Product, ATC, buy, confirm, cursor, checkout, Next Drop thank-you | Slower fill, amber/wine, viscous |
+| Oil | Product, ATC, buy, confirm, checkout, Next Drop thank-you | Viscous fill 480ms, amber/wine |
 
 `data-liquid="water|oil"` on LiquidButton. Touch uses a press ripple. Pointer tracking drives fill origin. Magnetism 4–8px on FULL desktop only.
 
@@ -52,9 +52,7 @@ CSS/SVG/canvas first. `OilLayer` canvas is wired on PDP and checkout and pauses 
 
 ## Cursor
 
-Default: a small stylized perfume-oil droplet (amber, transparent). Not an emoji. Not a bottle everywhere. Bottle + VIEW only over product photography.
-
-Immediate position + short delayed tail. Path morph 180–350ms. Disabled on reduced motion, coarse pointer, keyboard-only, and touch. Mobile uses tap ripples. Never required for function. RAF pauses when the tab is hidden.
+Default: V2 `LiquidCursor` — a 20×20 sage/green blob with `mix-blend-mode: multiply` so it stays visible on cream. Native cursor remains until the blob has painted (`data-rehmat-cursor="on"` only after first RAF). Disabled on reduced motion, coarse pointer, keyboard-only, and touch. No oil-droplet-as-only-cursor (invisible on cream). Bottle morph skipped. Mobile uses tap ripples. Never required for function.
 
 ## Motion modes
 
@@ -64,7 +62,7 @@ Defined in `lib/motion/mode.ts`. Durations live in `lib/motion/tokens.ts` and ar
 | --- | --- | --- |
 | REDUCED | `prefers-reduced-motion` | Instant states, 80ms transitions, no cursor, no RAF loops |
 | STANDARD | Default mobile / coarse pointer | Slightly shorter durations, no liquid cursor, tap ripples |
-| FULL | Desktop + fine pointer + hover | Cinematic path morph, RehmatCursor, refraction, magnetism |
+| FULL | Desktop + fine pointer + hover | LiquidCursor blob, refraction, magnetism |
 
 See `docs/MOTION_MAP.md` for every page.
 
@@ -117,7 +115,7 @@ Homepage is dense and cinematic. Commerce is controlled. Checkout is quiet then 
 
 ## Components that must not appear
 
-Pill buttons, glass cards, glowing orbs, three-up feature grids, giant gradient wordmarks used as decoration without the footer reveal, icon forests, “where tradition meets innovation” copy, concentric success orbs, trucks in checkout, confetti, green mix-blend cursor blobs.
+Pill buttons, glass cards, glowing orbs, three-up feature grids, giant gradient wordmarks used as decoration without the footer reveal, icon forests, “where tradition meets innovation” copy, concentric success orbs, trucks in checkout, confetti, invisible custom cursors (`cursor: none` without a painted pointer).
 
 ## LiquidButton
 

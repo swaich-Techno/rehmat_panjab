@@ -12,6 +12,8 @@ import { LiquidReveal } from "@/components/motion/LiquidReveal";
 import { LiquidLink } from "@/components/ui/LiquidLink";
 import { SplitTextReveal } from "@/components/motion/SplitTextReveal";
 import { LiquidMask } from "@/components/motion/LiquidMask";
+import { SceneConnector } from "@/components/motion/SceneConnector";
+import { OilLayer } from "@/components/motion/OilLayer";
 import { motionAllowsCinematic } from "@/lib/motion/mode";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 import { useScrollStretch } from "@/lib/motion/useScrollStretch";
@@ -34,7 +36,11 @@ export function HeroSequence() {
   return (
     <div className="home-scenes">
       <section className="scene scene--hero atmosphere-morning text-forest">
-        <RefractionLayer intensity={cinematic ? 1 : 0.6} />
+        <RefractionLayer intensity={cinematic ? 1.35 : 0.75} />
+        <div className="hero-oil-thicken" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 opacity-50" aria-hidden="true">
+          <OilLayer />
+        </div>
         <div className="site-grid relative z-[1] flex-1 pt-8">
           <p className="col-span-12 label md:col-span-3">{HOMEPAGE_CMS.heroKicker}</p>
           <div className="col-span-12 md:col-span-8 md:col-start-1">
@@ -56,6 +62,8 @@ export function HeroSequence() {
         <div className="hero-peek relative z-[1]" aria-hidden="true" />
       </section>
 
+      <SceneConnector />
+
       <section className="scene scene--overlap bg-cream">
         <div className="site-grid">
           <p className="col-span-12 label text-forest">The first glass</p>
@@ -63,13 +71,13 @@ export function HeroSequence() {
             <p className="label headline-gap text-wine">01</p>
             <h2 className="display headline-gap text-[clamp(2.6rem,7vw,5.8rem)]">Musk Rizali</h2>
             <p className="copy-gap max-w-sm text-base leading-7">{HOUSE.oilLine}</p>
-            <Link href="/product/musk-rizali" className="label block-gap inline-block min-h-11" data-cursor="link">
+            <Link href="/product/musk-rizali" className="label link-lux block-gap inline-block min-h-11" data-cursor="link">
               Open the oil
             </Link>
           </div>
           <div className="col-span-12 mt-8 md:col-span-6 md:col-start-7 md:mt-0">
             <LiquidMask kind="glass">
-              <div className="relative min-h-[52vw] bg-mint md:min-h-[58vh]" data-cursor="product">
+              <div className="image-sheen relative min-h-[52vw] bg-mint md:min-h-[58vh]" data-cursor="product">
                 <Image
                   src="/images/placeholders/bottle-01.svg"
                   alt="Placeholder Musk Rizali bottle"
@@ -81,6 +89,8 @@ export function HeroSequence() {
           </div>
         </div>
       </section>
+
+      <SceneConnector delay={80} />
 
       <section className="scene scene--overlap bg-paper">
         <div className="site-grid">
@@ -102,12 +112,14 @@ export function HeroSequence() {
         </div>
       </section>
 
+      <SceneConnector delay={120} />
+
       <section className="scene scene--overlap bg-cream">
         <div className="site-grid collection-stack">
           <p className="col-span-12 label text-forest">Collection</p>
           <article className="col-span-12 grid items-end gap-x-[var(--space-collection-col)] gap-y-6 md:grid-cols-12">
             <LiquidMask kind="sweep" className="md:col-span-5">
-              <div className="relative aspect-[3/4] bg-mint" data-cursor="product">
+              <div className="image-sheen relative aspect-[3/4] bg-mint" data-cursor="product">
                 <Image src={musk.images[0].src} alt={musk.images[0].alt} fill className="object-contain p-8" />
               </div>
             </LiquidMask>
@@ -138,13 +150,15 @@ export function HeroSequence() {
               <p className="label mt-4 text-ink/50">{HOMEPAGE_CMS.comingSoonLine}</p>
             </div>
             <LiquidMask kind="oil" className="md:col-span-5 md:col-start-8 md:-mt-10">
-              <div className="relative aspect-[3/4] bg-sand/40" data-cursor="product">
+              <div className="image-sheen relative aspect-[3/4] bg-sand/40" data-cursor="product">
                 <Image src={two.images[0].src} alt={two.images[0].alt} fill className="object-contain p-8" />
               </div>
             </LiquidMask>
           </article>
         </div>
       </section>
+
+      <SceneConnector delay={160} />
 
       <section className="scene scene--overlap atmosphere-morning">
         <LiquidReveal className="site-grid relative z-[1]" as="div">
@@ -204,15 +218,15 @@ function BottleStage({ src, alt }: { src: string; alt: string }) {
   return (
     <div
       ref={ref}
-      className="relative mx-auto h-[min(46vh,380px)] w-full max-w-sm"
+      className="bottle-stage relative mx-auto h-[min(46vh,380px)] w-full max-w-sm"
       data-cursor="product"
       onPointerMove={(event) => {
         const node = event.currentTarget;
         const rect = node.getBoundingClientRect();
         const x = (event.clientX - rect.left) / rect.width - 0.5;
         const y = (event.clientY - rect.top) / rect.height - 0.5;
-        const dx = Math.max(-16, Math.min(16, x * 16));
-        const dy = Math.max(-12, Math.min(12, y * 12));
+        const dx = Math.max(-22, Math.min(22, x * 28));
+        const dy = Math.max(-16, Math.min(16, y * 20));
         node.style.setProperty("--lx", `${50 + dx}%`);
         node.style.setProperty("--ly", `${22 + dy}%`);
         node.style.setProperty("--shift", `${dx}px`);
@@ -226,10 +240,7 @@ function BottleStage({ src, alt }: { src: string; alt: string }) {
           transition: `background ${durationCss("micro")} linear`,
         }}
       />
-      <div
-        className="absolute inset-0 flex justify-center"
-        style={{ transform: "translate3d(var(--shift, 0px), var(--lift, 0px), 0)" }}
-      >
+      <div className="absolute inset-0 flex justify-center">
         <div className="relative h-full w-24">
           <Image src={src} alt={alt} fill className="object-contain" priority />
         </div>

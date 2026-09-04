@@ -29,7 +29,7 @@ export function ProductView({ product }: { product: Product }) {
       <section className="site-grid relative z-[1] items-start section-pad">
         <div className="col-span-12 md:col-span-6">
           <LiquidMask kind="oil">
-            <div className="relative min-h-[62vw] bg-mint/40 md:min-h-[72vh]" data-cursor="product">
+            <div className="image-sheen relative min-h-[62vw] bg-mint/40 md:min-h-[72vh]" data-cursor="product">
               <Image
                 src={product.images[0].src}
                 alt={product.images[0].alt}
