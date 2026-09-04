@@ -133,7 +133,7 @@ export default function CheckoutPage() {
               disabled={totals.lines.length === 0}
               onClick={() => void submit("manual")}
             >
-              Request this oil
+              Request
             </LiquidButton>
             {whatsappOpen ? (
               <LiquidButton loading={loading} disabled={totals.lines.length === 0} onClick={() => void submit("whatsapp")}>

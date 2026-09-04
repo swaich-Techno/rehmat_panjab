@@ -18,9 +18,9 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const ORDER_LABEL: Record<OrderPhase, string> = {
-  idle: "Order now",
+  idle: "Request",
   preparing: "Preparing",
-  ready: "Order ready",
+  ready: "Request sent",
 };
 
 export function LiquidButton({
