@@ -44,7 +44,7 @@ export function useLiquidTransition() {
     }
 
     const veil = document.createElement("div");
-    veil.className = CLASS[kind === "none" ? "pour" : kind];
+    veil.className = CLASS[kind];
     document.body.appendChild(veil);
     window.setTimeout(() => {
       router.push(href);

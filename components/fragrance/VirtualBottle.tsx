@@ -14,7 +14,7 @@ export function VirtualBottle({
   orbit?: boolean;
   className?: string;
 }) {
-  const mix = blend ?? notes.reduce((acc, id) => acc || NOTE_LAYERS[id].color, "") || "#d7c8ab";
+  const mix = blend ?? (notes.reduce((acc, id) => acc || NOTE_LAYERS[id].color, "") || "#d7c8ab");
 
   return (
     <div className={`relative mx-auto h-80 w-40 ${className}`} aria-hidden="true">
