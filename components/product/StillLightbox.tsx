@@ -16,7 +16,10 @@ const FOCUSABLE = "button, [href], input, select, textarea, [tabindex]:not([tabi
 export function StillLightbox({ src, alt, onClose }: Props) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     const root = dialogRef.current;

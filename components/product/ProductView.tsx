@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import type { Product } from "@/data/fragrance-config";
 import { isDevelopmentProduct } from "@/data/fragrance-config";
 import { AddToCartButton } from "@/components/commerce/AddToCartButton";
