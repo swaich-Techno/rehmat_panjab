@@ -1,16 +1,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useOffscreenPause } from "@/lib/motion/useOffscreenPause";
+import { useMotionMode } from "@/lib/motion/useMotionMode";
 
 export function OilLayer({ className = "" }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const active = useOffscreenPause(ref);
+  const mode = useMotionMode();
 
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let frame = 0;
     let scroll = 0;
     let pointer = { x: 0.62, y: 0.4 };
@@ -43,7 +46,8 @@ export function OilLayer({ className = "" }: { className?: string }) {
       const w = canvas.offsetWidth;
       const h = canvas.offsetHeight;
       ctx.clearRect(0, 0, w, h);
-      const t = reduce ? 0 : frame * 0.008 + scroll;
+      const reduce = mode === "REDUCED" || !active;
+      const t = reduce ? scroll : frame * 0.008 + scroll;
       for (let i = 0; i < 5; i += 1) {
         const y = h * (0.35 + i * 0.09) + Math.sin(t + i) * (reduce ? 0 : 18);
         ctx.beginPath();
@@ -59,18 +63,15 @@ export function OilLayer({ className = "" }: { className?: string }) {
         ctx.closePath();
         ctx.fillStyle =
           i % 2 === 0
-            ? `rgba(185, 129, 77, ${0.08 + i * 0.03})`
-            : `rgba(90, 48, 47, ${0.05 + i * 0.02})`;
+            ? `rgba(180, 122, 71, ${0.08 + i * 0.03})`
+            : `rgba(99, 55, 54, ${0.05 + i * 0.02})`;
         ctx.fill();
       }
-      ctx.beginPath();
-      ctx.arc(w * pointer.x, h * pointer.y, 70, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(212, 168, 110, 0.12)";
-      ctx.fill();
-      frame += 1;
-      raf = requestAnimationFrame(draw);
+      if (!reduce) frame += 1;
+      if (!reduce) raf = requestAnimationFrame(draw);
     };
-    raf = requestAnimationFrame(draw);
+    draw();
+    if (active && mode !== "REDUCED") raf = requestAnimationFrame(draw);
     window.addEventListener("resize", resize);
     return () => {
       running = false;
@@ -79,7 +80,7 @@ export function OilLayer({ className = "" }: { className?: string }) {
       window.removeEventListener("scroll", onScroll);
       canvas.removeEventListener("pointermove", onMove);
     };
-  }, []);
+  }, [active, mode]);
 
   return <canvas ref={ref} className={`h-full w-full ${className}`} aria-hidden="true" />;
 }

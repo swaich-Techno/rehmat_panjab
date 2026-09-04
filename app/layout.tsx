@@ -3,8 +3,11 @@ import { Cormorant_Garamond, Instrument_Sans } from "next/font/google";
 import { CartProvider } from "@/components/commerce/CartProvider";
 import { SiteFooter } from "@/components/brand/SiteFooter";
 import { SiteHeader } from "@/components/brand/SiteHeader";
+import { MotionProvider } from "@/components/motion/MotionProvider";
+import { LiquidCursor } from "@/components/motion/LiquidCursor";
 import { defaultMetadata } from "@/lib/seo";
 import { organizationJsonLd } from "@/lib/seo";
+import { motionCssVars } from "@/lib/motion/tokens";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -30,17 +33,26 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${cormorant.variable} ${instrument.variable} h-full antialiased`}
     >
       <head>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `:root { ${motionCssVars()} }`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
         />
       </head>
       <body className="min-h-full bg-cream text-ink font-sans">
-        <CartProvider>
-          <SiteHeader />
-          <main className="min-h-[70vh]">{children}</main>
-          <SiteFooter />
-        </CartProvider>
+        <div className="grain-overlay" aria-hidden="true" />
+        <MotionProvider>
+          <CartProvider>
+            <SiteHeader />
+            <main className="min-h-[70vh]">{children}</main>
+            <SiteFooter />
+            <LiquidCursor />
+          </CartProvider>
+        </MotionProvider>
       </body>
     </html>
   );
