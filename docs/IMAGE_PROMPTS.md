@@ -2,6 +2,20 @@
 
 Use these to commission stills. **No type in the frame.** Leave room for editorial type to sit beside the picture. Palette stays in ink, forest, sage, cream, sand, amber, rose-metal, wine. No purple-blue cinema lighting. No stock perfume-bottle clichés, no Golden Temple, no Punjab map, no tractor, no wheat field.
 
+## Supplied campaign stills (first five oils)
+
+Do **not** regenerate these from the prompts below. The first catalogue oils already have supplied campaign stills in `public/images/products/`:
+
+| File | Oil |
+| --- | --- |
+| `musk-rizali.webp` | Musk Rizali |
+| `vanilla-musk.webp` | Vanilla Musk |
+| `saffron-amber-oud.webp` | Saffron Amber Oud |
+| `white-oud.webp` | White Oud |
+| `oud-rose.webp` | Oud Rose |
+
+These frames include product names and top-note lines in-camera. Catalogue `alt` text must call them campaign stills. Keep `placeholder: false`.
+
 ## A — Musk Rizali hero, 4:5
 
 A single glass attar bottle, matte forest cap, a third-full of translucent amber oil, standing on warm ivory paper. Morning side-light from the left, long quiet shadow to the right. Large negative space in the upper third. Shallow depth. No label text, no logo, no droplets flying.
@@ -64,7 +78,7 @@ A bottle silhouette behind frosted glass or thin cloth, colour only suggested (w
 
 ## Replacement rule
 
-Keep current SVG files in `public/images/placeholders/` until a commissioned file is in place. Catalogue entries use `placeholder: true` until then.
+Keep current SVG files in `public/images/placeholders/` until a commissioned file is in place. Catalogue entries use `placeholder: true` until a real still is assigned. The first five oils already have supplied stills in `public/images/products/`.
 
 ## K — Water morning hero, 16:9
 

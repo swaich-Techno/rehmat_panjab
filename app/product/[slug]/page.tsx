@@ -24,6 +24,9 @@ export async function generateMetadata({
       title: `${product.number} ${product.name}`,
       description: product.subtitle,
       url: absoluteUrl(`/product/${product.slug}`),
+      images: product.images[0]
+        ? [{ url: product.images[0].src, alt: product.images[0].alt }]
+        : undefined,
     },
   };
 }

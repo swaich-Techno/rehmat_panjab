@@ -18,7 +18,7 @@ export const HOMEPAGE_CMS: HomepageCms = {
   featuredSlug: "musk-rizali",
   featuredCta: "Hold Musk Rizali",
   collectionCta: "View collection",
-  comingSoonLine: "Four still choosing their names — in development, not unfinished shop pages.",
+  comingSoonLine: "Five named oils. Prices when they are real — launching soon.",
   finderCta: "WHAT SHOULD YOUR FRAGRANCE FEEL LIKE?",
   createCta: "CREATE YOUR REHMAT",
   nextDropCta: "HELP CREATE WHAT COMES NEXT",

@@ -79,8 +79,14 @@ export function QuizFlow() {
             ))}
           </div>
           <div className="col-span-12 mt-8 md:col-span-4 md:col-start-9">
-            <div className="relative aspect-[3/4] bg-ivory/50">
-              <Image src={primary.images[0].src} alt={primary.images[0].alt} fill className="object-contain p-8" />
+            <div className="relative aspect-[4/5] overflow-hidden bg-charcoal">
+              <Image
+                src={primary.images[0].src}
+                alt={primary.images[0].alt}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover"
+              />
             </div>
             <Link href={`/product/${primary.slug}`} className="label mt-4 inline-block min-h-11 link-lux">
               Open {primary.name}
@@ -93,6 +99,7 @@ export function QuizFlow() {
             <ShareCard
               kicker="Share the match"
               title={primary.name}
+              imageSrc={primary.images[0]?.src}
               lines={[
                 `Primary: ${primary.name}`,
                 secondary ? `Neighbour: ${secondary.name}` : "No second neighbour yet.",

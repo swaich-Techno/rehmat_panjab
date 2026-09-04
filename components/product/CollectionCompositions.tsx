@@ -24,8 +24,14 @@ export function CollectionCompositions({ featuredOnly = false }: { featuredOnly?
           >
             <div className={`col-span-12 md:col-span-5 ${index % 2 ? "md:col-start-8" : ""}`}>
               <LiquidMask kind={masks[index % masks.length]}>
-                <div className="relative aspect-[4/5] bg-mint" data-cursor="product">
-                  <Image src={product.images[0].src} alt={product.images[0].alt} fill className="object-contain p-8" />
+                <div className="relative aspect-[4/5] bg-charcoal" data-cursor="product">
+                  <Image
+                    src={product.images[0].src}
+                    alt={product.images[0].alt}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 42vw"
+                    className="object-cover"
+                  />
                   {development ? <p className="dev-mark absolute left-4 top-4">In development</p> : null}
                 </div>
               </LiquidMask>
@@ -46,7 +52,12 @@ export function CollectionCompositions({ featuredOnly = false }: { featuredOnly?
                   Reserved in the catalogue. Not a finished oil for sale.
                 </p>
               ) : (
-                <p className="mt-3 max-w-md text-sm leading-7 text-ink/60">{HOUSE.sizeGuide[6]}</p>
+                <>
+                  <p className="mt-3 max-w-md text-sm leading-7 text-ink/70">
+                    {product.notes.top.join(" · ")}
+                  </p>
+                  <p className="mt-2 max-w-md text-sm leading-7 text-ink/55">{HOUSE.sizeGuide[6]}</p>
+                </>
               )}
               <div className="mt-4">
                 <PriceDisplay paise={product.variants[0]?.price_paise ?? null} />

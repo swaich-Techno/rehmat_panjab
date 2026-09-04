@@ -63,13 +63,13 @@ The shop is written against a stub (`lib/supabase-stub`). When a project is link
 
 ## Images
 
-Placeholder SVG/CSS compositions live in `public/images/placeholders/` and are labelled as placeholders. Commissioned photography: `docs/IMAGE_PROMPTS.md`. Update `data/fragrance-config.ts` when a real file replaces a placeholder.
+Placeholder SVG/CSS compositions live in `public/images/placeholders/` and are labelled as placeholders. The first five campaign stills live in `public/images/products/` (WebP). Commissioned photography prompts: `docs/IMAGE_PROMPTS.md`. Update `data/fragrance-config.ts` when a real file replaces a placeholder.
 
 ## Prices and names
 
 Prices are INR **paise integers**. `null` means **LAUNCHING SOON**. Do not invent prices.
 
-`01 Musk Rizali` is named. `02–05` use working titles (`Product Two` …) and are marked **in development**. Edit `data/fragrance-config.ts`.
+The first five oils are named from the product guide: Musk Rizali, Vanilla Musk, Saffron Amber Oud, White Oud, Oud Rose. Edit `data/fragrance-config.ts`.
 
 ## Future Razorpay
 

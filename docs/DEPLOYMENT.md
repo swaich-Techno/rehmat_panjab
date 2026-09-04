@@ -57,4 +57,4 @@ Production deploys when the GitHub repository is connected to the Vercel project
 
 ## After images exist
 
-Replace files in `public/images/placeholders/` with production photography. Keep `placeholder: true` in the catalogue until a real asset is assigned, then set it to `false` and update `alt`.
+The first five oils use supplied campaign stills in `public/images/products/` (`placeholder: false`). Keep remaining SVG compositions in `public/images/placeholders/` until a commissioned file is assigned.

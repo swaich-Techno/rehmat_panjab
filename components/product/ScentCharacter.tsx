@@ -1,4 +1,4 @@
-import type { Product } from "@/data/fragrance-config";
+import { SCENT_PROFILE_BASIS, type Product } from "@/data/fragrance-config";
 
 function pad(value: number): string {
   return value.toString().padStart(2, "0");
@@ -15,6 +15,7 @@ export function ScentCharacter({ product }: { product: Product }) {
     <section className="border-y border-ink/10 bg-paper section-pad">
       <div className="site-grid">
         <p className="col-span-12 label text-forest">Scent character</p>
+        <p className="col-span-12 mt-3 max-w-lg text-sm leading-7 text-ink/55">{SCENT_PROFILE_BASIS}</p>
         <ul className="col-span-12 mt-10 md:col-span-10">
           {rows.map((row) => (
             <li key={row.label} className="flex items-baseline justify-between gap-6 border-b border-ink/10 py-5">

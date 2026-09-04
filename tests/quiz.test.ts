@@ -29,7 +29,7 @@ describe("quiz scoring", () => {
     expect(result.primary.product.slug).toBe("musk-rizali");
   });
 
-  it("leans product five for saffron warmth", () => {
+  it("leans saffron amber oud for saffron warmth", () => {
     const result = scoreQuiz({
       feel: "warm",
       when: "wedding",
@@ -38,6 +38,30 @@ describe("quiz scoring", () => {
       personality: "traditional",
       weather: "winter",
     });
-    expect(result.primary.product.slug).toBe("product-five");
+    expect(result.primary.product.slug).toBe("saffron-amber-oud");
+  });
+
+  it("leans oud rose for floral rose evenings", () => {
+    const result = scoreQuiz({
+      feel: "floral",
+      when: "date",
+      projection: "noticeable",
+      notes: "rose",
+      personality: "romantic",
+      weather: "cool",
+    });
+    expect(result.primary.product.slug).toBe("oud-rose");
+  });
+
+  it("leans vanilla musk for vanilla sweetness", () => {
+    const result = scoreQuiz({
+      feel: "sweet",
+      when: "evening",
+      projection: "noticeable",
+      notes: "vanilla",
+      personality: "romantic",
+      weather: "winter",
+    });
+    expect(result.primary.product.slug).toBe("vanilla-musk");
   });
 });

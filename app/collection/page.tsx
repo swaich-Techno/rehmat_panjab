@@ -15,8 +15,8 @@ export default function CollectionPage() {
       <CollectionTracker />
       <PageIntro
         kicker="The catalogue"
-        title={"Five numbers.\nOne finished name."}
-        body="Musk Rizali is written. Numbers 02–05 keep working titles — in development, marked as such. No invented prices. Concentrated perfume oil: a few drops on skin, not a spray that fills a room."
+        title={"Five oils.\nNamed."}
+        body="Musk Rizali, Vanilla Musk, Saffron Amber Oud, White Oud, Oud Rose. Concentrated perfume oil. No invented prices. A few drops on skin, not a spray that fills a room."
       />
       <CollectionCompositions />
     </div>

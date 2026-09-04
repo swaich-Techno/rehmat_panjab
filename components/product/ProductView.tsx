@@ -36,13 +36,14 @@ export function ProductView({ product }: { product: Product }) {
       <section className="site-grid relative z-[1] items-start section-pad">
         <div className="col-span-12 md:col-span-6">
           <LiquidMask kind="oil">
-            <div className="image-sheen relative min-h-[62vw] bg-mint/40 md:min-h-[72vh]" data-cursor="product">
+            <div className="image-sheen relative aspect-[4/5] bg-charcoal" data-cursor="product">
               <Image
                 src={product.images[0].src}
                 alt={product.images[0].alt}
                 fill
                 priority
-                className="object-contain p-10"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
               />
               {development ? (
                 <p className="dev-mark absolute left-4 top-4">In development</p>
@@ -56,6 +57,7 @@ export function ProductView({ product }: { product: Product }) {
           <h1 className="display headline-gap text-6xl md:text-8xl">{product.name}</h1>
           <OilExplainer className="mt-4" />
           <p className="copy-gap max-w-md text-base leading-7 text-ink/80">{product.description}</p>
+          <p className="mt-4 text-sm leading-7 text-ink/60">{product.notes.top.join(" · ")}</p>
           {development ? (
             <p className="mt-4 text-sm leading-7 text-ink/70">
               This number is reserved. The juice and the name are still being written. You can look — you cannot buy

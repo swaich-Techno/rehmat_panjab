@@ -20,10 +20,19 @@ describe("V3.2 conversion honesty", () => {
     expect(holdLabel(true)).toBe("Add to cart");
   });
 
-  it("marks product two through five as in development", () => {
-    const named = PRODUCTS.filter((product) => !isDevelopmentProduct(product));
-    expect(named.map((product) => product.slug)).toEqual(["musk-rizali"]);
-    expect(PRODUCTS.filter(isDevelopmentProduct)).toHaveLength(4);
+  it("names the first five oils and leaves none in development", () => {
+    expect(PRODUCTS.map((product) => product.slug)).toEqual([
+      "musk-rizali",
+      "vanilla-musk",
+      "saffron-amber-oud",
+      "white-oud",
+      "oud-rose",
+    ]);
+    expect(PRODUCTS.filter(isDevelopmentProduct)).toHaveLength(0);
+    expect(PRODUCTS.filter((product) => product.featured).map((product) => product.slug)).toEqual([
+      "musk-rizali",
+      "vanilla-musk",
+    ]);
   });
 
   it("explains concentrated oil and sizes without fake wear counts", () => {

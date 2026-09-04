@@ -38,8 +38,8 @@ export default function CartPage() {
                   key={key}
                   className={`grid grid-cols-[88px_1fr] gap-5 border-t border-ink/10 pt-6 ${dissolving === key ? "dissolve-out" : ""}`}
                 >
-                  <div className="relative h-28 bg-mint">
-                    <Image src={line.image} alt="" fill className="object-contain p-2" />
+                  <div className="relative h-28 overflow-hidden bg-charcoal">
+                    <Image src={line.image} alt={line.name} fill sizes="88px" className="object-cover" />
                   </div>
                   <div>
                     <p className="label">{line.number}</p>

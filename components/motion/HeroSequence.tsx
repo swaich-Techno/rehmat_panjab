@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { HOUSE, PRODUCTS, isDevelopmentProduct } from "@/data/fragrance-config";
+import { HOUSE, PRODUCTS, getProductBySlug } from "@/data/fragrance-config";
 import { HOMEPAGE_CMS } from "@/data/homepage-cms";
 import { RefractionLayer } from "@/components/motion/RefractionLayer";
 import { Droplet } from "@/components/motion/Droplet";
@@ -33,9 +33,11 @@ export function HeroSequence() {
     track({ name: "hero_view", path: "/" });
   }, []);
 
-  const musk = PRODUCTS[0];
-  const developing = PRODUCTS.filter(isDevelopmentProduct);
+  const featured = getProductBySlug(HOMEPAGE_CMS.featuredSlug) ?? PRODUCTS[0];
+  const featuredSet = PRODUCTS.filter((product) => product.featured);
+  const rest = PRODUCTS.filter((product) => !product.featured);
   const cinematic = motionAllowsCinematic(mode);
+  const heroStill = featured.images[0];
 
   return (
     <div className="home-scenes">
@@ -55,7 +57,7 @@ export function HeroSequence() {
             <p className="label copy-gap max-w-sm text-ink/70">{HOMEPAGE_CMS.heroLine}</p>
             <p className="copy-gap max-w-md text-sm leading-7 text-ink/75">{HOUSE.oilExplain}</p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <LiquidLink href={`/product/${musk.slug}`} liquid="oil">
+              <LiquidLink href={`/product/${featured.slug}`} liquid="oil">
                 {HOMEPAGE_CMS.featuredCta}
               </LiquidLink>
               <LiquidLink href="/collection" liquid="water">
@@ -64,7 +66,7 @@ export function HeroSequence() {
             </div>
           </div>
           <div className="col-span-12 mt-4 md:col-span-5 md:col-start-8 md:row-start-1 md:mt-6">
-            <BottleStage src="/images/placeholders/bottle-01.svg" alt="Placeholder house bottle in morning light" />
+            <BottleStage src={heroStill.src} alt={heroStill.alt} />
           </div>
           <div className="col-span-12 scroll-cue mt-2 md:col-span-4">
             <Droplet onSettled={() => setRipple(true)} />
@@ -81,24 +83,26 @@ export function HeroSequence() {
         <div className="site-grid">
           <p className="col-span-12 label text-forest">The first glass</p>
           <div className="col-span-12 md:col-span-5">
-            <p className="label headline-gap text-wine">01</p>
-            <h2 className="display headline-gap text-[clamp(2.6rem,7vw,5.8rem)]">Musk Rizali</h2>
-            <p className="copy-gap max-w-sm text-base leading-7">{HOUSE.oilLine}</p>
-            <p className="copy-gap max-w-sm text-sm leading-7 text-ink/70">{HOUSE.sizeGuide[6]}</p>
+            <p className="label headline-gap text-wine">{featured.number}</p>
+            <h2 className="display headline-gap text-[clamp(2.6rem,7vw,5.8rem)]">{featured.name}</h2>
+            <p className="copy-gap max-w-sm text-base leading-7">{featured.subtitle}</p>
+            <p className="copy-gap max-w-sm text-sm leading-7 text-ink/70">{featured.description}</p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <LiquidLink href="/product/musk-rizali" liquid="oil">
+              <LiquidLink href={`/product/${featured.slug}`} liquid="oil">
                 {HOMEPAGE_CMS.featuredCta}
               </LiquidLink>
             </div>
           </div>
           <div className="col-span-12 mt-8 md:col-span-6 md:col-start-7 md:mt-0">
             <LiquidMask kind="glass">
-              <div className="image-sheen relative min-h-[52vw] bg-mint md:min-h-[58vh]" data-cursor="product">
+              <div className="image-sheen relative aspect-[4/5] bg-charcoal md:min-h-0" data-cursor="product">
                 <Image
-                  src="/images/placeholders/bottle-01.svg"
-                  alt="Placeholder Musk Rizali bottle"
+                  src={heroStill.src}
+                  alt={heroStill.alt}
                   fill
-                  className="object-contain p-8"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  priority
                 />
               </div>
             </LiquidMask>
@@ -133,50 +137,72 @@ export function HeroSequence() {
       <section className="scene scene--overlap bg-cream">
         <div className="site-grid collection-stack">
           <p className="col-span-12 label text-forest">Collection</p>
-          <ClickWashCard
-            href={`/product/${musk.slug}`}
-            className="col-span-12 grid items-end gap-x-[var(--space-collection-col)] gap-y-6 md:grid-cols-12"
-          >
-            <LiquidMask kind="sweep" className="md:col-span-5">
-              <div className="image-sheen relative aspect-[3/4] bg-mint" data-cursor="product">
-                <Image src={musk.images[0].src} alt={musk.images[0].alt} fill className="object-contain p-8" />
+          {featuredSet.map((product, index) => (
+            <ClickWashCard
+              key={product.id}
+              href={`/product/${product.slug}`}
+              className="col-span-12 grid items-end gap-x-[var(--space-collection-col)] gap-y-6 md:grid-cols-12"
+            >
+              <LiquidMask kind={index % 2 ? "oil" : "sweep"} className={index % 2 ? "md:col-span-5 md:col-start-8" : "md:col-span-5"}>
+                <div className="image-sheen relative aspect-[4/5] bg-charcoal" data-cursor="product">
+                  <Image
+                    src={product.images[0].src}
+                    alt={product.images[0].alt}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 42vw"
+                    className="object-cover"
+                  />
+                </div>
+              </LiquidMask>
+              <div className={index % 2 ? "md:col-span-6 md:col-start-1 md:row-start-1" : "md:col-span-6 md:col-start-7 md:-ml-8"}>
+                <p className="label">{product.number}</p>
+                <h2 className="display headline-gap text-[clamp(2.4rem,6.5vw,5.4rem)]">
+                  <ClickWashLink href={`/product/${product.slug}`} className="no-underline link-lux">
+                    {product.name}
+                  </ClickWashLink>
+                </h2>
+                <p className="copy-gap max-w-md text-base leading-7">{product.subtitle}</p>
+                <p className="mt-2 text-sm leading-7 text-ink/55">LAUNCHING SOON</p>
+                <div className="mt-5">
+                  <LiquidLink href={`/product/${product.slug}`} liquid="oil">
+                    Hold {product.name}
+                  </LiquidLink>
+                </div>
               </div>
-            </LiquidMask>
-            <div className="md:col-span-6 md:col-start-7 md:-ml-8">
-              <p className="label">{musk.number}</p>
-              <h2 className="display headline-gap text-[clamp(2.4rem,6.5vw,5.4rem)]">
-                <ClickWashLink href={`/product/${musk.slug}`} className="no-underline link-lux">
-                  {musk.name}
-                </ClickWashLink>
-              </h2>
-              <p className="copy-gap max-w-md text-base leading-7">{musk.subtitle}</p>
-              <div className="mt-5">
-                <LiquidLink href={`/product/${musk.slug}`} liquid="oil">
-                  {HOMEPAGE_CMS.featuredCta}
-                </LiquidLink>
-              </div>
-            </div>
-          </ClickWashCard>
+            </ClickWashCard>
+          ))}
         </div>
       </section>
 
       <section className="scene scene--overlap bg-ivory">
         <div className="site-grid">
-          <p className="col-span-12 label text-rose-metal">In development</p>
+          <p className="col-span-12 label text-forest">The catalogue</p>
           <h2 className="col-span-12 display headline-gap text-[clamp(2.2rem,6vw,4.6rem)] md:col-span-8">
-            02–05 are still being written
+            Five oils, named
           </h2>
           <p className="col-span-12 copy-gap max-w-lg text-base leading-7 md:col-span-6">
-            {HOMEPAGE_CMS.comingSoonLine} Working titles only. Not unfinished shop pages.
+            {HOMEPAGE_CMS.comingSoonLine}
           </p>
-          <ul className="col-span-12 mt-8 grid gap-4 md:col-span-10 md:grid-cols-4">
-            {developing.map((product) => (
-              <li key={product.id} className="border-t border-ink/10 pt-3">
-                <p className="label">{product.number}</p>
-                <ClickWashLink href={`/product/${product.slug}`} className="display mt-1 block text-2xl no-underline link-lux">
-                  {product.name}
-                </ClickWashLink>
-                <p className="mt-2 text-xs leading-6 text-ink/50">Working title</p>
+          <ul className="col-span-12 mt-8 grid gap-6 md:col-span-12 md:grid-cols-3">
+            {rest.map((product) => (
+              <li key={product.id}>
+                <ClickWashCard href={`/product/${product.slug}`} className="block">
+                  <div className="image-sheen relative aspect-[4/5] bg-charcoal" data-cursor="product">
+                    <Image
+                      src={product.images[0].src}
+                      alt={product.images[0].alt}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <p className="label mt-3">{product.number}</p>
+                  <ClickWashLink href={`/product/${product.slug}`} className="display mt-1 block text-2xl no-underline link-lux">
+                    {product.name}
+                  </ClickWashLink>
+                  <p className="mt-2 text-sm leading-6 text-ink/60">{product.subtitle}</p>
+                  <p className="mt-1 text-xs leading-6 text-ink/50">LAUNCHING SOON</p>
+                </ClickWashCard>
               </li>
             ))}
           </ul>
@@ -271,7 +297,7 @@ function BottleStage({ src, alt }: { src: string; alt: string }) {
   return (
     <div
       ref={stageRef}
-      className="bottle-stage relative mx-auto h-[min(46vh,380px)] w-full max-w-sm"
+      className="bottle-stage relative mx-auto aspect-[4/5] h-[min(46vh,380px)] w-auto max-w-full overflow-hidden bg-charcoal"
       data-cursor="product"
       onPointerMove={(event) => {
         if (event.pointerType === "touch" || mode === "REDUCED") return;
@@ -291,10 +317,8 @@ function BottleStage({ src, alt }: { src: string; alt: string }) {
           transition: `background ${durationCss("micro")} linear`,
         }}
       />
-      <div ref={glassRef} className="bottle-stage__glass absolute inset-0 flex justify-center">
-        <div className="relative h-full w-24">
-          <Image src={src} alt={alt} fill className="object-contain" priority />
-        </div>
+      <div ref={glassRef} className="bottle-stage__glass absolute inset-0">
+        <Image src={src} alt={alt} fill sizes="(max-width: 768px) 90vw, 380px" className="object-cover" priority />
       </div>
     </div>
   );
