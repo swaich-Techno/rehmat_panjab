@@ -44,12 +44,12 @@ If the CLI or MCP is not authenticated, use `npx vercel deploy --temporary --yes
 
 **Working branch for V3.3:** `cursor/rehmat-panjab-v3-5654`. Production hostname (`rehmat-panjab.vercel.app`, or whatever the claimed project assigns) requires the Vercel project Production Branch to be this working branch, or a merge to `main`. `NEXT_PUBLIC_SITE_URL` should match the production URL once the project is claimed.
 
-Vercel CLI was **logged out** in this run (`vercel whoami` → Logged out). MCP `list_teams` was not used to invent a production host. A new temporary anonymous production deployment was created with `npx vercel deploy --temporary --yes` after clearing the expired local `.vercel/anonymous.json` (gitignored; never commit it):
+Vercel CLI was **logged out** in this run (`vercel whoami` → Logged out). MCP `list_teams` was not used to invent a production host. A new temporary anonymous production deployment was created with `npx vercel deploy --temporary --yes` after clearing a previously claimed local `.vercel/anonymous.json` (gitignored; never commit it):
 
-- Live: https://temporary-racing-timpani-3dp991g.vercel.app
-- Claim: https://vercel.com/claim-deployment?code=4f6321a7-f260-4d6b-baed-9df69251aa74
+- Live: https://temporary-agile-antimony-n6n64y4.vercel.app
+- Claim: https://vercel.com/claim-deployment?code=0cae27b0-40c1-4221-8100-c93ac4ad7854
 
-Anonymous deployments expire (~59 minutes from this deploy). GET `/`, `/collection`, `/find-your-scent`, `/product/musk-rizali` returned HTTP 200. Claim the URL or connect the GitHub repo (`swaich-Techno/rehmat_panjab`) and set the production branch. Do not treat the temporary host as permanent production. There is no working `rehmat-panjab.vercel.app` from this logged-out CLI.
+Anonymous deployments expire (~59 minutes from this deploy). GET `/`, `/collection`, `/find-your-scent`, and all five product PDPs returned HTTP 200. Campaign WebPs at `/images/products/*.webp` returned `image/webp`. Claim the URL or connect the GitHub repo (`swaich-Techno/rehmat_panjab`) and set the production branch. Do not treat the temporary host as permanent production. There is no working `rehmat-panjab.vercel.app` from this logged-out CLI.
 
 ## GitHub
 
