@@ -8,10 +8,16 @@ import { LiquidButton } from "@/components/ui/LiquidButton";
 import { formatInrFromPaise } from "@/lib/commerce/money";
 import { track } from "@/lib/analytics/index";
 import { LOCAL_ORDERS_KEY } from "@/lib/insights/store";
+import { PackCeremony, type PackPhase } from "@/components/commerce/PackCeremony";
+import { MobileCommerceBar } from "@/components/commerce/MobileCommerceBar";
+import { durationMs } from "@/lib/motion/tokens";
+import { useMotionMode } from "@/lib/motion/useMotionMode";
+import type { OrderPhase } from "@/components/ui/LiquidButton";
 
 export default function CheckoutPage() {
   const { totals, cart } = useCart();
   const router = useRouter();
+  const mode = useMotionMode();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -19,14 +25,30 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [whatsapp, setWhatsapp] = useState<string | null>(null);
+  const [pack, setPack] = useState<PackPhase>("idle");
+  const [orderPhase, setOrderPhase] = useState<OrderPhase>("idle");
 
   useEffect(() => {
     track({ name: "checkout_started", path: "/checkout" });
   }, []);
 
+  async function playPack() {
+    if (mode === "REDUCED") return;
+    const slice = Math.floor(durationMs("pack") / 3);
+    setPack("bottle");
+    await wait(slice);
+    setPack("carton");
+    await wait(slice);
+    setPack("parcel");
+    await wait(slice);
+    setPack("idle");
+  }
+
   async function submit(channel: "manual" | "whatsapp") {
     setLoading(true);
     setError("");
+    setOrderPhase("preparing");
+    await playPack();
     const response = await fetch("/api/checkout/request", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -47,9 +69,11 @@ export default function CheckoutPage() {
     };
     setLoading(false);
     if (!data.ok || !data.requestId) {
+      setOrderPhase("idle");
       setError(data.message ?? "The request could not be written.");
       return;
     }
+    setOrderPhase("ready");
     const orders = JSON.parse(window.localStorage.getItem(LOCAL_ORDERS_KEY) ?? "[]") as unknown[];
     window.localStorage.setItem(
       LOCAL_ORDERS_KEY,
@@ -64,7 +88,8 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="site-grid py-16">
+    <div className="site-grid py-16 pb-28 md:pb-16">
+      <PackCeremony phase={pack} />
       <div className="col-span-12 md:col-span-7">
         <p className="label text-wine">Checkout coming soon</p>
         <h1 className="display mt-3 text-5xl md:text-7xl">
@@ -79,10 +104,21 @@ export default function CheckoutPage() {
           <Field label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
           <Field label="Phone" value={phone} onChange={(event) => setPhone(event.target.value)} required />
           <AreaField label="Note to the house" rows={4} value={note} onChange={(event) => setNote(event.target.value)} />
-          {error ? <p className="text-sm text-wine">{error}</p> : null}
+          {error ? (
+            <p className="text-sm text-wine" role="alert">
+              {error}
+            </p>
+          ) : null}
           <div className="flex flex-col gap-3">
-            <LiquidButton loading={loading} disabled={totals.lines.length === 0} onClick={() => void submit("manual")}>
-              Confirm request
+            <LiquidButton
+              liquid="oil"
+              orderFlow
+              phase={orderPhase}
+              loading={loading}
+              disabled={totals.lines.length === 0}
+              onClick={() => void submit("manual")}
+            >
+              Complete order
             </LiquidButton>
             <LiquidButton loading={loading} disabled={totals.lines.length === 0} onClick={() => void submit("whatsapp")}>
               Request on WhatsApp
@@ -111,6 +147,11 @@ export default function CheckoutPage() {
           {totals.all_unpriced || totals.lines.length === 0 ? "To confirm" : formatInrFromPaise(totals.total_paise)}
         </p>
       </aside>
+      <MobileCommerceBar />
     </div>
   );
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }

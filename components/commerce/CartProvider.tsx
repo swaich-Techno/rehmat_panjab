@@ -6,12 +6,14 @@ import { CART_STORAGE_KEY, emptyCart, setLineQuantity, upsertLine, type StoredCa
 import { CartDrawer } from "@/components/commerce/CartDrawer";
 import { track } from "@/lib/analytics/index";
 import { useLocalJson, writeLocalJson } from "@/lib/storage/local-json";
+import { durationMs } from "@/lib/motion/tokens";
 
 const EMPTY = emptyCart();
 
 type FlyState = {
   src: string;
   from: DOMRect;
+  to: DOMRect;
 } | null;
 
 type CartContextValue = {
@@ -24,6 +26,7 @@ type CartContextValue = {
   addLine: (line: CartLineInput, meta?: { src?: string; from?: DOMRect }) => void;
   updateLine: (line: CartLineInput) => void;
   removeLine: (productId: string, variantId: string) => void;
+  dissolving: string | null;
   fly: FlyState;
   liveMessage: string;
 };
@@ -34,35 +37,65 @@ function persist(cart: StoredCart) {
   writeLocalJson(CART_STORAGE_KEY, { ...cart, updatedAt: Date.now() });
 }
 
+function cartTargetRect(): DOMRect | null {
+  if (typeof window === "undefined") return null;
+  const mobile = window.matchMedia("(max-width: 767px)").matches;
+  const selector = mobile ? '[data-cart-target="mobile"]' : '[data-cart-target="desktop"]';
+  const node = document.querySelector(selector) ?? document.querySelector("[data-cart-target]");
+  return node?.getBoundingClientRect() ?? null;
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const cart = useLocalJson<StoredCart>(CART_STORAGE_KEY, EMPTY);
   const [open, setOpen] = useState(false);
   const [fly, setFly] = useState<FlyState>(null);
   const [liveMessage, setLiveMessage] = useState("");
+  const [dissolving, setDissolving] = useState<string | null>(null);
 
   const totals = useMemo(() => calculateCart(cart.lines ?? []), [cart.lines]);
   const itemCount = totals.item_count;
 
-  const addLine = useCallback((line: CartLineInput, meta?: { src?: string; from?: DOMRect }) => {
-    persist(upsertLine(cart, line));
-    setLiveMessage("Added to cart");
-    track({ name: "add_to_cart", meta: { productId: line.productId } });
-    if (meta?.from && meta.src && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setFly({ src: meta.src, from: meta.from });
-      window.setTimeout(() => setFly(null), 800);
-    }
-    window.setTimeout(() => setOpen(true), 420);
-  }, [cart]);
+  const addLine = useCallback(
+    (line: CartLineInput, meta?: { src?: string; from?: DOMRect }) => {
+      persist(upsertLine(cart, line));
+      setLiveMessage("Added to cart");
+      track({ name: "add_to_cart", meta: { productId: line.productId } });
+      const reduce =
+        typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const to = cartTargetRect();
+      if (meta?.from && meta.src && to && !reduce) {
+        setFly({ src: meta.src, from: meta.from, to });
+        window.setTimeout(() => setFly(null), durationMs("cartFly"));
+      }
+    },
+    [cart],
+  );
 
-  const updateLine = useCallback((line: CartLineInput) => {
-    persist(setLineQuantity(cart, line));
-    setLiveMessage("Cart updated");
-  }, [cart]);
+  const updateLine = useCallback(
+    (line: CartLineInput) => {
+      persist(setLineQuantity(cart, line));
+      setLiveMessage("Cart updated");
+    },
+    [cart],
+  );
 
-  const removeLine = useCallback((productId: string, variantId: string) => {
-    persist(setLineQuantity(cart, { productId, variantId, quantity: 0 }));
-    setLiveMessage("Removed from cart");
-  }, [cart]);
+  const removeLine = useCallback(
+    (productId: string, variantId: string) => {
+      const key = `${productId}-${variantId}`;
+      setDissolving(key);
+      const reduce =
+        typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.setTimeout(
+        () => {
+          persist(setLineQuantity(cart, { productId, variantId, quantity: 0 }));
+          setDissolving(null);
+          setLiveMessage("Removed from cart");
+        },
+        reduce ? 80 : durationMs("editorial"),
+      );
+    },
+    [cart],
+  );
 
   const value = useMemo(
     () => ({
@@ -75,19 +108,39 @@ export function CartProvider({ children }: { children: ReactNode }) {
       addLine,
       updateLine,
       removeLine,
+      dissolving,
       fly,
       liveMessage,
     }),
-    [addLine, cart, fly, itemCount, liveMessage, open, removeLine, totals, updateLine],
+    [addLine, cart, dissolving, fly, itemCount, liveMessage, open, removeLine, totals, updateLine],
   );
 
   return (
     <CartContext.Provider value={value}>
       {children}
       <CartDrawer />
+      {fly ? (
+        <img
+          src={fly.src}
+          alt=""
+          className="pointer-events-none fixed z-[60] h-16 w-10 object-contain"
+          style={{
+            left: fly.from.left,
+            top: fly.from.top,
+            animation: `rp-fly var(--duration-cartFly) var(--ease-weighted) forwards`,
+            ["--dx" as string]: `${fly.to.left - fly.from.left}px`,
+            ["--dy" as string]: `${fly.to.top - fly.from.top}px`,
+          }}
+        />
+      ) : null}
       <p className="sr-only" aria-live="polite">
         {liveMessage}
       </p>
+      <style>{`
+        @keyframes rp-fly {
+          to { transform: translate(var(--dx), var(--dy)) scale(0.35); opacity: 0.25; }
+        }
+      `}</style>
     </CartContext.Provider>
   );
 }

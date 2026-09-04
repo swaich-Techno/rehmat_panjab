@@ -6,6 +6,7 @@ import type { Product } from "@/data/fragrance-config";
 import { AddToCartButton } from "@/components/commerce/AddToCartButton";
 import { BuyNowButton } from "@/components/commerce/BuyNowButton";
 import { PriceDisplay } from "@/components/commerce/PriceDisplay";
+import { MobileCommerceBar } from "@/components/commerce/MobileCommerceBar";
 import { Composition } from "@/components/product/Composition";
 import { ScentCharacter } from "@/components/product/ScentCharacter";
 import { track } from "@/lib/analytics/index";
@@ -22,7 +23,7 @@ export function ProductView({ product }: { product: Product }) {
     <div>
       <section className="site-grid items-start py-8 md:py-16">
         <div className="col-span-12 md:col-span-6">
-          <div className="relative min-h-[70vw] bg-mist md:min-h-[80vh]">
+          <div className="relative min-h-[70vw] bg-mint md:min-h-[80vh]">
             <Image
               src={product.images[0].src}
               alt={product.images[0].alt}
@@ -59,7 +60,7 @@ export function ProductView({ product }: { product: Product }) {
               <p className="mt-2 text-sm text-rose-metal">Not on sale yet. You may hold it as a request.</p>
             ) : null}
           </div>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 hidden flex-col gap-3 sm:flex-row md:flex">
             <AddToCartButton
               productId={product.id}
               variantId={variant.id}
@@ -71,6 +72,11 @@ export function ProductView({ product }: { product: Product }) {
       </section>
       <Composition product={product} />
       <ScentCharacter product={product} />
+      <MobileCommerceBar
+        productId={product.id}
+        variantId={variant.id}
+        imageSrc={product.images[0].src}
+      />
     </div>
   );
 }

@@ -1,22 +1,34 @@
 "use client";
 
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Emblem } from "@/components/brand/Emblem";
 import { LiquidLink } from "@/components/ui/LiquidLink";
+import { Droplet } from "@/components/motion/Droplet";
+import { Ripple } from "@/components/motion/Ripple";
+import { durationCss } from "@/lib/motion/tokens";
 
 export function ConfirmationCeremony({
   requestId,
 }: {
   requestId: string;
 }) {
+  const [mark, setMark] = useState(false);
+
   return (
     <section className="relative min-h-[86svh] overflow-hidden bg-ivory py-20">
-      <div className="pointer-events-none absolute left-1/2 top-16 h-3 w-3 -translate-x-1/2 rounded-full bg-amber animation-[drop_900ms_cubic-bezier(0.22,1,0.36,1)_both]" />
       <div className="mx-auto flex max-w-2xl flex-col items-center px-6 text-center">
-        <div className="relative mt-10 flex h-40 w-40 items-center justify-center">
-          <span className="absolute inset-0 rounded-full border border-sand/70" />
-          <span className="absolute inset-4 rounded-full border border-amber/40" />
-          <Emblem className="h-16 w-16 text-forest" />
+        <div className="relative mt-6 flex h-48 w-48 items-center justify-center">
+          <Droplet onSettled={() => setMark(true)} />
+          {mark ? <Ripple personality="water" className="absolute left-1/2 top-1/2" /> : null}
+          <span
+            className="absolute inset-12 flex items-center justify-center"
+            style={{
+              animation: mark ? `confirmation-mark ${durationCss("editorial")} var(--ease-weighted) both` : undefined,
+              opacity: mark ? 1 : 0,
+            }}
+          >
+            <Emblem className="h-16 w-16 text-forest" />
+          </span>
         </div>
         <p className="label mt-10 text-forest">Request received</p>
         <h1 className="display mt-4 text-5xl md:text-7xl">Your Rehmat is on its way to being confirmed</h1>
@@ -25,10 +37,7 @@ export function ConfirmationCeremony({
         </p>
         <p className="display mt-8 text-3xl tracking-[0.14em]">#{requestId}</p>
         <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-          <LiquidLink href={`/order/${requestId}`}>View request</LiquidLink>
-          <Link href="/collection" className="label self-center">
-            Continue exploring
-          </Link>
+          <LiquidLink href="/collection">Continue exploring</LiquidLink>
         </div>
       </div>
     </section>

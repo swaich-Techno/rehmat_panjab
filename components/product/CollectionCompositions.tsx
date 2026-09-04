@@ -10,7 +10,7 @@ export function CollectionCompositions({ featuredOnly = false }: { featuredOnly?
       {items.map((product, index) => (
         <article key={product.id} className="site-grid items-end">
           <div className={`col-span-12 md:col-span-5 ${index % 2 ? "md:col-start-8" : ""}`}>
-            <div className="relative aspect-[4/5] bg-mist">
+            <div className="relative aspect-[4/5] bg-mint">
               <Image src={product.images[0].src} alt={product.images[0].alt} fill className="object-contain p-10" />
             </div>
           </div>
