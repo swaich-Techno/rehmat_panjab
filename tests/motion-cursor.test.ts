@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { cursorEnabled, cursorShapeFromElement, cursorShapeFromDataset, nativeCursorHidden } from "@/lib/motion/cursor-mode";
 import { scaleDuration, motionAllowsCursor, motionAllowsCinematic } from "@/lib/motion/mode";
+import { MOTION_DURATION_MS } from "@/lib/motion/tokens";
 import { LIQUID_PERSONALITIES } from "@/lib/motion/personalities";
 import { transitionKind } from "@/lib/motion/transitions";
 

@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { HOUSE } from "@/data/fragrance-config";
 import { Emblem } from "@/components/brand/Emblem";
 import { PRIMARY_NAV } from "@/lib/nav";
-import { useMotionMode } from "@/lib/motion/useMotionMode";
 
 export function SiteFooter() {
   const pathname = usePathname();
@@ -75,15 +74,10 @@ export function SiteFooter() {
 function FooterMark() {
   const ref = useRef<HTMLDivElement>(null);
   const [shown, setShown] = useState(false);
-  const mode = useMotionMode();
 
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
-    if (mode === "REDUCED") {
-      setShown(true);
-      return;
-    }
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) setShown(true);
@@ -92,7 +86,7 @@ function FooterMark() {
     );
     io.observe(node);
     return () => io.disconnect();
-  }, [mode]);
+  }, []);
 
   return (
     <div
