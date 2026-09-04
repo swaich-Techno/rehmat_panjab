@@ -40,7 +40,9 @@ npx vercel env pull .env.local --yes
 npx vercel deploy
 ```
 
-If the CLI or MCP is not authenticated, use the Vercel dashboard import. Do not invent a deployment URL.
+If the CLI or MCP is not authenticated, use `npx vercel deploy --temporary --yes` for a claimable URL, or import via the Vercel dashboard. Do not invent a production hostname.
+
+**Production hostname (`rehmat-panjab.vercel.app`):** set the Vercel project Production Branch to this working branch, or merge to `main`. `NEXT_PUBLIC_SITE_URL` should match the production URL once the project is claimed.
 
 ## GitHub
 
