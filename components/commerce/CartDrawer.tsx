@@ -41,7 +41,7 @@ export function CartDrawer() {
         </div>
         <div className="flex-1 overflow-y-auto px-5 py-4">
           {totals.lines.length === 0 ? (
-            <EmptyShelf />
+            <EmptyShelf onClose={closeCart} />
           ) : (
             <ul className="space-y-4">
               {totals.lines.map((line) => {
@@ -118,7 +118,7 @@ export function CartDrawer() {
   );
 }
 
-function EmptyShelf() {
+function EmptyShelf({ onClose }: { onClose: () => void }) {
   return (
     <div className="flex flex-col gap-4 py-6">
       <div className="relative mx-auto h-28 w-16 border border-ink/15 bg-ivory/40">
@@ -129,7 +129,7 @@ function EmptyShelf() {
       <p className="mx-auto max-w-xs text-center text-sm leading-7 text-ink/70">
         The catalogue is still arriving. Add an oil from the collection if you want the house to hold a request.
       </p>
-      <Link href="/collection" onClick={closeCart} className="liquid-button mx-auto text-center no-underline" data-liquid="water">
+      <Link href="/collection" onClick={onClose} className="liquid-button mx-auto text-center no-underline" data-liquid="water">
         View collection
       </Link>
     </div>

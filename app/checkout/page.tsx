@@ -14,7 +14,8 @@ import { OilLayer } from "@/components/motion/OilLayer";
 import { durationMs } from "@/lib/motion/tokens";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 import type { OrderPhase } from "@/components/ui/LiquidButton";
-import { readActiveReward } from "@/lib/rewards/client";
+import { ACTIVE_REWARD_KEY, readRewardCookie, type ActiveReward } from "@/lib/rewards/client";
+import { useLocalJson } from "@/lib/storage/local-json";
 
 export default function CheckoutPage() {
   const { totals, cart } = useCart();
@@ -30,16 +31,14 @@ export default function CheckoutPage() {
   const [pack, setPack] = useState<PackPhase>("idle");
   const [orderPhase, setOrderPhase] = useState<OrderPhase>("idle");
   const [whatsappOpen, setWhatsappOpen] = useState(false);
-  const [rewardNote, setRewardNote] = useState("");
+  const storedReward = useLocalJson<ActiveReward | null>(ACTIVE_REWARD_KEY, null);
+  const rewardToken = storedReward?.token ?? null;
+  const rewardNote = rewardToken
+    ? "A 5% house thank-you is attached if this email matches the vote. It only applies when prices exist — we will not invent a rupee off."
+    : "";
 
   useEffect(() => {
     track({ name: "checkout_started", path: "/checkout" });
-    const held = readActiveReward();
-    if (held?.token) {
-      setRewardNote(
-        "A 5% house thank-you is attached if this email matches the vote. It only applies when prices exist — we will not invent a rupee off.",
-      );
-    }
     void fetch("/api/capabilities")
       .then((response) => response.json())
       .then((data: { whatsapp?: boolean }) => setWhatsappOpen(Boolean(data.whatsapp)))
@@ -63,7 +62,6 @@ export default function CheckoutPage() {
     setError("");
     setOrderPhase("preparing");
     await playPack();
-    const held = readActiveReward();
     const response = await fetch("/api/checkout/request", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -74,7 +72,7 @@ export default function CheckoutPage() {
         phone,
         note,
         channel,
-        rewardToken: held?.token,
+        rewardToken: rewardToken || readRewardCookie() || undefined,
       }),
     });
     const data = (await response.json()) as {

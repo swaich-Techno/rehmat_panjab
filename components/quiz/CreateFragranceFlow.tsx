@@ -37,7 +37,7 @@ const EMPTY_SESSION: Session = { step: 0, answers: {}, name: "" };
 export function CreateFragranceFlow() {
   const stored = useLocalJson<Session>(CREATE_SESSION_KEY, EMPTY_SESSION);
   const step = stored.step ?? 0;
-  const answers = stored.answers ?? {};
+  const answers = useMemo(() => stored.answers ?? EMPTY_SESSION.answers, [stored.answers]);
   const name = stored.name ?? "";
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
