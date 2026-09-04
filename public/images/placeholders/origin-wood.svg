@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Placeholder wood">
+  <rect width="600" height="400" fill="#5A302F"/>
+  <text x="16" y="28" fill="#D5C5AA" font-size="11" font-family="sans-serif" letter-spacing="2">PLACEHOLDER  WOOD</text>
+  <path d="M0 90c80 20 140-20 220 0s160 30 220 0 160-10 160-10" fill="none" stroke="#D5C5AA" stroke-opacity="0.4"/>
+  <path d="M0 160c100 10 180-30 260 0s180 20 340 0" fill="none" stroke="#B9814D" stroke-opacity="0.45"/>
+  <path d="M0 240c90-20 200 20 300 0s200-20 300 10" fill="none" stroke="#D5C5AA" stroke-opacity="0.3"/>
+  <path d="M0 310c120 16 200-16 300 0s190 20 300-8" fill="none" stroke="#24442F" stroke-opacity="0.5"/>
+</svg>
