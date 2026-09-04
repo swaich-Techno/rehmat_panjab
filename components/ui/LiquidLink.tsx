@@ -24,7 +24,8 @@ export function LiquidLink({
 }) {
   const { go } = useLiquidTransition();
   const pathname = usePathname() ?? "/";
-  const press = useClickPress<HTMLAnchorElement>();
+  const { ref, pressed, ripple, fromPointer, trackPointer, magnet, clearMagnet, up, fromKeyboard } =
+    useClickPress<HTMLAnchorElement>();
   const fillMs = LIQUID_PERSONALITIES[liquid].fillMs;
 
   function navigate() {
@@ -39,46 +40,46 @@ export function LiquidLink({
   }
 
   function onPointerDown(event: PointerEvent<HTMLAnchorElement>) {
-    press.fromPointer(event, true);
+    fromPointer(event, true);
   }
 
   function onPointerMove(event: PointerEvent<HTMLAnchorElement>) {
     if (event.pointerType === "touch") return;
-    press.trackPointer(event);
-    if (!press.pressed) press.magnet(event);
+    trackPointer(event);
+    if (!pressed) magnet(event);
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLAnchorElement>) {
-    if (!press.fromKeyboard(event)) return;
+    if (!fromKeyboard(event)) return;
     if (event.key === " ") event.preventDefault();
   }
 
   return (
     <Link
-      ref={press.ref}
+      ref={ref}
       href={href}
       onClick={onClick}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
-      onPointerUp={() => press.up()}
+      onPointerUp={() => up()}
       onPointerLeave={() => {
-        press.up();
-        press.clearMagnet();
+        up();
+        clearMagnet();
       }}
       onKeyDown={onKeyDown}
       onKeyUp={(event) => {
-        if (event.key === "Enter" || event.key === " ") press.up();
+        if (event.key === "Enter" || event.key === " ") up();
       }}
       className={`liquid-button inline-flex items-center justify-center no-underline ${className}`}
       data-liquid={liquid}
       data-cursor="link"
-      data-pressed={press.pressed}
+      data-pressed={pressed}
       style={{
         ["--fill-ms" as string]: `${fillMs}ms`,
         transition: `transform ${durationCss("pressSettle")} var(--ease-overshoot)`,
       }}
     >
-      {press.ripple ? <Ripple x={press.ripple.x} y={press.ripple.y} personality={liquid} origin="pointer" /> : null}
+      {ripple ? <Ripple x={ripple.x} y={ripple.y} personality={liquid} origin="pointer" /> : null}
       <span className="relative z-[1]">{children}</span>
     </Link>
   );

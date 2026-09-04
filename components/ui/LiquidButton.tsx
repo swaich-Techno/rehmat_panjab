@@ -42,40 +42,41 @@ export function LiquidButton({
   onClick,
   ...props
 }: Props) {
-  const press = useClickPress<HTMLButtonElement>();
+  const { ref, pressed, ripple, fromPointer, trackPointer, magnet, clearMagnet, up, fromKeyboard } =
+    useClickPress<HTMLButtonElement>();
   const fillMs = LIQUID_PERSONALITIES[liquid].fillMs;
   const busy = success || loading || phase === "preparing" || phase === "ready";
 
   function handleMove(event: PointerEvent<HTMLButtonElement>) {
     if (event.pointerType === "touch") return;
-    press.trackPointer(event);
-    if (!busy && !press.pressed) press.magnet(event);
+    trackPointer(event);
+    if (!busy && !pressed) magnet(event);
     onPointerMove?.(event);
   }
 
   function handleDown(event: PointerEvent<HTMLButtonElement>) {
-    press.fromPointer(event, true);
+    fromPointer(event, true);
     onPointerDown?.(event);
   }
 
   function handleUp(event: PointerEvent<HTMLButtonElement>) {
-    press.up();
+    up();
     onPointerUp?.(event);
   }
 
   function handleLeave(event: PointerEvent<HTMLButtonElement>) {
-    press.up();
-    press.clearMagnet();
+    up();
+    clearMagnet();
     onPointerLeave?.(event);
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
-    press.fromKeyboard(event);
+    fromKeyboard(event);
     onKeyDown?.(event);
   }
 
   function handleKeyUp(event: KeyboardEvent<HTMLButtonElement>) {
-    if (event.key === "Enter" || event.key === " ") press.up();
+    if (event.key === "Enter" || event.key === " ") up();
     onKeyUp?.(event);
   }
 
@@ -85,13 +86,13 @@ export function LiquidButton({
   return (
     <button
       {...props}
-      ref={press.ref}
+      ref={ref}
       type={props.type ?? "button"}
       className={`liquid-button ${className}`}
       data-liquid={liquid}
       data-success={success || phase === "ready"}
       data-loading={loading || phase === "preparing"}
-      data-pressed={press.pressed}
+      data-pressed={pressed}
       data-phase={orderFlow ? phase : undefined}
       data-cursor={cursorAttr}
       disabled={disabled || loading}
@@ -107,7 +108,7 @@ export function LiquidButton({
         transition: `transform ${durationCss("pressSettle")} var(--ease-overshoot)`,
       }}
     >
-      {press.ripple ? <Ripple x={press.ripple.x} y={press.ripple.y} personality={liquid} origin="pointer" /> : null}
+      {ripple ? <Ripple x={ripple.x} y={ripple.y} personality={liquid} origin="pointer" /> : null}
       <span className="relative z-[1]">{label}</span>
     </button>
   );

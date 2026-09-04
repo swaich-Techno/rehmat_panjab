@@ -18,15 +18,13 @@ export function RefractionLayer({ className = "", intensity = 1 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const active = useOffscreenPause(ref);
   const mode = useMotionMode();
-  const [settled, setSettled] = useState(mode === "REDUCED");
+  const [timedOut, setTimedOut] = useState(false);
+  const settled = mode === "REDUCED" || timedOut;
   const run = active && mode !== "REDUCED" && !settled;
 
   useEffect(() => {
-    if (mode === "REDUCED") {
-      setSettled(true);
-      return;
-    }
-    const id = window.setTimeout(() => setSettled(true), durationMs("cinematic"));
+    if (mode === "REDUCED") return;
+    const id = window.setTimeout(() => setTimedOut(true), durationMs("cinematic"));
     return () => window.clearTimeout(id);
   }, [mode]);
 
