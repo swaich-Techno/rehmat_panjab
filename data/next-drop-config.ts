@@ -1,0 +1,90 @@
+import { HOUSE } from "@/data/fragrance-config";
+
+export const NEXT_DROP = {
+  campaignId: "next-rehmat-001",
+  title: "NEXT REHMAT",
+  rewardPercent: 5,
+  questions: [
+    {
+      id: "family",
+      number: "01",
+      total: "08",
+      prompt: "Which family\nshould we write next?",
+      options: HOUSE.families.map((label) => ({ id: label, label })),
+    },
+    {
+      id: "notes",
+      number: "02",
+      total: "08",
+      prompt: "Name up to three\nnotes you want inside.",
+      multi: true,
+      max: 3,
+      options: HOUSE.notePool.map((label) => ({ id: label, label })),
+    },
+    {
+      id: "feel",
+      number: "03",
+      total: "08",
+      prompt: "How should the next\noil feel on skin?",
+      options: [
+        { id: "fresh", label: "Fresh" },
+        { id: "clean", label: "Clean" },
+        { id: "warm", label: "Warm" },
+        { id: "sweet", label: "Sweet" },
+        { id: "woody", label: "Woody" },
+        { id: "dark", label: "Dark" },
+        { id: "floral", label: "Floral" },
+      ],
+    },
+    {
+      id: "projection",
+      number: "04",
+      total: "08",
+      prompt: "How far should\nit travel?",
+      options: [
+        { id: "skin", label: "Close to skin" },
+        { id: "noticeable", label: "Noticeable" },
+        { id: "strong", label: "Strong" },
+      ],
+    },
+    {
+      id: "occasion",
+      number: "05",
+      total: "08",
+      prompt: "Where will people\nwear it?",
+      options: [
+        { id: "everyday", label: "Everyday" },
+        { id: "work", label: "Work" },
+        { id: "evening", label: "Evening" },
+        { id: "date", label: "Date" },
+        { id: "wedding", label: "Wedding" },
+        { id: "special", label: "Special occasion" },
+      ],
+    },
+    {
+      id: "format",
+      number: "06",
+      total: "08",
+      prompt: "What format\ndo you want first?",
+      options: [
+        { id: "perfume_oil", label: "Perfume oil" },
+        { id: "either", label: "Either is fine" },
+        { id: "spray_later", label: "A spray, later" },
+      ],
+    },
+    {
+      id: "size",
+      number: "07",
+      total: "08",
+      prompt: "Which size feels\nright to start?",
+      options: HOUSE.sizesMl.map((ml) => ({ id: String(ml), label: `${ml} ml` })),
+    },
+    {
+      id: "priceBand",
+      number: "08",
+      total: "08",
+      prompt: "What should the\nfirst bottle ask?",
+      options: HOUSE.priceBandsPaise.map((band) => ({ id: band.id, label: band.label })),
+    },
+  ],
+} as const;
