@@ -10,6 +10,7 @@ import { track } from "@/lib/analytics/index";
 import { LOCAL_ORDERS_KEY } from "@/lib/insights/store";
 import { PackCeremony, type PackPhase } from "@/components/commerce/PackCeremony";
 import { MobileCommerceBar } from "@/components/commerce/MobileCommerceBar";
+import { OilLayer } from "@/components/motion/OilLayer";
 import { durationMs } from "@/lib/motion/tokens";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 import type { OrderPhase } from "@/components/ui/LiquidButton";
@@ -88,7 +89,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="site-grid py-16 pb-28 md:pb-16">
+    <div className="site-grid section-pad pb-28 md:pb-16">
       <PackCeremony phase={pack} />
       <div className="col-span-12 md:col-span-7">
         <p className="label text-wine">Checkout coming soon</p>
@@ -131,9 +132,12 @@ export default function CheckoutPage() {
           ) : null}
         </form>
       </div>
-      <aside className="col-span-12 mt-16 bg-paper p-8 md:col-span-4 md:col-start-9">
-        <p className="label">Request list</p>
-        <ul className="mt-6 space-y-4 text-sm leading-7">
+      <aside className="relative col-span-12 mt-10 overflow-hidden bg-paper p-6 md:col-span-4 md:col-start-9 md:mt-8">
+        <div className="pointer-events-none absolute inset-0 opacity-80" aria-hidden="true">
+          <OilLayer />
+        </div>
+        <p className="relative z-[1] label">Request list</p>
+        <ul className="relative z-[1] mt-6 space-y-4 text-sm leading-7">
           {totals.lines.map((line) => (
             <li key={`${line.productId}-${line.variantId}`}>
               {line.number} {line.name} · {line.sizeLabel} × {line.quantity}
@@ -143,7 +147,7 @@ export default function CheckoutPage() {
             </li>
           ))}
         </ul>
-        <p className="display mt-8 text-4xl">
+        <p className="relative z-[1] display mt-8 text-4xl">
           {totals.all_unpriced || totals.lines.length === 0 ? "To confirm" : formatInrFromPaise(totals.total_paise)}
         </p>
       </aside>

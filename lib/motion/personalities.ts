@@ -17,7 +17,7 @@ export const LIQUID_PERSONALITIES: Record<
 > = {
   water: {
     viscosity: 0.32,
-    fillMs: MOTION_DURATION_MS.normal,
+    fillMs: MOTION_DURATION_MS.fast,
     rippleMs: MOTION_DURATION_MS.editorial,
     stretch: 1.14,
     compress: 0.86,

@@ -18,6 +18,7 @@ export function LiquidLink({
       href={href}
       className={`liquid-button inline-flex items-center justify-center no-underline ${className}`}
       data-liquid={liquid}
+      data-cursor="link"
     >
       {children}
     </Link>

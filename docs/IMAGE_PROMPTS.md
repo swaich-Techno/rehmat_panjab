@@ -82,5 +82,18 @@ The same attar bottle as A, but closer, slightly off-centre, on a mint paper gro
 
 A bottle half in a linen pocket or against a wrist, vertical, cream and forest only. Soft grain. No logos on clothes, no fake UI stickers in camera.
 
-**Why:** Vertical share from Create Your Rehmat and Find Your Scent. 9:16 matches Instagram stories without adding type in-camera.
+**Why:** Vertical share from Create Your Rehmat and Find Your Scent. 9:16 matches Instagram stories without adding type in-camera. In-app branded cards (9:16 and 1:1) are generated from type + house colour only — no PII, no type inside commissioned frames.
+
+## N — Oil droplet cursor still, 1:1 (reference, not a site image)
+
+A single amber perfume-oil droplet on ivory, meniscus highlight top-left, transparent body, no emoji, no bottle. Macro, quiet.
+
+**Why:** Cursor language reference. The live cursor is SVG, not this file. Commission only if a brand film needs a matching drop.
+
+## O — Empty shelf bottle, 4:5
+
+An empty attar bottle, cap off beside it, one leftover drop on the lip, cream paper. No cart UI, no “empty state” type.
+
+**Why:** Cart empty shelf. The live page draws the bottle in CSS; this still is for a later photograph swap.
+
 

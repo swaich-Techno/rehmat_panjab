@@ -7,7 +7,7 @@ export function Composition({ product }: { product: Product }) {
     { id: "base", label: "Base", notes: product.notes.base },
   ];
   return (
-    <section className="site-grid py-20">
+    <section className="site-grid section-pad">
       <p className="col-span-12 label text-forest">The composition</p>
       <div className="col-span-12 mt-10 space-y-10 md:col-span-10">
         {rows.map((row) => (

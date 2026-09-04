@@ -19,6 +19,18 @@ const atmospheres: Record<string, string> = {
   evening: "atmosphere-evening text-ivory",
 };
 
+const FRESH = new Set(["fresh", "clean", "everyday", "greens", "bergamot"]);
+const DARK = new Set(["dark", "woody", "oud", "evening", "strong", "woods"]);
+const ROMANTIC = new Set(["floral", "rose", "date", "sweet", "wedding"]);
+
+function moodClass(optionId: string | undefined, fallback: string): string {
+  if (!optionId) return atmospheres[fallback] ?? "atmosphere-morning";
+  if (FRESH.has(optionId)) return "quiz-fresh";
+  if (DARK.has(optionId)) return "quiz-dark text-ivory";
+  if (ROMANTIC.has(optionId)) return "quiz-romantic";
+  return atmospheres[fallback] ?? "atmosphere-morning";
+}
+
 type Session = {
   answers: QuizAnswers;
   step: number;
@@ -46,7 +58,7 @@ export function QuizFlow() {
     const secondary = result.secondary?.product;
     const shareText = `REHMAT PANJAB scent match: ${primary.name}${secondary ? ` (neighbour: ${secondary.name})` : ""}. Made to be worn, not announced.`;
     return (
-      <section className="atmosphere-morning min-h-[80svh] py-16">
+      <section className="atmosphere-morning min-h-[72svh] section-pad">
         <div className="site-grid">
           <p className="col-span-12 label">Scent match</p>
           <h1 className="col-span-12 display mt-4 text-6xl md:col-span-8 md:text-8xl">{primary.name}</h1>
@@ -93,7 +105,7 @@ export function QuizFlow() {
   const selected = answers[question.id];
 
   return (
-    <section className={`min-h-[100dvh] py-10 md:py-16 ${atmospheres[question.atmosphere]}`}>
+    <section className={`min-h-[72svh] section-pad ${moodClass(selected, question.atmosphere)}`}>
       <LiquidReveal className="site-grid" as="div">
         <p className="col-span-12 label">
           {question.number} — {question.total}
@@ -104,12 +116,14 @@ export function QuizFlow() {
         <p className="col-span-12 mt-4 text-sm md:col-span-3 md:col-start-10 md:mt-10 md:text-right">
           {question.instruction}
         </p>
-        <ul className="col-span-12 mt-12 md:col-span-9">
+        <ul className="col-span-12 mt-8 md:col-span-9">
           {question.options.map((option) => (
-            <li key={option.id} className="border-t border-current/20">
+            <li key={option.id}>
               <button
                 type="button"
-                className={`flex min-h-11 w-full items-baseline justify-between py-5 text-left ${selected === option.id ? "text-forest" : ""}`}
+                data-cursor="quiz"
+                data-held={selected === option.id}
+                className={`option-liquid flex min-h-11 w-full items-baseline justify-between py-4 text-left ${selected === option.id ? "text-forest" : ""}`}
                 onClick={() => patch({ answers: { ...answers, [question.id]: option.id } })}
               >
                 <span className="display text-4xl md:text-5xl">{option.label}</span>
@@ -130,6 +144,12 @@ export function QuizFlow() {
               }
               const scored = scoreQuiz(answers);
               setResult(scored);
+              if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                const veil = document.createElement("div");
+                veil.className = "liquid-merge-veil";
+                document.body.appendChild(veil);
+                window.setTimeout(() => veil.remove(), 900);
+              }
               track({ name: "quiz_completed" });
               track({ name: "quiz_result", meta: { primary: scored.primary.product.slug } });
               patch({ answers, step, resultSlug: scored.primary.product.slug });

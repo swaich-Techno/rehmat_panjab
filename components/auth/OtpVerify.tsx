@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { LiquidButton } from "@/components/ui/LiquidButton";
 import { Droplet } from "@/components/motion/Droplet";
-import { durationMs } from "@/lib/motion/tokens";
+import { durationCss, durationMs } from "@/lib/motion/tokens";
 
 const LENGTH = 6;
 const RESEND_SECONDS = 30;
@@ -113,26 +113,38 @@ export function OtpVerify() {
               value={digit}
               aria-label={`Digit ${index + 1}`}
               className="display h-14 w-11 border-b-2 border-ink/30 bg-transparent text-center text-4xl [text-shadow:0_6px_0_rgba(22,24,21,0.08)]"
+              data-cursor="text"
               onChange={(event) => setDigit(index, event.target.value)}
               onKeyDown={(event) => onKey(index, event)}
             />
           ))}
         </div>
         {verified ? (
-          <div className="relative mx-auto mt-12 flex h-28 w-28 items-center justify-center">
-            <span className="absolute inset-0 rounded-full border-2 border-sage" />
+          <div className="relative mx-auto mt-12 flex h-36 w-36 items-center justify-center">
+            <span
+              className="absolute inset-6 border-2 border-amber"
+              style={{ animation: `vault-open ${durationCss("vault")} var(--ease-editorialEase) both` }}
+            />
             <Droplet />
-            <p className="label relative z-[1] text-forest">Number verified</p>
+            <p className="label relative z-[1] text-forest">Archive open</p>
           </div>
         ) : (
-          <div className="mt-10 flex flex-col items-center gap-4">
-            <LiquidButton liquid="water" disabled={!complete || available === null} onClick={() => void submit()}>
-              Verify
-            </LiquidButton>
-            <button type="button" className="label touch-target" disabled={cooldown > 0} onClick={() => void resend()}>
-              {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend"}
-            </button>
-          </div>
+          <>
+            <div className="relative mx-auto mt-10 h-24 w-20" aria-hidden="true">
+              <span className="absolute inset-x-4 top-0 h-8 rounded-t-full border-2 border-ink/40" />
+              <span className="absolute inset-x-2 top-6 bottom-0 border-2 border-ink/40 bg-ivory" />
+              <span className="absolute left-1/2 top-12 h-3 w-3 -translate-x-1/2 rounded-full bg-ink/40" />
+              {gather ? <Droplet className="absolute left-1/2 top-0" /> : null}
+            </div>
+            <div className="mt-8 flex flex-col items-center gap-4">
+              <LiquidButton liquid="water" disabled={!complete || available === null} onClick={() => void submit()}>
+                Verify
+              </LiquidButton>
+              <button type="button" className="label touch-target" disabled={cooldown > 0} onClick={() => void resend()}>
+                {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend"}
+              </button>
+            </div>
+          </>
         )}
         {message ? (
           <p className="mt-6 text-sm leading-7" role="status">

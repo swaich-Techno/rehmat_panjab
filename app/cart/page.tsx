@@ -12,16 +12,22 @@ export default function CartPage() {
   const { totals, updateLine, removeLine, dissolving } = useCart();
 
   return (
-    <div className="site-grid py-16 pb-28 md:pb-16">
+    <div className="site-grid section-pad pb-28 md:pb-16">
       <div className="col-span-12 md:col-span-7">
         <p className="label text-forest">Held oils</p>
         <h1 className="display mt-3 text-6xl md:text-8xl">Cart</h1>
         {totals.lines.length === 0 ? (
-          <p className="mt-8 max-w-md text-base leading-8 text-ink/70">
-            Your shelf is waiting. The catalogue is still arriving. Add an oil from the collection if you want the house to hold a request.
-          </p>
+          <div className="mt-8">
+            <div className="relative h-32 w-20 border border-ink/15 bg-ivory/40">
+              <span className="absolute inset-x-5 top-0 h-4 bg-forest/30" />
+            </div>
+            <p className="display mt-4 text-4xl">Your shelf is waiting</p>
+            <p className="mt-3 max-w-md text-base leading-7 text-ink/70">
+              The catalogue is still arriving. Add an oil from the collection if you want the house to hold a request.
+            </p>
+          </div>
         ) : (
-          <ul className="mt-12 space-y-8">
+          <ul className="mt-8 space-y-5">
             {totals.lines.map((line) => {
               const key = `${line.productId}-${line.variantId}`;
               return (
@@ -70,7 +76,7 @@ export default function CartPage() {
           </ul>
         )}
       </div>
-      <aside className="col-span-12 mt-16 border border-ink/10 bg-paper p-8 md:col-span-4 md:col-start-9 md:mt-24">
+      <aside className="col-span-12 mt-10 border border-ink/10 bg-paper p-6 md:col-span-4 md:col-start-9 md:mt-16">
         <p className="label">Subtotal</p>
         <p className="display mt-3 text-5xl">
           {totals.all_unpriced || totals.lines.length === 0

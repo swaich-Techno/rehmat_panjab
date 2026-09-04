@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   return (
     <VaultDoor
-      title="Enter the house"
+      title="Private fragrance archive"
       submitLabel="Enter the house"
       onSubmit={async () => {
         const response = await fetch("/api/auth/login", {

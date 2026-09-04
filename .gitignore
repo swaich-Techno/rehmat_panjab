@@ -45,3 +45,4 @@ yarn-error.log*
 
 # downloadable source archive (generated locally, never commit)
 rehmat-panjab-source.zip
+/opt/cursor/artifacts/rehmat-panjab-source.zip

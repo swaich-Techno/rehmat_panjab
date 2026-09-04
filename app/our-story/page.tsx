@@ -22,7 +22,7 @@ const MATERIALS = [
 export default function OurStoryPage() {
   return (
     <div>
-      <section className="atmosphere-morning py-20 md:py-28">
+      <section className="atmosphere-morning section-pad">
         <div className="site-grid">
           <p className="col-span-12 label text-forest">Origin</p>
           <h1 className="col-span-12 display mt-4 text-[clamp(2.8rem,8vw,7rem)] md:col-span-9">
@@ -36,7 +36,7 @@ export default function OurStoryPage() {
         </div>
       </section>
 
-      <section className="bg-paper py-20">
+      <section className="bg-paper section-pad">
         <LiquidReveal className="site-grid" as="div">
           <div className="col-span-12 md:col-span-7">
             <div className="relative min-h-[70vw] bg-cream md:min-h-[72vh]">

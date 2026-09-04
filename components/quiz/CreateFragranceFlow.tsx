@@ -4,9 +4,7 @@ import { useMemo, useState } from "react";
 import {
   CREATE_QUESTIONS,
   CREATE_STORAGE_KEY,
-  NOTE_LAYERS,
   type CreateConcept,
-  type CreateNoteId,
 } from "@/data/create-fragrance-config";
 import { conceptSummary, notesFromAnswers } from "@/lib/fragrance/create-concept";
 import { LiquidButton } from "@/components/ui/LiquidButton";
@@ -14,6 +12,8 @@ import { Field } from "@/components/ui/Field";
 import { ShareCard } from "@/components/quiz/ShareCard";
 import { LiquidReveal } from "@/components/motion/LiquidReveal";
 import { writeLocalJson } from "@/lib/storage/local-json";
+import { VirtualBottle } from "@/components/fragrance/VirtualBottle";
+import Link from "next/link";
 
 const atmospheres: Record<string, string> = {
   morning: "atmosphere-morning",
@@ -72,17 +72,17 @@ export function CreateFragranceFlow() {
   if (concept) {
     const title = concept.name || "Your Rehmat";
     return (
-      <section className="atmosphere-morning min-h-[100dvh] py-16">
+      <section className="atmosphere-morning min-h-[72svh] section-pad">
         <div className="site-grid">
           <p className="col-span-12 label">Your Rehmat</p>
-          <h1 className="col-span-12 display mt-4 text-[clamp(2.8rem,8vw,6.5rem)] md:col-span-8">{title}</h1>
-          <p className="col-span-12 mt-4 max-w-lg text-base leading-8 md:col-span-6">
+          <h1 className="col-span-12 display headline-gap text-[clamp(2.8rem,8vw,6.5rem)] md:col-span-8">{title}</h1>
+          <p className="col-span-12 copy-gap max-w-lg text-base leading-7 md:col-span-6">
             A preference portrait. Not a formula. No percentages. The vessel is virtual until the house is connected.
           </p>
-          <div className="col-span-12 mt-10 md:col-span-5">
-            <Vessel notes={concept.notes} />
+          <div className="col-span-12 mt-8 md:col-span-5">
+            <VirtualBottle notes={concept.notes} orbit />
           </div>
-          <div className="col-span-12 mt-10 md:col-span-6 md:col-start-7">
+          <div className="col-span-12 mt-8 md:col-span-6 md:col-start-7">
             <p className="label text-forest">Notes held</p>
             <p className="display mt-3 text-4xl">{conceptSummary(concept.notes)}</p>
             <p className="mt-4 text-sm leading-7 text-ink/70">
@@ -101,9 +101,14 @@ export function CreateFragranceFlow() {
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
               />
-              <LiquidButton liquid="water" loading={loading} onClick={() => void archiveLater()}>
-                Save for later
-              </LiquidButton>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <LiquidButton liquid="water" loading={loading} onClick={() => void archiveLater()}>
+                  Save
+                </LiquidButton>
+                <Link href="/next-drop" className="liquid-button text-center no-underline" data-cursor="link" data-liquid="oil">
+                  Join next drop
+                </Link>
+              </div>
               {archiveMessage ? <p className="text-sm leading-7 text-forest">{archiveMessage}</p> : null}
             </div>
             <ShareCard
@@ -120,11 +125,11 @@ export function CreateFragranceFlow() {
 
   if (step === CREATE_QUESTIONS.length) {
     return (
-      <section className="min-h-[100dvh] bg-paper py-16">
+      <section className="min-h-[72svh] bg-paper section-pad">
         <div className="site-grid">
           <p className="col-span-12 label">Name</p>
-          <h1 className="col-span-12 display mt-4 text-5xl md:col-span-7">What should we call this Rehmat?</h1>
-          <div className="col-span-12 mt-10 max-w-md md:col-span-5">
+          <h1 className="col-span-12 display headline-gap text-5xl md:col-span-7">What should we call this Rehmat?</h1>
+          <div className="col-span-12 mt-8 max-w-md md:col-span-5">
             <Field label="Optional name" value={name} onChange={(event) => setName(event.target.value)} />
             <div className="mt-8">
               <LiquidButton liquid="oil" onClick={finish}>
@@ -132,8 +137,8 @@ export function CreateFragranceFlow() {
               </LiquidButton>
             </div>
           </div>
-          <div className="col-span-12 mt-12 md:col-span-5 md:col-start-8">
-            <Vessel notes={notes} />
+          <div className="col-span-12 mt-8 md:col-span-5 md:col-start-8">
+            <VirtualBottle notes={notes} />
           </div>
         </div>
       </section>
@@ -141,20 +146,22 @@ export function CreateFragranceFlow() {
   }
 
   return (
-    <section className={`min-h-[100dvh] py-12 ${atmospheres[question.atmosphere]}`}>
-      <LiquidReveal className="site-grid items-end" as="div">
+    <section className={`min-h-[72svh] section-pad ${atmospheres[question.atmosphere]}`}>
+      <LiquidReveal className="site-grid" as="div">
         <div className="col-span-12 md:col-span-7">
           <p className="label">
             {question.number} — {question.total}
           </p>
-          <h1 className="display mt-6 whitespace-pre-line text-[clamp(2.4rem,7vw,4.6rem)]">{question.prompt}</h1>
-          <p className="mt-4 text-sm">{question.instruction}</p>
-          <ul className="mt-10">
+          <h1 className="display headline-gap whitespace-pre-line text-[clamp(2.4rem,7vw,4.6rem)]">{question.prompt}</h1>
+          <p className="copy-gap text-sm">{question.instruction}</p>
+          <ul className="mt-8">
             {question.options.map((option) => (
-              <li key={option.id} className="border-t border-current/20">
+              <li key={option.id}>
                 <button
                   type="button"
-                  className={`flex min-h-11 w-full items-baseline justify-between py-5 text-left ${selected === option.id ? "text-forest" : ""}`}
+                  data-cursor="quiz"
+                  data-held={selected === option.id}
+                  className={`option-liquid flex min-h-11 w-full items-baseline justify-between py-4 text-left ${selected === option.id ? "text-forest" : ""}`}
                   onClick={() => setAnswers((current) => ({ ...current, [question.id]: option.id }))}
                 >
                   <span className="display text-4xl">{option.label}</span>
@@ -169,33 +176,10 @@ export function CreateFragranceFlow() {
             </LiquidButton>
           </div>
         </div>
-        <div className="col-span-12 mt-12 md:col-span-4 md:col-start-9">
-          <Vessel notes={notes} />
+        <div className="col-span-12 mt-8 md:col-span-4 md:col-start-9">
+          <VirtualBottle notes={notes} />
         </div>
       </LiquidReveal>
     </section>
-  );
-}
-
-function Vessel({ notes }: { notes: CreateNoteId[] }) {
-  return (
-    <div className="relative mx-auto h-72 w-36 overflow-hidden border border-ink/20 bg-ivory/40" aria-hidden="true">
-      <div className="absolute inset-x-6 top-0 h-6 bg-forest/40" />
-      <div className="absolute inset-x-4 bottom-0 top-10 overflow-hidden">
-        {notes.map((id, index) => (
-          <span
-            key={id}
-            className="absolute inset-x-0 bottom-0"
-            style={{
-              height: `${18 + index * 10}%`,
-              background: NOTE_LAYERS[id].color,
-              opacity: 0.55,
-              mixBlendMode: "multiply",
-            }}
-          />
-        ))}
-      </div>
-      <p className="sr-only">{conceptSummary(notes)}</p>
-    </div>
   );
 }

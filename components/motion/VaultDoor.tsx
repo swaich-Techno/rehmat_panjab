@@ -47,21 +47,22 @@ export function VaultDoor({ title, children, onSubmit, submitLabel }: Props) {
   }
 
   return (
-    <section className="min-h-[86svh] bg-[#1a241c] px-4 py-16 text-ivory">
+    <section className="min-h-[72svh] bg-[#1a241c] px-4 section-pad text-ivory">
       <div className="mx-auto grid min-h-[70vh] max-w-5xl grid-cols-1 overflow-hidden border border-[#8a6a55]/50 md:grid-cols-[1.1fr_0.9fr]">
         <div className="relative flex flex-col justify-between bg-gradient-to-br from-[#183a2a] via-[#2a2622] to-[#633736] p-8 md:p-12">
-          <p className="label text-sand">Rehmat Panjab / Private house</p>
+          <p className="label text-sand">Private fragrance archive</p>
           <div className="my-12 flex flex-1 items-center justify-center">
             <div
-              className={`relative flex h-48 w-48 items-center justify-center rounded-sm border-4 ${
+              className={`relative flex h-56 w-56 items-center justify-center rounded-sm border-4 ${
                 vault === "failed" ? "border-wine" : "border-[#a66f5f]"
               }`}
+              data-cursor="vault"
               style={{
                 boxShadow:
                   vault === "open"
                     ? "inset 0 0 40px rgba(180,122,71,0.55), 0 0 30px rgba(180,122,71,0.25)"
                     : "inset 0 0 18px rgba(0,0,0,0.45)",
-                transition: `box-shadow ${durationCss("vault")} var(--ease-weighted)`,
+                transition: `box-shadow ${durationCss("vault")} var(--ease-editorialEase)`,
               }}
             >
               <span
@@ -71,7 +72,7 @@ export function VaultDoor({ title, children, onSubmit, submitLabel }: Props) {
                     vault === "turning" || vault === "pins" || vault === "open"
                       ? "rotate(72deg)"
                       : "rotate(0deg)",
-                  transition: `transform ${durationCss("editorial")} var(--ease-overshoot)`,
+                  transition: `transform ${durationCss("editorial")} var(--ease-snapEase)`,
                 }}
               />
               <span
@@ -91,7 +92,7 @@ export function VaultDoor({ title, children, onSubmit, submitLabel }: Props) {
             </div>
           </div>
           <p className="max-w-sm text-sm leading-7 text-ivory/70">
-            A mechanical safe for orders, saved oils, and the notes you keep. Warm metal. Not a dashboard. A door.
+            A mechanical safe for orders, saved oils, and the notes you keep. Warm metal. Not a dashboard. A private fragrance archive.
           </p>
         </div>
         <form onSubmit={handleSubmit} className="bg-ivory p-8 text-ink md:p-12">
@@ -104,7 +105,7 @@ export function VaultDoor({ title, children, onSubmit, submitLabel }: Props) {
           ) : null}
           {info ? <p className="mt-4 text-sm leading-7 text-forest">{info}</p> : null}
           <div className="mt-8">
-            <LiquidButton type="submit" className="w-full" loading={loading}>
+            <LiquidButton type="submit" className="w-full" loading={loading} cursor="vault">
               {submitLabel}
             </LiquidButton>
           </div>

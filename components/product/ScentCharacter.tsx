@@ -12,7 +12,7 @@ export function ScentCharacter({ product }: { product: Product }) {
     { label: "Wood", value: product.scent_profile.woody },
   ];
   return (
-    <section className="border-y border-ink/10 bg-paper py-16">
+    <section className="border-y border-ink/10 bg-paper section-pad">
       <div className="site-grid">
         <p className="col-span-12 label text-forest">Scent character</p>
         <ul className="col-span-12 mt-10 md:col-span-10">

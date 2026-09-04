@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { NEXT_DROP } from "@/data/next-drop-config";
-import { HOUSE } from "@/data/fragrance-config";
 import { LiquidButton } from "@/components/ui/LiquidButton";
 import { Field } from "@/components/ui/Field";
 import { RewardGlass } from "@/components/quiz/RewardGlass";
 import { INSIGHTS_KEY, REWARD_LEDGER_KEY, type NextDropInsight } from "@/lib/insights/store";
 import { track } from "@/lib/analytics/index";
 import { durationMs } from "@/lib/motion/tokens";
+import { VirtualBottle } from "@/components/fragrance/VirtualBottle";
+import type { CreateNoteId } from "@/data/create-fragrance-config";
 
 type Answers = {
   family: string;
@@ -34,6 +35,28 @@ const empty: Answers = {
   email: "",
 };
 
+const NOTE_MAP: Record<string, CreateNoteId> = {
+  Musk: "musk",
+  Oud: "oud",
+  Amber: "amber",
+  Rose: "rose",
+  Vanilla: "vanilla",
+  Saffron: "spice",
+  Woods: "woods",
+  Spices: "spice",
+  "Fresh greens": "greens",
+  Jasmine: "jasmine",
+  Incense: "oud",
+  Vetiver: "woods",
+};
+
+function voteNotes(answers: Answers): CreateNoteId[] {
+  const fromNotes = answers.notes.map((note) => NOTE_MAP[note]).filter((id): id is CreateNoteId => Boolean(id));
+  if (fromNotes.length) return fromNotes;
+  const family = NOTE_MAP[answers.family];
+  return family ? [family] : [];
+}
+
 type Stage = "questions" | "email" | "voted" | "reward";
 
 export function NextDropFlow() {
@@ -49,6 +72,7 @@ export function NextDropFlow() {
   const [notifyPhone, setNotifyPhone] = useState("");
   const [notifyNote, setNotifyNote] = useState("");
   const [glass, setGlass] = useState(false);
+  const [bell, setBell] = useState(false);
 
   useEffect(() => {
     track({ name: "next_drop_started", path: "/next-drop" });
@@ -127,13 +151,27 @@ export function NextDropFlow() {
     const data = (await response.json()) as { ok: boolean; message: string };
     setLoading(false);
     setNotifyNote(data.message);
+    setBell(true);
     track({ name: "notify_opt_in", meta: { email: notifyEmail, sms: notifySms } });
   }
 
   const notifyBlock = (
-    <div className="col-span-12 mt-16 max-w-lg border-t border-ink/10 pt-10 md:col-span-6">
+    <div className="col-span-12 mt-12 max-w-lg border-t border-ink/10 pt-8 md:col-span-6">
       <p className="label">Notify me when this Rehmat arrives</p>
       <p className="mt-3 text-sm leading-7 text-ink/70">Both stay off until you choose. We will not invent a send.</p>
+      <div className="mt-4 flex h-12 w-12 items-center justify-center" aria-hidden="true">
+        {bell ? (
+          <svg viewBox="0 0 24 24" className="h-8 w-8 text-amber" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M12 3c-2.8 0-5 2.1-5 4.8v2.2c0 .7-.3 1.4-.8 1.9L5 13.2v1.3h14v-1.3l-1.2-1.3c-.5-.5-.8-1.2-.8-1.9V7.8C17 5.1 14.8 3 12 3Zm-2.2 13.5c.4 1.2 1.5 2 2.7 2s2.3-.8 2.7-2Z"
+            />
+          </svg>
+        ) : (
+          <span className="droplet droplet--still" />
+        )}
+      </div>
+      <p className="label text-ink/50">{bell ? "Bell set" : "A droplet becomes a bell when you save."}</p>
       <label className="mt-6 flex min-h-11 items-center gap-3 text-sm">
         <input type="checkbox" checked={notifyEmail} onChange={(event) => setNotifyEmail(event.target.checked)} />
         Email
@@ -165,11 +203,11 @@ export function NextDropFlow() {
 
   if (stage === "reward" || stage === "voted") {
     return (
-      <section className="atmosphere-amber min-h-[80svh] py-20">
+      <section className="atmosphere-amber min-h-[72svh] section-pad">
         <div className="site-grid">
           <p className="col-span-12 label">Your vote is in.</p>
-          <h1 className="col-span-12 display mt-4 text-6xl md:col-span-8 md:text-8xl">
-            {HOUSE.rewardsEnabled && reward ? "5% thank-you reward" : "Thank you"}
+          <h1 className="col-span-12 display headline-gap text-5xl md:col-span-8 md:text-7xl">
+            You just helped shape the next Rehmat
           </h1>
           {reward ? (
             <>
@@ -194,7 +232,7 @@ export function NextDropFlow() {
 
   if (step === questions.length) {
     return (
-      <section className="min-h-[80svh] bg-paper py-16">
+      <section className="min-h-[72svh] bg-paper section-pad">
         <div className="site-grid">
           <p className="col-span-12 label">Last thing</p>
           <h1 className="col-span-12 display mt-4 text-5xl md:col-span-7">Where should we send the thank-you?</h1>
@@ -239,24 +277,29 @@ export function NextDropFlow() {
   const canContinue = Array.isArray(selected) ? selected.length > 0 : Boolean(selected);
 
   return (
-    <section className="min-h-[84svh] bg-cream py-12">
+    <section className="min-h-[72svh] bg-cream section-pad">
       <div className="site-grid">
         <p className="col-span-2 label text-forest">{question.number}</p>
         <p className="col-span-10 label text-right text-ink/40">{question.total}</p>
-        <h1 className="col-span-12 display mt-8 whitespace-pre-line text-[clamp(2.2rem,6vw,4.2rem)] md:col-span-7">
+        <h1 className="col-span-12 display headline-gap whitespace-pre-line text-[clamp(2.2rem,6vw,4.2rem)] md:col-span-7">
           {question.prompt}
         </h1>
-        <ul className="col-span-12 mt-12 columns-1 gap-0 md:col-span-8">
+        <div className="col-span-12 mt-4 md:col-span-4 md:col-start-9 md:row-span-3">
+          <VirtualBottle notes={voteNotes(answers)} />
+        </div>
+        <ul className="col-span-12 mt-8 columns-1 gap-0 md:col-span-8">
           {question.options.map((option) => {
             const held = Array.isArray(selected) ? selected.includes(option.id) : selected === option.id;
             return (
-              <li key={option.id} className="border-b border-ink/15">
+              <li key={option.id}>
                 <button
                   type="button"
-                  className="flex min-h-11 w-full items-baseline justify-between py-4 text-left"
+                  data-cursor="quiz"
+                  data-held={held}
+                  className="option-liquid flex min-h-11 w-full items-baseline justify-between py-3 text-left"
                   onClick={() => toggle(option.id)}
                 >
-                  <span className={`text-xl ${held ? "text-forest" : ""}`}>{option.label}</span>
+                  <span className={`display text-2xl md:text-3xl ${held ? "text-forest" : ""}`}>{option.label}</span>
                   {held ? <span className="label">Marked</span> : null}
                 </button>
               </li>

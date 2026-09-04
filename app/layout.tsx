@@ -4,7 +4,9 @@ import { CartProvider } from "@/components/commerce/CartProvider";
 import { SiteFooter } from "@/components/brand/SiteFooter";
 import { SiteHeader } from "@/components/brand/SiteHeader";
 import { MotionProvider } from "@/components/motion/MotionProvider";
-import { LiquidCursor } from "@/components/motion/LiquidCursor";
+import { RehmatCursor } from "@/components/motion/RehmatCursor";
+import { TapRipple } from "@/components/motion/TapRipple";
+import { RouteTransition } from "@/components/motion/RouteTransition";
 import { defaultMetadata } from "@/lib/seo";
 import { organizationJsonLd } from "@/lib/seo";
 import { motionCssVars } from "@/lib/motion/tokens";
@@ -50,7 +52,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <SiteHeader />
             <main className="min-h-[70vh]">{children}</main>
             <SiteFooter />
-            <LiquidCursor />
+            <RehmatCursor />
+            <TapRipple />
+            <RouteTransition />
           </CartProvider>
         </MotionProvider>
       </body>

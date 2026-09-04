@@ -10,6 +10,7 @@ export function Field({
       <input
         {...props}
         className="mt-2 w-full border-b border-ink/25 bg-transparent py-2 text-base outline-none focus:border-forest"
+        data-cursor="text"
       />
     </label>
   );
@@ -25,6 +26,7 @@ export function AreaField({
       <textarea
         {...props}
         className="mt-2 w-full border-b border-ink/25 bg-transparent py-2 text-base outline-none focus:border-forest"
+        data-cursor="text"
       />
     </label>
   );

@@ -62,8 +62,8 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
         viewBox="0 0 96 56"
         style={{
           left: blob.x,
-          opacity: blob.visible && mode !== "REDUCED" ? 0.55 : 0,
-          transition: `left ${MOTION_DURATION_MS.editorial}ms ${MOTION_EASE_CSS.overshoot}, width ${MOTION_DURATION_MS.normal}ms ${MOTION_EASE_CSS.liquid}, opacity ${MOTION_DURATION_MS.fast}ms ${MOTION_EASE_CSS.weighted}`,
+          opacity: blob.visible && mode !== "REDUCED" ? 0.4 : 0,
+          transition: `left ${MOTION_DURATION_MS.editorial}ms ${MOTION_EASE_CSS.liquidEase}, width ${MOTION_DURATION_MS.fast}ms ${MOTION_EASE_CSS.liquidEase}, opacity ${MOTION_DURATION_MS.micro}ms ${MOTION_EASE_CSS.weighted}`,
         }}
         aria-hidden="true"
       >
@@ -71,7 +71,7 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
           d={blob.path}
           fill="var(--mint)"
           style={{
-            transition: `d ${MOTION_DURATION_MS.editorial}ms ${MOTION_EASE_CSS.liquid}`,
+            transition: `d ${MOTION_DURATION_MS.morph}ms ${MOTION_EASE_CSS.liquidEase}`,
           }}
         />
       </svg>
@@ -82,7 +82,9 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`label no-underline ${active ? "text-forest" : "text-ink/70"}`}
+                data-cursor="link"
+                data-active={active}
+                className={`nav-link label no-underline ${active ? "text-forest" : "text-ink/70"}`}
                 onPointerEnter={() => {
                   if (mode === "REDUCED") return;
                   place(index, "stretch");
@@ -92,6 +94,7 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
                 onClick={() => onNavigate?.()}
               >
                 {item.label}
+                <span className="nav-drop" aria-hidden="true" />
               </Link>
             </li>
           );

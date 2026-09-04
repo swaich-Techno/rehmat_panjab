@@ -6,7 +6,7 @@ This repository is the small-business commerce foundation for the house: catalog
 
 ## Features
 
-- Cinematic homepage with eight scenes (water morning, droplet, bottle, notes, sequential collection, finder, create, next drop)
+- Cinematic homepage with eight overlapping scenes (water morning with bottle in-viewport, drop hinge, sequential oils, note atmospheres, finder, create, next drop)
 - Shop, Find your scent, Create your Rehmat, Next drop, Our story
 - Collection and product pages with composition + scent character
 - Cart drawer / mobile sheet and cart page, persisted in `localStorage`, totals recomputed on the server
