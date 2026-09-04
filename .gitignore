@@ -42,3 +42,6 @@ yarn-error.log*
 # agent / local
 .cursor
 .claude
+
+# downloadable source archive (generated locally, never commit)
+rehmat-panjab-source.zip
