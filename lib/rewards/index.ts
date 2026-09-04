@@ -20,11 +20,12 @@ export type IssuedReward = {
 };
 
 function signingSecret(): string {
-  return (
-    process.env.REWARD_SIGNING_SECRET ||
-    process.env.AUTH_SECRET ||
-    "rehmat-local-only-reward-secret"
-  );
+  const secret = process.env.REWARD_SIGNING_SECRET || process.env.AUTH_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("REWARD_SIGNING_SECRET is required in production.");
+  }
+  return "rehmat-local-only-reward-secret";
 }
 
 export function isLocalRewardFallback(): boolean {

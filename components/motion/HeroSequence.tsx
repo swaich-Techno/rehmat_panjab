@@ -187,13 +187,14 @@ function BottleStage({ src, alt }: { src: string; alt: string }) {
       ref={ref}
       className="relative mx-auto h-[420px] w-full max-w-md"
       onPointerMove={(event) => {
-        if (placeholderTilt) return;
         const node = event.currentTarget;
         const rect = node.getBoundingClientRect();
         const x = (event.clientX - rect.left) / rect.width;
         const y = (event.clientY - rect.top) / rect.height;
         node.style.setProperty("--lx", `${x * 100}%`);
         node.style.setProperty("--ly", `${y * 100}%`);
+        if (placeholderTilt) return;
+        node.style.setProperty("--tilt", `${(x - 0.5) * 6}deg`);
       }}
     >
       <div

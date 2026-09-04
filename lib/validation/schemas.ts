@@ -52,6 +52,23 @@ export const nextDropSchema = z.object({
   email: emailSchema,
 });
 
+export const launchNotifySchema = z.object({
+  email: emailSchema.optional(),
+  phone: z.string().trim().min(8).max(20).optional(),
+  notifyEmail: z.boolean().default(false),
+  notifySms: z.boolean().default(false),
+  campaign: z.string().min(1).max(80).default("next-rehmat-001"),
+});
+
+export const createFragranceSchema = z.object({
+  answers: z.record(z.string(), z.string()),
+  notes: z.array(z.string().min(1)).max(12),
+  name: z.string().trim().max(80).optional(),
+  email: emailSchema.optional(),
+  phone: z.string().trim().max(20).optional(),
+  formulaPercent: z.never().optional(),
+});
+
 export const authCredentialsSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
@@ -91,6 +108,8 @@ export const analyticsEventSchema = z.object({
     "buy_now",
     "checkout_started",
     "order_confirmed",
+    "create_fragrance_saved",
+    "notify_opt_in",
   ]),
   path: z.string().max(200).optional(),
   meta: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),

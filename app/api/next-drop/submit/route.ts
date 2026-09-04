@@ -4,6 +4,8 @@ import { nextDropSchema } from "@/lib/validation/schemas";
 import { alreadyIssued, hashEmail, issueReward } from "@/lib/rewards/index";
 import { cookies } from "next/headers";
 
+// Rate-limit-ready: one vote + one reward per email hash per campaign.
+
 const EMAIL_COOKIE = "rp_reward_emails";
 
 function readHashes(raw: string | undefined): string[] {
@@ -44,7 +46,15 @@ export async function POST(request: Request) {
     });
   }
 
-  const issued = issueReward(parsed.data.email);
+  let issued;
+  try {
+    issued = issueReward(parsed.data.email);
+  } catch {
+    return NextResponse.json({
+      ok: true,
+      message: "Your vote is in. A thank-you code cannot be sealed until signing is configured.",
+    });
+  }
   const nextHashes = [...hashes, emailHash];
   jar.set(EMAIL_COOKIE, JSON.stringify(nextHashes), {
     httpOnly: true,

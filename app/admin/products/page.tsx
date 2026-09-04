@@ -7,7 +7,7 @@ export default function AdminProductsPage() {
       <p className="label text-forest">Products</p>
       <h1 className="display mt-3 text-5xl">Catalogue config</h1>
       <p className="mt-4 max-w-lg text-sm leading-7 text-ink/70">
-        Edit <code>data/fragrance-config.ts</code>. This table is read-only until a database exists.
+        Edit <code>data/fragrance-config.ts</code> for production. Runtime rows below are read-only. Use the wizard for PREVIEW ONLY drafts.
       </p>
       <table className="mt-10 w-full text-left text-sm">
         <thead>

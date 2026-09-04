@@ -5,8 +5,10 @@ import { NEXT_DROP } from "@/data/next-drop-config";
 import { HOUSE } from "@/data/fragrance-config";
 import { LiquidButton } from "@/components/ui/LiquidButton";
 import { Field } from "@/components/ui/Field";
+import { RewardGlass } from "@/components/quiz/RewardGlass";
 import { INSIGHTS_KEY, REWARD_LEDGER_KEY, type NextDropInsight } from "@/lib/insights/store";
 import { track } from "@/lib/analytics/index";
+import { durationMs } from "@/lib/motion/tokens";
 
 type Answers = {
   family: string;
@@ -32,19 +34,31 @@ const empty: Answers = {
   email: "",
 };
 
+type Stage = "questions" | "email" | "voted" | "reward";
+
 export function NextDropFlow() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>(empty);
   const [reward, setReward] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [stage, setStage] = useState<Stage>("questions");
+  const [smsAvailable, setSmsAvailable] = useState(false);
+  const [notifyEmail, setNotifyEmail] = useState(false);
+  const [notifySms, setNotifySms] = useState(false);
+  const [notifyPhone, setNotifyPhone] = useState("");
+  const [notifyNote, setNotifyNote] = useState("");
+  const [glass, setGlass] = useState(false);
 
   useEffect(() => {
     track({ name: "next_drop_started", path: "/next-drop" });
+    void fetch("/api/capabilities")
+      .then((response) => response.json())
+      .then((data: { sms?: boolean }) => setSmsAvailable(Boolean(data.sms)))
+      .catch(() => setSmsAvailable(false));
   }, []);
 
   const questions = NEXT_DROP.questions;
-  const finished = reward !== null || message.startsWith("Already");
 
   async function submit() {
     setLoading(true);
@@ -87,29 +101,92 @@ export function NextDropFlow() {
     }
     if (data.code) {
       setReward(data.code);
+      setStage("reward");
+      window.setTimeout(() => setGlass(true), durationMs("normal"));
       track({ name: "discount_issued" });
     } else {
       setMessage(data.message ?? "Your vote is in.");
+      setStage("voted");
     }
     track({ name: "next_drop_completed" });
   }
 
-  if (finished) {
+  async function submitNotify() {
+    setLoading(true);
+    const response = await fetch("/api/notify", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        email: answers.email,
+        phone: notifyPhone || undefined,
+        notifyEmail,
+        notifySms,
+        campaign: NEXT_DROP.campaignId,
+      }),
+    });
+    const data = (await response.json()) as { ok: boolean; message: string };
+    setLoading(false);
+    setNotifyNote(data.message);
+    track({ name: "notify_opt_in", meta: { email: notifyEmail, sms: notifySms } });
+  }
+
+  const notifyBlock = (
+    <div className="col-span-12 mt-16 max-w-lg border-t border-ink/10 pt-10 md:col-span-6">
+      <p className="label">Notify me when this Rehmat arrives</p>
+      <p className="mt-3 text-sm leading-7 text-ink/70">Both stay off until you choose. We will not invent a send.</p>
+      <label className="mt-6 flex min-h-11 items-center gap-3 text-sm">
+        <input type="checkbox" checked={notifyEmail} onChange={(event) => setNotifyEmail(event.target.checked)} />
+        Email
+      </label>
+      <label className="mt-3 flex min-h-11 items-center gap-3 text-sm">
+        <input
+          type="checkbox"
+          checked={notifySms}
+          disabled={!smsAvailable}
+          onChange={(event) => setNotifySms(event.target.checked)}
+        />
+        SMS
+      </label>
+      {!smsAvailable ? (
+        <p className="mt-2 text-sm text-rose-metal">PHONE/SMS CURRENTLY UNAVAILABLE</p>
+      ) : (
+        <div className="mt-4">
+          <Field label="Phone for SMS" value={notifyPhone} onChange={(event) => setNotifyPhone(event.target.value)} />
+        </div>
+      )}
+      <div className="mt-6">
+        <LiquidButton loading={loading} onClick={() => void submitNotify()}>
+          Save notification
+        </LiquidButton>
+      </div>
+      {notifyNote ? <p className="mt-4 text-sm leading-7">{notifyNote}</p> : null}
+    </div>
+  );
+
+  if (stage === "reward" || stage === "voted") {
     return (
       <section className="atmosphere-amber min-h-[80svh] py-20">
         <div className="site-grid">
           <p className="col-span-12 label">Your vote is in.</p>
           <h1 className="col-span-12 display mt-4 text-6xl md:col-span-8 md:text-8xl">
-            {HOUSE.rewardsEnabled ? "5% thank-you reward" : "Thank you"}
+            {HOUSE.rewardsEnabled && reward ? "5% thank-you reward" : "Thank you"}
           </h1>
           {reward ? (
-            <p className="col-span-12 mt-10 display text-5xl tracking-[0.12em] md:col-span-8">{reward}</p>
+            <>
+              <div className="col-span-12 mt-10 md:col-span-4">
+                <RewardGlass revealed={glass} />
+              </div>
+              {glass ? (
+                <p className="col-span-12 mt-10 display text-5xl tracking-[0.12em] md:col-span-8">{reward}</p>
+              ) : null}
+            </>
           ) : (
             <p className="col-span-12 mt-8 max-w-lg text-base leading-8">{message}</p>
           )}
           <p className="col-span-12 mt-6 max-w-md text-sm leading-7 text-ink/70">
-            This code is shown once. The house will confirm it against a signed token — not a number you can invent.
+            This code is shown once. The house will confirm it against a signed token — not a number you can invent. Five percent is locked.
           </p>
+          {notifyBlock}
         </div>
       </section>
     );
@@ -120,9 +197,7 @@ export function NextDropFlow() {
       <section className="min-h-[80svh] bg-paper py-16">
         <div className="site-grid">
           <p className="col-span-12 label">Last thing</p>
-          <h1 className="col-span-12 display mt-4 text-5xl md:col-span-7">
-            Where should we send the thank-you?
-          </h1>
+          <h1 className="col-span-12 display mt-4 text-5xl md:col-span-7">Where should we send the thank-you?</h1>
           <div className="col-span-12 mt-10 max-w-md md:col-span-5">
             <Field
               label="Email"
@@ -164,22 +239,25 @@ export function NextDropFlow() {
   const canContinue = Array.isArray(selected) ? selected.length > 0 : Boolean(selected);
 
   return (
-    <section className="atmosphere-garden min-h-[84svh] py-12">
+    <section className="min-h-[84svh] bg-cream py-12">
       <div className="site-grid">
-        <p className="col-span-12 label">
-          {question.number} — {question.total}
-        </p>
-        <h1 className="col-span-12 display mt-6 whitespace-pre-line text-5xl md:col-span-8 md:text-7xl">
+        <p className="col-span-2 label text-forest">{question.number}</p>
+        <p className="col-span-10 label text-right text-ink/40">{question.total}</p>
+        <h1 className="col-span-12 display mt-8 whitespace-pre-line text-[clamp(2.2rem,6vw,4.2rem)] md:col-span-7">
           {question.prompt}
         </h1>
-        <ul className="col-span-12 mt-12 md:col-span-8">
+        <ul className="col-span-12 mt-12 columns-1 gap-0 md:col-span-8">
           {question.options.map((option) => {
             const held = Array.isArray(selected) ? selected.includes(option.id) : selected === option.id;
             return (
-              <li key={option.id} className="border-t border-ink/15">
-                <button type="button" className="flex w-full items-baseline justify-between py-5 text-left" onClick={() => toggle(option.id)}>
-                  <span className={`display text-4xl ${held ? "text-forest" : ""}`}>{option.label}</span>
-                  {held ? <span className="label">Held</span> : null}
+              <li key={option.id} className="border-b border-ink/15">
+                <button
+                  type="button"
+                  className="flex min-h-11 w-full items-baseline justify-between py-4 text-left"
+                  onClick={() => toggle(option.id)}
+                >
+                  <span className={`text-xl ${held ? "text-forest" : ""}`}>{option.label}</span>
+                  {held ? <span className="label">Marked</span> : null}
                 </button>
               </li>
             );

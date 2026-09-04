@@ -65,3 +65,22 @@ A bottle silhouette behind frosted glass or thin cloth, colour only suggested (w
 ## Replacement rule
 
 Keep current SVG files in `public/images/placeholders/` until a commissioned file is in place. Catalogue entries use `placeholder: true` until then.
+
+## K — Water morning hero, 16:9
+
+A shallow pool of clear water on cream stone at first light. Gentle caustics, no fountain, no splash crown. Sage and mint in the refraction, a darker forest edge. Large empty centre so the wordmark can sit in type, distorted only by the water, never drawn in the photograph.
+
+**Why:** Homepage scene 01. Landscape so refraction can run under REHMAT PANJAB. Water, not oil — the drop in scene 02 is the hinge.
+
+## L — Gen Z product still, 4:5 (Musk Rizali)
+
+The same attar bottle as A, but closer, slightly off-centre, on a mint paper ground with one hard morning shadow. Phone-native crop. No lifestyle crowd, no unboxing mess, no neon. Cap and meniscus sharp; background quiet so Stories overlays can sit in the negative space.
+
+**Why:** Share cards and PDP. Gen Z product photography here means editorial closeness and empty air, not trend clutter.
+
+## M — Gen Z wrist / pocket, 9:16
+
+A bottle half in a linen pocket or against a wrist, vertical, cream and forest only. Soft grain. No logos on clothes, no fake UI stickers in camera.
+
+**Why:** Vertical share from Create Your Rehmat and Find Your Scent. 9:16 matches Instagram stories without adding type in-camera.
+

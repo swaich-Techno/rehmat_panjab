@@ -8,11 +8,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/collection",
     "/find-your-scent",
+    "/create-your-fragrance",
     "/next-drop",
+    "/our-story",
     "/cart",
     "/checkout",
     "/auth/login",
     "/auth/register",
+    "/auth/otp",
   ];
   return [
     ...staticRoutes.map((path) => ({

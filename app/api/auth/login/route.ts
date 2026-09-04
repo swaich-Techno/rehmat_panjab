@@ -3,6 +3,7 @@ import { authCredentialsSchema } from "@/lib/validation/schemas";
 import { AUTH_DISCONNECTED_COPY, isSupabaseConfigured } from "@/lib/supabase-stub/index";
 
 export async function POST(request: Request) {
+  // Rate-limit-ready: bind to IP once an edge store exists.
   const body = await request.json().catch(() => null);
   const parsed = authCredentialsSchema.safeParse(body);
   if (!parsed.success) {

@@ -20,7 +20,7 @@ export function ProductView({ product }: { product: Product }) {
   }, [product.slug]);
 
   return (
-    <div>
+    <div className="pb-28 md:pb-0">
       <section className="site-grid items-start py-8 md:py-16">
         <div className="col-span-12 md:col-span-6">
           <div className="relative min-h-[70vw] bg-mint md:min-h-[80vh]">

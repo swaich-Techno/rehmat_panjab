@@ -6,15 +6,17 @@ This repository is the small-business commerce foundation for the house: catalog
 
 ## Features
 
-- Editorial homepage with eight scenes (arrival, oil, notes, first bottle, worn line, collection, finder, origin)
+- Cinematic homepage with eight scenes (water morning, droplet, bottle, notes, sequential collection, finder, create, next drop)
+- Shop, Find your scent, Create your Rehmat, Next drop, Our story
 - Collection and product pages with composition + scent character
-- Cart drawer and cart page, persisted in `localStorage`, totals recomputed on the server
-- Checkout coming soon — manual / WhatsApp request with a request number, never a fake charge
-- Fragrance finder (six questions) with primary + secondary scent match
-- Next Rehmat vote + 5% thank-you reward (server-locked percent, one per email, hashed / signed)
-- Auth vault UI with honest “archive not connected” when Supabase is missing
+- Cart drawer / mobile sheet and cart page, persisted in `localStorage`, totals recomputed on the server
+- Checkout coming soon — pack ceremony then manual / WhatsApp request, never a fake charge
+- Fragrance finder (six questions) with primary + secondary scent match and a shareable card
+- Create your Rehmat preference vessel (nine questions, coloured layers, no fake formula %)
+- Next Rehmat vote + 5% thank-you reward (server-locked percent, one per email, hashed / signed) and unchecked notify opt-in
+- Auth vault UI with honest “archive not connected” when Supabase is missing; OTP UI without fake SMS
 - Account surfaces for orders, profile, saved oils, quiz, rewards, votes (local / empty states)
-- Admin preview: overview, products, inventory, orders, quiz, next drop, rewards — locked unless `ADMIN_PREVIEW_KEY` is set
+- Admin preview: wizard, homepage CMS, inventory, orders, quiz, next drop, rewards, empty bell, audit stub — locked unless `ADMIN_PREVIEW_KEY` is set
 - SEO: metadata, OG, robots, sitemap, JSON-LD (no fake ratings)
 - First-party analytics events (no PII)
 
@@ -47,7 +49,7 @@ See `.env.example`.
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Future public client |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server only, later. Never `NEXT_PUBLIC_` |
 | `ADMIN_PREVIEW_KEY` | Gates `/admin`. If unset, admin stays locked |
-| `REWARD_SIGNING_SECRET` | HMAC for reward tokens. Local fallback is documented and not multi-instance safe |
+| `REWARD_SIGNING_SECRET` | HMAC for reward tokens. **Required in production** (fail closed). Local fallback only in development |
 | `WHATSAPP_ORDER_NUMBER` | Optional E.164 digits for request links |
 | `RAZORPAY_*` | Reserved. Checkout does not charge |
 

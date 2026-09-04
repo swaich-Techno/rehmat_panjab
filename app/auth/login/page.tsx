@@ -29,6 +29,9 @@ export default function LoginPage() {
         <Link href="/auth/register">Register</Link>
         <Link href="/auth/forgot-password">Forgot password</Link>
       </div>
+      <Link href="/auth/otp" className="text-sm">
+        Phone code
+      </Link>
     </VaultDoor>
   );
 }

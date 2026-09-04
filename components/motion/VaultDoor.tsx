@@ -3,6 +3,8 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { LiquidButton } from "@/components/ui/LiquidButton";
 import { Emblem } from "@/components/brand/Emblem";
+import { durationCss, durationMs } from "@/lib/motion/tokens";
+import { useMotionMode } from "@/lib/motion/useMotionMode";
 
 type Props = {
   title: string;
@@ -11,44 +13,85 @@ type Props = {
   submitLabel: string;
 };
 
+type VaultState = "idle" | "turning" | "pins" | "open" | "failed";
+
 export function VaultDoor({ title, children, onSubmit, submitLabel }: Props) {
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [vault, setVault] = useState<VaultState>("idle");
+  const mode = useMotionMode();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setError("");
     setInfo("");
-    setFailed(false);
+    setVault("idle");
     const result = await onSubmit();
     setLoading(false);
     if (result.ok) {
-      setInfo(result.message);
+      if (mode === "REDUCED") {
+        setVault("open");
+        setInfo(result.message);
+        return;
+      }
+      setVault("turning");
+      window.setTimeout(() => setVault("pins"), durationMs("fast") + 200);
+      window.setTimeout(() => setVault("open"), durationMs("vault"));
+      window.setTimeout(() => setInfo(result.message), durationMs("vault"));
       return;
     }
-    setFailed(true);
+    setVault("failed");
     setError(result.message);
   }
 
   return (
-    <section className="atmosphere-evening min-h-[86svh] px-4 py-16 text-ivory">
-      <div className="mx-auto grid min-h-[70vh] max-w-5xl grid-cols-1 overflow-hidden border border-sand/30 md:grid-cols-[1.1fr_0.9fr]">
-        <div className={`relative flex flex-col justify-between p-8 md:p-12 ${failed ? "opacity-90" : ""}`}>
+    <section className="min-h-[86svh] bg-[#1a241c] px-4 py-16 text-ivory">
+      <div className="mx-auto grid min-h-[70vh] max-w-5xl grid-cols-1 overflow-hidden border border-[#8a6a55]/50 md:grid-cols-[1.1fr_0.9fr]">
+        <div className="relative flex flex-col justify-between bg-gradient-to-br from-[#183a2a] via-[#2a2622] to-[#633736] p-8 md:p-12">
           <p className="label text-sand">Rehmat Panjab / Private house</p>
           <div className="my-12 flex flex-1 items-center justify-center">
             <div
-              className={`relative flex h-40 w-40 items-center justify-center rounded-full border border-sand/50 ${failed ? "scale-95" : ""}`}
-              style={{ transition: "transform 700ms cubic-bezier(0.22,1,0.36,1)" }}
+              className={`relative flex h-48 w-48 items-center justify-center rounded-sm border-4 ${
+                vault === "failed" ? "border-wine" : "border-[#a66f5f]"
+              }`}
+              style={{
+                boxShadow:
+                  vault === "open"
+                    ? "inset 0 0 40px rgba(180,122,71,0.55), 0 0 30px rgba(180,122,71,0.25)"
+                    : "inset 0 0 18px rgba(0,0,0,0.45)",
+                transition: `box-shadow ${durationCss("vault")} var(--ease-weighted)`,
+              }}
             >
-              <span className="absolute inset-4 rounded-full border border-sand/20" />
-              <Emblem className="h-16 w-16 text-sand" />
+              <span
+                className="absolute h-2 w-16 bg-[#d7c8ab]"
+                style={{
+                  transform:
+                    vault === "turning" || vault === "pins" || vault === "open"
+                      ? "rotate(72deg)"
+                      : "rotate(0deg)",
+                  transition: `transform ${durationCss("editorial")} var(--ease-overshoot)`,
+                }}
+              />
+              <span
+                className={`absolute top-6 h-2 w-2 rounded-full ${vault === "pins" || vault === "open" ? "bg-amber" : "bg-sand/40"}`}
+              />
+              <span
+                className={`absolute top-10 h-2 w-2 rounded-full ${vault === "open" ? "bg-amber" : "bg-sand/40"}`}
+              />
+              <div
+                className="absolute inset-4 border border-[#a66f5f]/40 bg-[#183a2a]"
+                style={{
+                  clipPath: vault === "open" ? "inset(0 0 0 92%)" : "inset(0 0 0 0)",
+                  transition: `clip-path ${durationCss("vault")} var(--ease-weighted)`,
+                }}
+              />
+              <Emblem className="relative z-[1] h-14 w-14 text-sand" />
             </div>
           </div>
           <p className="max-w-sm text-sm leading-7 text-ivory/70">
-            A vault for orders, saved oils, and the notes you keep. Not a dashboard. A door.
+            A mechanical safe for orders, saved oils, and the notes you keep. Warm metal. Not a dashboard. A door.
           </p>
         </div>
         <form onSubmit={handleSubmit} className="bg-ivory p-8 text-ink md:p-12">

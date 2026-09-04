@@ -4,6 +4,7 @@ import { adminLoginSchema } from "@/lib/validation/schemas";
 import { ADMIN_COOKIE, isAdminConfigured, keysMatch, signAdminSession } from "@/lib/admin/auth";
 
 export async function POST(request: Request) {
+  // Rate-limit-ready: bind to IP once an edge store exists.
   if (!isAdminConfigured()) {
     return NextResponse.json(
       { ok: false, message: "ADMIN_PREVIEW_KEY is not set. The preview stays locked." },

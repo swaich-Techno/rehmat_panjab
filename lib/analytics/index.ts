@@ -11,7 +11,9 @@ export type AnalyticsEventName =
   | "add_to_cart"
   | "buy_now"
   | "checkout_started"
-  | "order_confirmed";
+  | "order_confirmed"
+  | "create_fragrance_saved"
+  | "notify_opt_in";
 
 export type AnalyticsEvent = {
   name: AnalyticsEventName;

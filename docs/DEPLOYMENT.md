@@ -27,7 +27,7 @@ npm run build
    - Do **not** set `SUPABASE_SERVICE_ROLE_KEY` as `NEXT_PUBLIC_*`.
    - Set `NEXT_PUBLIC_SITE_URL` to the production URL.
    - Set `ADMIN_PREVIEW_KEY` (8+ characters) before using `/admin`.
-   - Set `REWARD_SIGNING_SECRET` in production. The code falls back to a local-only secret if unset — that fallback is not safe across instances.
+   - Set `REWARD_SIGNING_SECRET` in production. The app **fails closed** if it is unset there. A local-only secret is used only in development.
    - `WHATSAPP_ORDER_NUMBER` is optional (E.164 digits, no `+`).
    - Leave Razorpay empty until checkout is intentionally launched.
 5. Deploy the `main` branch for production. Preview deploys follow other branches.
