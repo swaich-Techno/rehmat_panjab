@@ -211,6 +211,9 @@ a {
 .liquid-button {
   --px: 70%;
   --py: 80%;
+  --mx: 0px;
+  --my: 0px;
+  --press: 1;
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -225,10 +228,11 @@ a {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   cursor: pointer;
+  transform: translate3d(var(--mx), var(--my), 0) scale(var(--press));
   transition:
-    transform var(--duration-fast) var(--ease-press),
-    border-color var(--duration-normal) var(--ease-weighted),
-    color var(--duration-normal) var(--ease-weighted);
+    transform var(--duration-pressSettle) var(--ease-overshoot),
+    border-color var(--duration-standard) var(--ease-weighted),
+    color var(--duration-standard) var(--ease-weighted);
 }
 
 .liquid-button::before {
@@ -265,6 +269,12 @@ a {
 .liquid-button:hover::before,
 .liquid-button:focus-visible::before,
 .liquid-button[data-loading="true"]::before {
+  transform: scaleY(0.88) scaleX(1);
+  clip-path: circle(78% at var(--px) var(--py));
+}
+
+.liquid-button[data-pressed="true"]::before,
+.liquid-button:active::before {
   transform: scaleY(1) scaleX(1);
   clip-path: circle(140% at var(--px) var(--py));
 }
@@ -279,8 +289,11 @@ a {
   color: var(--forest);
 }
 
+.liquid-button[data-pressed="true"],
 .liquid-button:active {
-  transform: scale(0.96, 0.9);
+  --press: 0.96;
+  transition-duration: var(--duration-micro);
+  transition-timing-function: var(--ease-press);
 }
 
 .liquid-button[data-success="true"] {
@@ -296,7 +309,9 @@ a {
 .liquid-button:disabled {
   cursor: not-allowed;
   opacity: 0.45;
-  transform: none;
+  --press: 1;
+  --mx: 0px;
+  --my: 0px;
 }
 
 .liquid-button[data-loading="true"] {
@@ -402,8 +417,13 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   opacity: 0.7;
 }
 
-.refraction-layer[data-active="false"] .refraction-layer__sheet {
+.refraction-layer[data-active="false"] .refraction-layer__sheet,
+.refraction-layer[data-settled="true"] .refraction-layer__sheet {
   filter: none;
+  opacity: 0.32;
+  transition:
+    filter var(--duration-editorial) var(--ease-glassEase),
+    opacity var(--duration-editorial) var(--ease-editorialEase);
 }
 
 .droplet {
@@ -685,9 +705,32 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 }
 
 .nav-link {
+  --mx: 0px;
+  --my: 0px;
+  --press: 1;
   position: relative;
   display: inline-block;
-  transition: color var(--duration-fast) var(--ease-liquidEase), transform var(--duration-micro) var(--ease-snapEase);
+  transform: translate3d(var(--mx), var(--my), 0) scale(var(--press));
+  transition:
+    color var(--duration-fast) var(--ease-liquidEase),
+    transform var(--duration-pressSettle) var(--ease-overshoot);
+}
+
+.nav-link[data-pressed="true"] {
+  --press: 0.96;
+  transition-duration: var(--duration-micro);
+  transition-timing-function: var(--ease-press);
+}
+
+.nav-ink {
+  position: absolute;
+  width: 14px;
+  height: 10px;
+  margin: -5px 0 0 -7px;
+  border-radius: 60% 40% 55% 45%;
+  background: color-mix(in srgb, var(--forest) 55%, var(--amber));
+  pointer-events: none;
+  animation: ink-spread var(--duration-fast) var(--ease-liquidEase) both;
 }
 
 .nav-link::after {
@@ -806,6 +849,18 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   animation: split-in var(--duration-editorial) var(--ease-editorialEase) forwards;
 }
 
+.hero-wordmark {
+  position: relative;
+  z-index: 2;
+  filter: none;
+  transform: none;
+}
+
+.hero-wordmark .split-text__word {
+  /* One-shot enter, then editorial lock — no bob, tilt, or refraction. */
+  will-change: clip-path, filter;
+}
+
 .liquid-mask {
   clip-path: inset(18% 12% 22% 12%);
   filter: saturate(0.78);
@@ -864,27 +919,26 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   letter-spacing: -0.04em;
   line-height: 0.85;
   pointer-events: none;
-  will-change: transform, filter, opacity;
-  animation: note-drift 16s var(--ease-glassEase) infinite;
+  opacity: 0.4;
+  transform: translate3d(0, 10px, 0);
+  animation: note-settle var(--duration-cinematic) var(--ease-editorialEase) both;
+  animation-play-state: paused;
 }
 
 .note-musk {
   color: color-mix(in srgb, var(--sage) 78%, var(--forest));
-  filter: blur(0.6px);
-  animation-duration: 18s;
+  animation-delay: 0ms;
 }
 
 .note-oud {
   color: color-mix(in srgb, #3a2414 88%, transparent);
-  animation-duration: 22s;
-  animation-delay: -4s;
+  animation-delay: 80ms;
 }
 
 .note-rose {
   color: color-mix(in srgb, var(--rose-metal) 70%, white);
   mix-blend-mode: multiply;
-  animation-duration: 20s;
-  animation-delay: -8s;
+  animation-delay: 140ms;
 }
 
 .hero-peek {
@@ -908,7 +962,11 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 }
 
 .bottle-stage {
-  animation: bottle-breathe 5.6s var(--ease-glassEase) infinite;
+  isolation: isolate;
+}
+
+.bottle-stage__glass {
+  will-change: transform;
 }
 
 .bottle-note-enter {
@@ -983,8 +1041,16 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
   animation: wash-open var(--duration-standard) var(--ease-liquidEase) forwards;
 }
 
-.note-field__word {
-  animation-play-state: paused;
+.quiz-stage__wash--loud::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--wash-x, 50%) var(--wash-y, 42%),
+    rgba(251, 247, 238, 0.42),
+    transparent 46%
+  );
 }
 
 .note-field.is-on .note-field__word {
@@ -997,13 +1063,55 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 }
 
 .option-liquid {
+  --ox: 12%;
+  --oy: 50%;
   position: relative;
   isolation: isolate;
-  transition: color var(--duration-fast) var(--ease-liquidEase), transform var(--duration-micro) var(--ease-snapEase);
+  overflow: hidden;
+  transition: color var(--duration-fast) var(--ease-liquidEase);
 }
 
-.option-liquid:hover {
+.option-liquid .option-word {
+  display: inline-block;
+  transform-origin: left center;
+  transition:
+    transform var(--duration-pressSettle) var(--ease-overshoot),
+    letter-spacing var(--duration-standard) var(--ease-liquidEase);
+}
+
+.option-liquid:hover .option-word {
   transform: translate3d(6px, 0, 0);
+}
+
+.option-liquid[data-held="true"] .option-word {
+  transform: scale(1.14);
+  letter-spacing: 0.045em;
+}
+
+.option-liquid[data-burst="true"] .option-word {
+  transform: scale(1.22);
+  letter-spacing: 0.07em;
+}
+
+.option-liquid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--ox) var(--oy),
+    color-mix(in srgb, var(--sage) 42%, transparent),
+    transparent 58%
+  );
+  clip-path: circle(0% at var(--ox) var(--oy));
+  opacity: 0;
+}
+
+.option-liquid[data-held="true"]::after,
+.option-liquid[data-burst="true"]::after {
+  opacity: 1;
+  animation: wash-open var(--duration-standard) var(--ease-liquidEase) forwards;
 }
 
 .option-liquid[data-held="true"]::before {
@@ -1057,16 +1165,27 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 }
 
 .link-lux {
+  --press: 1;
+  position: relative;
   background-image: linear-gradient(currentColor, currentColor);
   background-size: 0 1px;
   background-position: 0 100%;
   background-repeat: no-repeat;
-  transition: background-size var(--duration-fast) var(--ease-liquidEase), color var(--duration-fast) var(--ease-weighted);
+  transform: scale(var(--press));
+  transition:
+    background-size var(--duration-fast) var(--ease-liquidEase),
+    color var(--duration-fast) var(--ease-weighted),
+    transform var(--duration-pressSettle) var(--ease-overshoot);
 }
 
 .link-lux:hover,
 .link-lux:focus-visible {
   background-size: 100% 1px;
+}
+
+.link-lux:active,
+.click-wash-link[data-pressed="true"] {
+  --press: 0.96;
 }
 
 @keyframes light-through {
@@ -1156,40 +1275,47 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 
 @keyframes button-bloom {
   0% {
-    transform: scale(0.96, 0.9);
+    transform: translate3d(var(--mx, 0px), var(--my, 0px), 0) scale(0.96);
   }
   42% {
-    transform: scale(1.06, 1.03);
+    transform: translate3d(var(--mx, 0px), var(--my, 0px), 0) scale(1.06);
   }
   100% {
-    transform: scale(1.02, 1);
+    transform: translate3d(var(--mx, 0px), var(--my, 0px), 0) scale(1.02);
   }
 }
 
-@keyframes note-drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(-0.6deg);
-    opacity: 0.82;
+@keyframes note-settle {
+  from {
+    opacity: 0.35;
+    transform: translate3d(0, 12px, 0);
   }
-  40% {
-    transform: translate3d(14px, -16px, 0) rotate(1.2deg);
-    opacity: 1;
+  to {
+    opacity: 0.92;
+    transform: none;
   }
-  70% {
-    transform: translate3d(-8px, 10px, 0) rotate(-0.4deg);
+}
+
+@keyframes ink-spread {
+  from {
+    transform: scale(0.35);
     opacity: 0.9;
   }
+  to {
+    transform: scale(7.5, 3.6);
+    opacity: 0;
+  }
 }
 
-@keyframes bottle-breathe {
-  0%,
-  100% {
-    transform: translate3d(var(--shift, 0px), var(--lift, 0px), 0) rotate(calc(var(--tilt, 0deg) - 0.5deg));
+@keyframes atc-punch {
+  0% {
+    transform: scale(0.96);
   }
-  50% {
-    transform: translate3d(calc(var(--shift, 0px) + 5px), calc(var(--lift, 0px) - 7px), 0)
-      rotate(calc(var(--tilt, 0deg) + 0.7deg));
+  48% {
+    transform: scale(1.05) translate3d(0, -8px, 0);
+  }
+  100% {
+    transform: scale(1) translate3d(0, -10px, 0);
   }
 }
 
@@ -1270,11 +1396,140 @@ html[data-rehmat-cursor="on"] [data-cursor="text"] {
 
 @keyframes wash-open {
   from {
-    clip-path: circle(0% at var(--wash-x, 50%) var(--wash-y, 42%));
+    clip-path: circle(0% at var(--wash-x, var(--ox, 50%)) var(--wash-y, var(--oy, 42%)));
   }
   to {
-    clip-path: circle(160% at var(--wash-x, 50%) var(--wash-y, 42%));
+    clip-path: circle(160% at var(--wash-x, var(--ox, 50%)) var(--wash-y, var(--oy, 42%)));
   }
+}
+
+.click-wash-card {
+  position: relative;
+  isolation: isolate;
+  cursor: pointer;
+  transition: transform var(--duration-pressSettle) var(--ease-overshoot);
+}
+
+.click-wash-card.is-washing {
+  transform: scale(0.985);
+}
+
+.click-wash-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--ox, 50%) var(--oy, 50%),
+    color-mix(in srgb, var(--amber) 58%, transparent),
+    color-mix(in srgb, var(--forest) 22%, transparent) 46%,
+    transparent 72%
+  );
+  clip-path: circle(0% at var(--ox, 50%) var(--oy, 50%));
+  opacity: 0;
+}
+
+.click-wash-card.is-washing::after {
+  opacity: 1;
+  animation: card-wash var(--duration-standard) var(--ease-liquidEase) forwards;
+}
+
+@keyframes card-wash {
+  from {
+    clip-path: circle(0% at var(--ox, 50%) var(--oy, 50%));
+  }
+  to {
+    clip-path: circle(160% at var(--ox, 50%) var(--oy, 50%));
+  }
+}
+
+.click-wash-link {
+  --press: 1;
+  position: relative;
+  display: inline-block;
+  transform: scale(var(--press));
+  transition: transform var(--duration-pressSettle) var(--ease-overshoot);
+}
+
+.click-wash-link[data-washing="true"]::after {
+  content: "";
+  position: absolute;
+  inset: -8% -4%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--ox, 50%) var(--oy, 50%),
+    color-mix(in srgb, var(--amber) 40%, transparent),
+    transparent 70%
+  );
+  clip-path: circle(0% at var(--ox, 50%) var(--oy, 50%));
+  animation: card-wash var(--duration-standard) var(--ease-liquidEase) forwards;
+}
+
+.size-pills {
+  position: relative;
+}
+
+.size-pills__track {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.size-pills__blob {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--amber) 82%, var(--wine));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.size-pills__blob[data-ready="true"] {
+  opacity: 1;
+}
+
+.size-pills__pill {
+  --press: 1;
+  position: relative;
+  z-index: 1;
+  min-height: 44px;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transform: scale(var(--press));
+  transition:
+    color var(--duration-fast) var(--ease-weighted),
+    border-color var(--duration-fast) var(--ease-weighted),
+    transform var(--duration-pressSettle) var(--ease-overshoot);
+}
+
+.size-pills__pill[data-pressed="true"] {
+  --press: 0.96;
+}
+
+.size-pills__pill.is-on {
+  color: var(--ivory);
+  border-color: transparent;
+}
+
+.size-pills__pill:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 3px;
+}
+
+.atc-punch {
+  animation: atc-punch var(--duration-pressSettle) var(--ease-overshoot) both;
 }
 
 .bottle-note-name {
@@ -1357,6 +1612,13 @@ footer a:hover,
   color: var(--forest);
 }
 
+header a:active,
+header button:active,
+footer a:active,
+.touch-target:active {
+  transform: scale(0.96);
+}
+
 .touch-target:hover {
   background: color-mix(in srgb, var(--mint) 40%, transparent);
 }
@@ -1387,7 +1649,8 @@ html[data-page-hidden="1"] .atmosphere-oud::after,
 html[data-page-hidden="1"] .atmosphere-rose::after,
 html[data-page-hidden="1"] .note-field__word,
 html[data-page-hidden="1"] .bottle-stage,
-html[data-page-hidden="1"] .orbit-note {
+html[data-page-hidden="1"] .orbit-note,
+html[data-page-hidden="1"] .size-pills__blob {
   animation-play-state: paused !important;
 }
 
@@ -1435,11 +1698,16 @@ html[data-page-hidden="1"] .orbit-note {
 
   .note-field__word,
   .bottle-stage,
-  .footer-wordmark {
+  .footer-wordmark,
+  .hero-wordmark,
+  .size-pills__blob,
+  .click-wash-card,
+  .option-word {
     animation: none;
     clip-path: none;
     transform: none;
     opacity: 1;
+    filter: none;
   }
 
   .atmosphere-morning::after,

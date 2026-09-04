@@ -11,7 +11,8 @@ import { MobileCommerceBar } from "@/components/commerce/MobileCommerceBar";
 import { NotifyMe } from "@/components/commerce/NotifyMe";
 import { Composition } from "@/components/product/Composition";
 import { ScentCharacter } from "@/components/product/ScentCharacter";
-import { OilExplainer, SizeGuide } from "@/components/product/OilExplainer";
+import { OilExplainer } from "@/components/product/OilExplainer";
+import { SizePills } from "@/components/product/SizePills";
 import { OilLayer } from "@/components/motion/OilLayer";
 import { LiquidMask } from "@/components/motion/LiquidMask";
 import { track } from "@/lib/analytics/index";
@@ -63,24 +64,8 @@ export function ProductView({ product }: { product: Product }) {
           ) : null}
           <fieldset className="block-gap">
             <legend className="label">Size</legend>
-            <div className="mt-3 flex flex-col">
-              {product.variants.map((item) => (
-                <label
-                  key={item.id}
-                  className="interactive-row flex min-h-11 cursor-pointer items-center justify-between border-t border-ink/10 py-3"
-                >
-                  <span>
-                    <span className="display text-3xl">{item.label}</span>
-                    {variantId === item.id ? <SizeGuide ml={item.ml} /> : null}
-                  </span>
-                  <input
-                    type="radio"
-                    name="size"
-                    checked={variantId === item.id}
-                    onChange={() => setVariantId(item.id)}
-                  />
-                </label>
-              ))}
+            <div className="mt-3">
+              <SizePills variants={product.variants} value={variantId} onChange={setVariantId} />
             </div>
           </fieldset>
           <div className="mt-6">

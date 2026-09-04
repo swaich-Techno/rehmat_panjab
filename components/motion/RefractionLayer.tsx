@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useOffscreenPause } from "@/lib/motion/useOffscreenPause";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
+import { durationMs } from "@/lib/motion/tokens";
 
 type Props = {
   className?: string;
@@ -10,21 +11,38 @@ type Props = {
 };
 
 /**
- * CSS + SVG refraction. No WebGL. Pauses offscreen and in reduced mode.
+ * CSS + SVG refraction. One-shot reveal, then settles — never an idle wobble on type.
+ * Pauses offscreen and in reduced mode. Applied to the atmosphere sheet only.
  */
 export function RefractionLayer({ className = "", intensity = 1 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const active = useOffscreenPause(ref);
   const mode = useMotionMode();
-  const run = active && mode !== "REDUCED";
+  const [settled, setSettled] = useState(mode === "REDUCED");
+  const run = active && mode !== "REDUCED" && !settled;
+
+  useEffect(() => {
+    if (mode === "REDUCED") {
+      setSettled(true);
+      return;
+    }
+    const id = window.setTimeout(() => setSettled(true), durationMs("cinematic"));
+    return () => window.clearTimeout(id);
+  }, [mode]);
 
   return (
-    <div ref={ref} className={`refraction-layer ${className}`} data-active={run} aria-hidden="true">
+    <div
+      ref={ref}
+      className={`refraction-layer ${className}`}
+      data-active={run}
+      data-settled={settled}
+      aria-hidden="true"
+    >
       <svg className="absolute h-0 w-0" aria-hidden="true">
         <filter id="rp-refract" x="-20%" y="-20%" width="140%" height="140%">
           <feTurbulence
             type="fractalNoise"
-            baseFrequency={mode === "FULL" ? 0.016 * intensity : 0.01}
+            baseFrequency={mode === "FULL" ? 0.012 * intensity : 0.008}
             numOctaves="2"
             seed="2"
             result="noise"
@@ -32,13 +50,14 @@ export function RefractionLayer({ className = "", intensity = 1 }: Props) {
             {run ? (
               <animate
                 attributeName="baseFrequency"
-                dur={mode === "FULL" ? "6s" : "11s"}
-                values="0.012;0.022;0.012"
-                repeatCount="indefinite"
+                dur={mode === "FULL" ? "1.05s" : "1.4s"}
+                values="0.01;0.018;0.01"
+                repeatCount="1"
+                fill="freeze"
               />
             ) : null}
           </feTurbulence>
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale={14 * intensity} />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale={settled ? 0 : 8 * intensity} />
         </filter>
       </svg>
       <div className="refraction-layer__sheet" />

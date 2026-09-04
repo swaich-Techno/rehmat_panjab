@@ -3,6 +3,7 @@ import Link from "next/link";
 import { HOUSE, PRODUCTS, isDevelopmentProduct } from "@/data/fragrance-config";
 import { PriceDisplay } from "@/components/commerce/PriceDisplay";
 import { LiquidMask } from "@/components/motion/LiquidMask";
+import { ClickWashCard } from "@/components/motion/ClickWash";
 import { OilExplainer } from "@/components/product/OilExplainer";
 
 export function CollectionCompositions({ featuredOnly = false }: { featuredOnly?: boolean }) {
@@ -16,7 +17,11 @@ export function CollectionCompositions({ featuredOnly = false }: { featuredOnly?
       {items.map((product, index) => {
         const development = isDevelopmentProduct(product);
         return (
-          <article key={product.id} className={`site-grid ${development ? "dev-oil" : ""}`}>
+          <ClickWashCard
+            key={product.id}
+            href={`/product/${product.slug}`}
+            className={`site-grid ${development ? "dev-oil" : ""}`}
+          >
             <div className={`col-span-12 md:col-span-5 ${index % 2 ? "md:col-start-8" : ""}`}>
               <LiquidMask kind={masks[index % masks.length]}>
                 <div className="relative aspect-[4/5] bg-mint" data-cursor="product">
@@ -47,7 +52,7 @@ export function CollectionCompositions({ featuredOnly = false }: { featuredOnly?
                 <PriceDisplay paise={product.variants[0]?.price_paise ?? null} />
               </div>
             </div>
-          </article>
+          </ClickWashCard>
         );
       })}
     </div>

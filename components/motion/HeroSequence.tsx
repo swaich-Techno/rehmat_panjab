@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { HOUSE, PRODUCTS, isDevelopmentProduct } from "@/data/fragrance-config";
 import { HOMEPAGE_CMS } from "@/data/homepage-cms";
 import { RefractionLayer } from "@/components/motion/RefractionLayer";
@@ -14,11 +13,13 @@ import { SplitTextReveal } from "@/components/motion/SplitTextReveal";
 import { LiquidMask } from "@/components/motion/LiquidMask";
 import { SceneConnector } from "@/components/motion/SceneConnector";
 import { OilLayer } from "@/components/motion/OilLayer";
+import { ClickWashCard, ClickWashLink } from "@/components/motion/ClickWash";
 import { motionAllowsCinematic } from "@/lib/motion/mode";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 import { useScrollStretch } from "@/lib/motion/useScrollStretch";
 import { useOffscreenPause } from "@/lib/motion/useOffscreenPause";
 import { durationCss } from "@/lib/motion/tokens";
+import { BOTTLE_LERP_MAX_PX, clampBottleLerp } from "@/lib/motion/press";
 import { track } from "@/lib/analytics/index";
 
 export function HeroSequence() {
@@ -49,7 +50,7 @@ export function HeroSequence() {
           <div className="col-span-12 md:col-span-8 md:col-start-1">
             <SplitTextReveal
               text="Rehmat Panjab"
-              className="display mt-2 text-[clamp(3rem,10vw,8.2rem)] leading-[0.82] [filter:url(#rp-refract)]"
+              className="hero-wordmark display mt-2 text-[clamp(3rem,10vw,8.2rem)] leading-[0.82]"
             />
             <p className="label copy-gap max-w-sm text-ink/70">{HOMEPAGE_CMS.heroLine}</p>
             <p className="copy-gap max-w-md text-sm leading-7 text-ink/75">{HOUSE.oilExplain}</p>
@@ -132,7 +133,10 @@ export function HeroSequence() {
       <section className="scene scene--overlap bg-cream">
         <div className="site-grid collection-stack">
           <p className="col-span-12 label text-forest">Collection</p>
-          <article className="col-span-12 grid items-end gap-x-[var(--space-collection-col)] gap-y-6 md:grid-cols-12">
+          <ClickWashCard
+            href={`/product/${musk.slug}`}
+            className="col-span-12 grid items-end gap-x-[var(--space-collection-col)] gap-y-6 md:grid-cols-12"
+          >
             <LiquidMask kind="sweep" className="md:col-span-5">
               <div className="image-sheen relative aspect-[3/4] bg-mint" data-cursor="product">
                 <Image src={musk.images[0].src} alt={musk.images[0].alt} fill className="object-contain p-8" />
@@ -141,9 +145,9 @@ export function HeroSequence() {
             <div className="md:col-span-6 md:col-start-7 md:-ml-8">
               <p className="label">{musk.number}</p>
               <h2 className="display headline-gap text-[clamp(2.4rem,6.5vw,5.4rem)]">
-                <Link href={`/product/${musk.slug}`} className="no-underline link-lux" data-cursor="link">
+                <ClickWashLink href={`/product/${musk.slug}`} className="no-underline link-lux">
                   {musk.name}
-                </Link>
+                </ClickWashLink>
               </h2>
               <p className="copy-gap max-w-md text-base leading-7">{musk.subtitle}</p>
               <div className="mt-5">
@@ -152,7 +156,7 @@ export function HeroSequence() {
                 </LiquidLink>
               </div>
             </div>
-          </article>
+          </ClickWashCard>
         </div>
       </section>
 
@@ -169,9 +173,9 @@ export function HeroSequence() {
             {developing.map((product) => (
               <li key={product.id} className="border-t border-ink/10 pt-3">
                 <p className="label">{product.number}</p>
-                <Link href={`/product/${product.slug}`} className="display mt-1 block text-2xl no-underline link-lux">
+                <ClickWashLink href={`/product/${product.slug}`} className="display mt-1 block text-2xl no-underline link-lux">
                   {product.name}
-                </Link>
+                </ClickWashLink>
                 <p className="mt-2 text-xs leading-6 text-ink/50">Working title</p>
               </li>
             ))}
@@ -234,14 +238,16 @@ export function HeroSequence() {
 }
 
 function BottleStage({ src, alt }: { src: string; alt: string }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const glassRef = useRef<HTMLDivElement>(null);
   const target = useRef({ x: 0, y: 0 });
   const current = useRef({ x: 0, y: 0 });
   const mode = useMotionMode();
 
   useEffect(() => {
-    const node = ref.current;
-    if (!node || mode === "REDUCED") return;
+    const glass = glassRef.current;
+    const stage = stageRef.current;
+    if (!glass || !stage || mode === "REDUCED") return;
     let raf = 0;
     let running = true;
     const tick = () => {
@@ -250,11 +256,9 @@ function BottleStage({ src, alt }: { src: string; alt: string }) {
       current.current.y += (target.current.y - current.current.y) * 0.12;
       const dx = current.current.x;
       const dy = current.current.y;
-      node.style.setProperty("--lx", `${50 + dx}%`);
-      node.style.setProperty("--ly", `${22 + dy}%`);
-      node.style.setProperty("--shift", `${dx}px`);
-      node.style.setProperty("--lift", `${dy}px`);
-      node.style.setProperty("--tilt", `${dx * 0.35}deg`);
+      stage.style.setProperty("--lx", `${50 + dx}%`);
+      stage.style.setProperty("--ly", `${22 + dy}%`);
+      glass.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -266,19 +270,15 @@ function BottleStage({ src, alt }: { src: string; alt: string }) {
 
   return (
     <div
-      ref={ref}
+      ref={stageRef}
       className="bottle-stage relative mx-auto h-[min(46vh,380px)] w-full max-w-sm"
       data-cursor="product"
       onPointerMove={(event) => {
         if (event.pointerType === "touch" || mode === "REDUCED") return;
-        const node = event.currentTarget;
-        const rect = node.getBoundingClientRect();
+        const rect = event.currentTarget.getBoundingClientRect();
         const x = (event.clientX - rect.left) / rect.width - 0.5;
         const y = (event.clientY - rect.top) / rect.height - 0.5;
-        target.current = {
-          x: Math.max(-22, Math.min(22, x * 28)),
-          y: Math.max(-16, Math.min(16, y * 20)),
-        };
+        target.current = clampBottleLerp(x, y, BOTTLE_LERP_MAX_PX);
       }}
       onPointerLeave={() => {
         target.current = { x: 0, y: 0 };
@@ -291,7 +291,7 @@ function BottleStage({ src, alt }: { src: string; alt: string }) {
           transition: `background ${durationCss("micro")} linear`,
         }}
       />
-      <div className="absolute inset-0 flex justify-center">
+      <div ref={glassRef} className="bottle-stage__glass absolute inset-0 flex justify-center">
         <div className="relative h-full w-24">
           <Image src={src} alt={alt} fill className="object-contain" priority />
         </div>

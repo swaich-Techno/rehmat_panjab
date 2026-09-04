@@ -33,14 +33,7 @@ export function AddToCartButton({
   const caption = phase === "added" ? "Added" : phase === "another" ? "Add another" : idleLabel;
 
   return (
-    <div
-      ref={ref}
-      className="relative"
-      style={{
-        transform: phase === "added" ? "translate3d(0, -10px, 0)" : undefined,
-        transition: `transform var(--duration-atc) var(--ease-liquidEase)`,
-      }}
-    >
+    <div ref={ref} className={`relative ${phase === "added" ? "atc-punch" : ""}`}>
       {ripple ? <Ripple personality="oil" className="absolute left-1/2 top-1/2" /> : null}
       <LiquidButton
         success={phase === "added"}

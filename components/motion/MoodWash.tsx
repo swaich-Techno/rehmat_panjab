@@ -17,7 +17,7 @@ export function MoodWash({ current, previous, x, y, tick }: Props) {
       <div className={`quiz-stage__wash quiz-stage__wash--base ${previous}`} aria-hidden="true" />
       <div
         key={tick}
-        className={`quiz-stage__wash quiz-stage__wash--from-click ${current}`}
+        className={`quiz-stage__wash quiz-stage__wash--from-click quiz-stage__wash--loud ${current}`}
         style={{
           ["--wash-x" as string]: `${x}%`,
           ["--wash-y" as string]: `${y}%`,

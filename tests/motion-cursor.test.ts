@@ -87,6 +87,8 @@ describe("motion tokens and gating", () => {
     expect(MOTION_DURATION_MS.editorial).toBeLessThanOrEqual(850);
     expect(MOTION_DURATION_MS.cinematic).toBeGreaterThanOrEqual(900);
     expect(MOTION_DURATION_MS.cinematic).toBeLessThanOrEqual(1200);
+    expect(MOTION_DURATION_MS.pressSettle).toBeGreaterThanOrEqual(280);
+    expect(MOTION_DURATION_MS.pressSettle).toBeLessThanOrEqual(400);
     expect(LIQUID_PERSONALITIES.oil.fillMs).toBeGreaterThanOrEqual(300);
     expect(LIQUID_PERSONALITIES.oil.fillMs).toBeLessThanOrEqual(600);
     expect(LIQUID_PERSONALITIES.water.fillMs).toBeGreaterThanOrEqual(250);

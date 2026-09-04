@@ -10,6 +10,8 @@ export const MOTION_DURATION_MS = {
   instant: 80,
   micro: 180,
   fast: 280,
+  /** Click overshoot settle — 280–400ms band, not a second system. */
+  pressSettle: 340,
   standard: 480,
   /** @deprecated alias of standard — kept so existing CSS/hooks keep compiling */
   normal: 480,
@@ -56,6 +58,7 @@ export const MOTION_EASE_CSS = {
 export const motionTokens = {
   micro: MOTION_DURATION_MS.micro / 1000,
   fast: MOTION_DURATION_MS.fast / 1000,
+  pressSettle: MOTION_DURATION_MS.pressSettle / 1000,
   standard: MOTION_DURATION_MS.standard / 1000,
   normal: MOTION_DURATION_MS.standard / 1000,
   sheet: MOTION_DURATION_MS.sheet / 1000,

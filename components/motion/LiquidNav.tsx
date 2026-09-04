@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useRef, useState, type PointerEvent } from "react";
-import { MOTION_DURATION_MS, MOTION_EASE_CSS } from "@/lib/motion/tokens";
+import { MOTION_DURATION_MS, MOTION_EASE_CSS, durationCss } from "@/lib/motion/tokens";
 import { LIQUID_PERSONALITIES } from "@/lib/motion/personalities";
 import { useMotionMode } from "@/lib/motion/useMotionMode";
 import { useLiquidTransition } from "@/components/motion/LiquidTransition";
 import { transitionKind } from "@/lib/motion/transitions";
+import { pointerPercent } from "@/lib/motion/press";
 
 export type NavItem = { href: string; label: string };
 
@@ -27,6 +28,7 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
   const { go } = useLiquidTransition();
   const listRef = useRef<HTMLUListElement>(null);
   const [blob, setBlob] = useState({ x: 0, width: 0, path: IDLE_PATH, visible: false });
+  const [ink, setInk] = useState<{ id: number; index: number; x: number; y: number } | null>(null);
 
   function place(index: number, morph: "idle" | "stretch" | "settle") {
     const list = listRef.current;
@@ -53,7 +55,8 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
     const rect = node.getBoundingClientRect();
     const dx = event.clientX - (rect.left + rect.width / 2);
     const dy = event.clientY - (rect.top + rect.height / 2);
-    node.style.transform = `translate3d(${Math.max(-8, Math.min(8, dx * 0.22))}px, ${Math.max(-5, Math.min(5, dy * 0.22))}px, 0)`;
+    node.style.setProperty("--mx", `${Math.max(-8, Math.min(8, dx * 0.22))}px`);
+    node.style.setProperty("--my", `${Math.max(-5, Math.min(5, dy * 0.22))}px`);
     const x = ((event.clientX - rect.left) / rect.width) * 100;
     node.style.setProperty("--nav-drop-x", `${Math.max(12, Math.min(88, x))}%`);
     node.style.setProperty("--nav-fill", `${Math.max(28, Math.min(100, 40 + Math.abs(dx)))}%`);
@@ -99,17 +102,38 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
                 href={item.href}
                 data-cursor="link"
                 data-active={active}
+                data-pressed={ink?.index === index}
                 className={`nav-link label no-underline ${active ? "text-forest" : "text-ink/70"}`}
+                style={{
+                  transition: `color ${durationCss("fast")} var(--ease-liquidEase), transform ${durationCss("pressSettle")} var(--ease-overshoot)`,
+                }}
                 onPointerEnter={() => {
                   if (mode === "REDUCED") return;
                   place(index, "stretch");
                   window.setTimeout(() => place(index, "settle"), MOTION_DURATION_MS.fast);
                 }}
                 onPointerMove={magnet}
+                onPointerDown={(event) => {
+                  if (mode === "REDUCED") return;
+                  const origin = pointerPercent(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect());
+                  event.currentTarget.style.setProperty("--ink-x", `${origin.x}%`);
+                  event.currentTarget.style.setProperty("--ink-y", `${origin.y}%`);
+                  event.currentTarget.style.setProperty("--nav-fill", "100%");
+                  setInk({ id: Date.now(), index, x: origin.x, y: origin.y });
+                  window.setTimeout(() => setInk(null), MOTION_DURATION_MS.fast);
+                }}
                 onPointerLeave={(event) => {
-                  event.currentTarget.style.transform = "";
+                  event.currentTarget.style.setProperty("--mx", "0px");
+                  event.currentTarget.style.setProperty("--my", "0px");
                   event.currentTarget.style.setProperty("--nav-fill", active ? "100%" : "0%");
                   event.currentTarget.style.setProperty("--nav-drop-x", "50%");
+                }}
+                onKeyDown={(event) => {
+                  if (event.key !== "Enter" && event.key !== " ") return;
+                  event.currentTarget.style.setProperty("--ink-x", "50%");
+                  event.currentTarget.style.setProperty("--ink-y", "50%");
+                  setInk({ id: Date.now(), index, x: 50, y: 50 });
+                  window.setTimeout(() => setInk(null), MOTION_DURATION_MS.fast);
                 }}
                 onFocus={() => place(index, "settle")}
                 onClick={(event) => {
@@ -125,6 +149,14 @@ export function LiquidNav({ items, onNavigate }: { items: NavItem[]; onNavigate?
               >
                 {item.label}
                 <span className="nav-drop" aria-hidden="true" />
+                {ink && ink.index === index ? (
+                  <span
+                    key={ink.id}
+                    className="nav-ink"
+                    style={{ left: `${ink.x}%`, top: `${ink.y}%` }}
+                    aria-hidden="true"
+                  />
+                ) : null}
               </Link>
             </li>
           );
