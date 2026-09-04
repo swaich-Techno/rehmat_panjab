@@ -44,12 +44,12 @@ If the CLI or MCP is not authenticated, use `npx vercel deploy --temporary --yes
 
 **Working branch for V3:** `cursor/rehmat-panjab-v3-5654`. Production hostname (`rehmat-panjab.vercel.app`, or whatever the claimed project assigns) requires the Vercel project Production Branch to be this working branch, or a merge to `main`. `NEXT_PUBLIC_SITE_URL` should match the production URL once the project is claimed.
 
-Vercel MCP was unauthenticated in this agent run. A temporary anonymous deployment was created instead:
+Vercel CLI was **logged out** in this V3.1 run (`vercel whoami` → Logged out). MCP `list_teams` returned no teams. A temporary anonymous deployment was created instead (same host as the prior V3 claim):
 
 - Live: https://temporary-spry-marble-ykc20go.vercel.app
 - Claim: https://vercel.com/claim-deployment?code=b80507ee-84f1-437d-bd30-5aa58f655071
 
-Anonymous deployments expire. Claim the URL or connect the GitHub repo (`swaich-Techno/rehmat_panjab`) and set the production branch. Do not treat the temporary host as permanent production.
+Anonymous deployments expire (this one was reported as ~44 minutes from the V3.1 redeploy). Claim the URL or connect the GitHub repo (`swaich-Techno/rehmat_panjab`) and set the production branch. Do not treat the temporary host as permanent production.
 
 ## GitHub
 
