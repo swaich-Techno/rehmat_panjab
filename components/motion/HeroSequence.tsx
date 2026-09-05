@@ -1,0 +1,317 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { HOUSE, PRODUCTS, getProductBySlug } from "@/data/fragrance-config";
+import { HOMEPAGE_CMS } from "@/data/homepage-cms";
+import { RefractionLayer } from "@/components/motion/RefractionLayer";
+import { Droplet } from "@/components/motion/Droplet";
+import { Ripple } from "@/components/motion/Ripple";
+import { LiquidReveal } from "@/components/motion/LiquidReveal";
+import { LiquidLink } from "@/components/ui/LiquidLink";
+import { SplitTextReveal } from "@/components/motion/SplitTextReveal";
+import { LiquidMask } from "@/components/motion/LiquidMask";
+import { SceneConnector } from "@/components/motion/SceneConnector";
+import { OilLayer } from "@/components/motion/OilLayer";
+import { ClickWashCard, ClickWashLink } from "@/components/motion/ClickWash";
+import { CampaignStill } from "@/components/product/CampaignStill";
+import { motionAllowsCinematic } from "@/lib/motion/mode";
+import { useMotionMode } from "@/lib/motion/useMotionMode";
+import { useOffscreenPause } from "@/lib/motion/useOffscreenPause";
+import { durationCss } from "@/lib/motion/tokens";
+import { BOTTLE_LERP_MAX_PX, clampBottleLerp } from "@/lib/motion/press";
+import { track } from "@/lib/analytics/index";
+
+export function HeroSequence() {
+  const [ripple, setRipple] = useState(false);
+  const notesRef = useRef<HTMLDivElement>(null);
+  const notesOn = useOffscreenPause(notesRef);
+  const mode = useMotionMode();
+
+  useEffect(() => {
+    track({ name: "hero_view", path: "/" });
+  }, []);
+
+  const featured = getProductBySlug(HOMEPAGE_CMS.featuredSlug) ?? PRODUCTS[0];
+  const featuredSet = PRODUCTS.filter((product) => product.featured);
+  const rest = PRODUCTS.filter((product) => !product.featured);
+  const cinematic = motionAllowsCinematic(mode);
+  const heroStill = featured.images[0];
+
+  return (
+    <div className="home-scenes">
+      <section className="scene scene--hero atmosphere-morning text-forest">
+        <RefractionLayer intensity={cinematic ? 1.35 : 0.75} />
+        <div className="hero-oil-thicken" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 opacity-50" aria-hidden="true">
+          <OilLayer />
+        </div>
+        <div className="site-grid relative z-[1] flex-1 pt-8">
+          <p className="col-span-12 label md:col-span-3">{HOMEPAGE_CMS.heroKicker}</p>
+          <div className="col-span-12 min-w-0 md:col-span-7 md:col-start-1">
+            <SplitTextReveal
+              text="Rehmat Panjab"
+              className="hero-wordmark display mt-2 text-[clamp(3rem,10vw,8.2rem)] leading-[0.82]"
+            />
+            <p className="label copy-gap max-w-sm text-ink/70">{HOMEPAGE_CMS.heroLine}</p>
+            <p className="copy-gap max-w-md text-sm leading-7 text-ink/75">{HOUSE.oilExplain}</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <LiquidLink href={`/product/${featured.slug}`} liquid="oil">
+                {HOMEPAGE_CMS.featuredCta}
+              </LiquidLink>
+              <LiquidLink href="/collection" liquid="water">
+                {HOMEPAGE_CMS.collectionCta}
+              </LiquidLink>
+            </div>
+          </div>
+          <div className="product-visual col-span-12 mt-4 min-w-0 md:col-span-5 md:col-start-8 md:row-start-1 md:mt-6">
+            <BottleStage src={heroStill.src} alt={heroStill.alt} />
+          </div>
+          <div className="col-span-12 scroll-cue mt-2 md:col-span-4">
+            <Droplet onSettled={() => setRipple(true)} />
+            {ripple ? <Ripple personality="water" className="relative" /> : null}
+            <p className="label text-forest">A drop, then the oil</p>
+          </div>
+        </div>
+        <div className="hero-peek relative z-[1]" aria-hidden="true" />
+      </section>
+
+      <SceneConnector />
+
+      <section className="scene scene--overlap bg-cream">
+        <div className="site-grid">
+          <p className="col-span-12 label text-forest">The first glass</p>
+          <div className="product-copy relative z-[2] col-span-12 min-w-0 md:col-span-5">
+            <p className="label headline-gap text-wine">{featured.number}</p>
+            <h2 className="display headline-gap text-[clamp(2.6rem,7vw,5.8rem)]">{featured.name}</h2>
+            <p className="copy-gap max-w-sm text-base leading-7">{featured.subtitle}</p>
+            <p className="copy-gap max-w-sm text-sm leading-7 text-ink/70">{featured.description}</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <LiquidLink href={`/product/${featured.slug}`} liquid="oil">
+                {HOMEPAGE_CMS.featuredCta}
+              </LiquidLink>
+            </div>
+          </div>
+          <div className="product-visual col-span-12 mt-8 min-w-0 md:col-span-6 md:col-start-7 md:mt-0">
+            <LiquidMask kind="glass" eager>
+              <CampaignStill
+                src={heroStill.src}
+                alt={heroStill.alt}
+                sizes="(max-width: 768px) calc(100vw - 2rem), 50vw"
+                priority
+              />
+            </LiquidMask>
+          </div>
+        </div>
+      </section>
+
+      <SceneConnector />
+
+      <section className="scene scene--overlap bg-paper">
+        <div className="site-grid">
+          <p className="col-span-12 label text-forest">Notes as atmosphere</p>
+          <div ref={notesRef} className={`col-span-12 note-field mt-4 ${notesOn ? "is-on" : ""}`}>
+            <span className="note-field__word note-musk text-[clamp(4rem,16vw,11rem)]" style={{ left: "2%", top: "8%" }}>
+              MUSK
+            </span>
+            <span
+              className="note-field__word note-oud text-[clamp(3.4rem,13vw,9rem)] text-ivory"
+              style={{ right: "4%", top: "28%" }}
+            >
+              OUD
+            </span>
+            <span className="note-field__word note-rose text-[clamp(3rem,11vw,7.5rem)]" style={{ left: "18%", top: "58%" }}>
+              ROSE
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <SceneConnector />
+
+      <section className="scene scene--overlap bg-cream">
+        <div className="site-grid collection-stack">
+          <p className="col-span-12 label text-forest">Collection</p>
+          {featuredSet.map((product, index) => (
+            <ClickWashCard
+              key={product.id}
+              href={`/product/${product.slug}`}
+              className="col-span-12 grid items-start gap-x-[var(--space-collection-col)] gap-y-6 md:grid-cols-12"
+            >
+              <LiquidMask
+                kind={index % 2 ? "oil" : "sweep"}
+                className={`product-visual min-w-0 ${index % 2 ? "md:col-span-5 md:col-start-8" : "md:col-span-5"}`}
+              >
+                <CampaignStill
+                  src={product.images[0].src}
+                  alt={product.images[0].alt}
+                  sizes="(max-width: 768px) calc(100vw - 2rem), 40vw"
+                />
+              </LiquidMask>
+              <div
+                className={`product-copy relative z-[2] min-w-0 ${index % 2 ? "md:col-span-6 md:col-start-1 md:row-start-1" : "md:col-span-6 md:col-start-7"}`}
+              >
+                <p className="label">{product.number}</p>
+                <h2 className="display headline-gap text-[clamp(2.4rem,6.5vw,5.4rem)]">
+                  <ClickWashLink href={`/product/${product.slug}`} className="no-underline link-lux">
+                    {product.name}
+                  </ClickWashLink>
+                </h2>
+                <p className="copy-gap max-w-md text-base leading-7">{product.subtitle}</p>
+                <p className="mt-2 text-sm leading-7 text-ink/55">LAUNCHING SOON</p>
+                <div className="mt-5">
+                  <LiquidLink href={`/product/${product.slug}`} liquid="oil">
+                    Hold {product.name}
+                  </LiquidLink>
+                </div>
+              </div>
+            </ClickWashCard>
+          ))}
+        </div>
+      </section>
+
+      <section className="scene scene--overlap bg-ivory">
+        <div className="site-grid">
+          <p className="col-span-12 label text-forest">The catalogue</p>
+          <h2 className="col-span-12 display headline-gap text-[clamp(2.2rem,6vw,4.6rem)] md:col-span-8">
+            Five oils, named
+          </h2>
+          <p className="col-span-12 copy-gap max-w-lg text-base leading-7 md:col-span-6">
+            {HOMEPAGE_CMS.comingSoonLine}
+          </p>
+          <ul className="col-span-12 mt-8 grid gap-6 md:col-span-12 md:grid-cols-3">
+            {rest.map((product) => (
+              <li key={product.id}>
+                <ClickWashCard href={`/product/${product.slug}`} className="block min-w-0">
+                  <CampaignStill
+                    src={product.images[0].src}
+                    alt={product.images[0].alt}
+                    sizes="(max-width: 768px) calc(100vw - 2rem), 33vw"
+                  />
+                  <p className="label mt-3">{product.number}</p>
+                  <ClickWashLink href={`/product/${product.slug}`} className="display mt-1 block text-2xl no-underline link-lux">
+                    {product.name}
+                  </ClickWashLink>
+                  <p className="mt-2 text-sm leading-6 text-ink/60">{product.subtitle}</p>
+                  <p className="mt-1 text-xs leading-6 text-ink/50">LAUNCHING SOON</p>
+                </ClickWashCard>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <SceneConnector />
+
+      <section className="scene scene--overlap atmosphere-morning">
+        <LiquidReveal className="site-grid relative z-[1]" as="div">
+          <p className="col-span-12 label">Find your scent</p>
+          <h2 className="col-span-12 display headline-gap text-[clamp(2.2rem,7vw,5.6rem)] md:col-span-9">
+            {HOMEPAGE_CMS.finderCta}
+          </h2>
+          <div className="col-span-12 block-gap md:col-span-4">
+            <p className="mb-5 max-w-sm text-base leading-7">
+              Six questions. A primary match and a second neighbour. We call it a scent match — not intelligence.
+            </p>
+            <LiquidLink href="/find-your-scent" liquid="water">
+              Start
+            </LiquidLink>
+          </div>
+        </LiquidReveal>
+      </section>
+
+      <section className="scene scene--overlap atmosphere-garden text-ivory">
+        <div className="site-grid relative z-[1]">
+          <p className="col-span-12 label">Liquid ingredients</p>
+          <h2 className="col-span-12 display headline-gap text-[clamp(2.2rem,7vw,5.6rem)] md:col-span-8">
+            {HOMEPAGE_CMS.createCta}
+          </h2>
+          <div className="col-span-12 block-gap md:col-span-5">
+            <p className="mb-5 max-w-sm text-base leading-7">
+              A preference vessel — not a factory. Notes layer as colour. You leave with a portrait, not a formula pretending to be chemistry.
+            </p>
+            <LiquidLink href="/create-your-fragrance" liquid="water">
+              Begin
+            </LiquidLink>
+          </div>
+        </div>
+      </section>
+
+      <section className="scene scene--overlap atmosphere-evening text-ivory">
+        <div className="site-grid relative z-[1]">
+          <p className="col-span-12 label text-sand">Next Rehmat</p>
+          <h2 className="col-span-12 display headline-gap text-[clamp(2.2rem,7vw,5.6rem)] md:col-span-9">
+            {HOMEPAGE_CMS.nextDropCta}
+          </h2>
+          <div className="col-span-12 block-gap md:col-span-5">
+            <p className="mb-5 max-w-sm text-base leading-7 text-ivory/80">{HOUSE.nextDropLine}</p>
+            <LiquidLink href="/next-drop" liquid="oil">
+              Vote
+            </LiquidLink>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function BottleStage({ src, alt }: { src: string; alt: string }) {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const glassRef = useRef<HTMLDivElement>(null);
+  const target = useRef({ x: 0, y: 0 });
+  const current = useRef({ x: 0, y: 0 });
+  const mode = useMotionMode();
+
+  useEffect(() => {
+    const glass = glassRef.current;
+    const stage = stageRef.current;
+    if (!glass || !stage || mode === "REDUCED") return;
+    let raf = 0;
+    let running = true;
+    const tick = () => {
+      if (!running) return;
+      current.current.x += (target.current.x - current.current.x) * 0.12;
+      current.current.y += (target.current.y - current.current.y) * 0.12;
+      const dx = current.current.x;
+      const dy = current.current.y;
+      stage.style.setProperty("--lx", `${50 + dx}%`);
+      stage.style.setProperty("--ly", `${22 + dy}%`);
+      glass.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+  }, [mode]);
+
+  return (
+    <div
+      ref={stageRef}
+      className="bottle-stage campaign-still relative mx-auto h-[min(46vh,380px)] w-auto max-w-full"
+      data-cursor="product"
+      onPointerMove={(event) => {
+        if (event.pointerType === "touch" || mode === "REDUCED") return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        target.current = clampBottleLerp(x, y, BOTTLE_LERP_MAX_PX);
+      }}
+      onPointerLeave={() => {
+        target.current = { x: 0, y: 0 };
+      }}
+    >
+      <div
+        className="pointer-events-none absolute inset-6"
+        style={{
+          background: `radial-gradient(70% 50% at var(--lx, 62%) var(--ly, 18%), rgba(251,247,238,0.55), transparent 58%)`,
+          transition: `background ${durationCss("micro")} linear`,
+        }}
+      />
+      <div ref={glassRef} className="bottle-stage__glass absolute inset-0">
+        <Image src={src} alt={alt} fill sizes="(max-width: 768px) 90vw, 380px" className="campaign-still__img" priority />
+      </div>
+    </div>
+  );
+}

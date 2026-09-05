@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Placeholder rose metal still life">
+  <rect width="600" height="400" fill="#F5F1E7"/>
+  <text x="16" y="28" fill="#A46F5D" font-size="11" font-family="sans-serif" letter-spacing="2">PLACEHOLDER  ROSE</text>
+  <circle cx="300" cy="200" r="80" fill="#A46F5D" opacity="0.55"/>
+  <circle cx="300" cy="200" r="40" fill="#5A302F" opacity="0.4"/>
+  <path d="M300 120c30 40 30 80 0 120-30-40-30-80 0-120Z" fill="#F5F1E7" opacity="0.3"/>
+</svg>
